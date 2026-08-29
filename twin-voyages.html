@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Twin Voyages — The Marked Chart</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#071C24;--panel:rgba(18,40,46,.62);--line:rgba(31,182,201,.22);
+  --teal:#1FB6C9;--deepteal:#0B6E7A;--mint:#4FE8CA;--gold:#FFC700;--sand:#D9A66C;
+  --cream:#F4EDE1;--coursera:#0056D2;--text:#F4EDE1;--dim:#8FA3A8;
+  --hn:"Helvetica Neue",Helvetica,Arial,sans-serif;--mono:"Roboto Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--hn);background:linear-gradient(180deg,#040E13 0%,var(--bg) 42%,#0E2731 100%);color:var(--text);min-height:100vh}
+
+.wrap{max-width:1320px;margin:0 auto;padding:24px 28px 60px}
+.eyebrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.eyebrow b{font-size:14px;color:var(--cream)}
+.eyebrow i{font-style:normal;font-size:9px;color:var(--teal);font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em}
+.backlink{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);text-decoration:none;
+  font-family:var(--mono);letter-spacing:.05em;margin-bottom:18px}
+.backlink:hover{color:var(--teal)}
+h1{font-size:clamp(24px,4.6vw,34px);margin-bottom:8px;letter-spacing:-.02em}
+.sub{color:var(--dim);font-size:14px;line-height:1.55;margin-bottom:22px;max-width:56ch}
+
+.stage{border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(10px);
+  margin-bottom:13px;overflow:hidden;transition:border-color .3s,box-shadow .3s;scroll-margin-top:20px}
+.stage.on{border-color:rgba(31,182,201,.55);box-shadow:0 0 0 1px rgba(31,182,201,.14),0 22px 60px -30px rgba(31,182,201,.75)}
+.stage.done{border-color:rgba(79,232,202,.42)}
+.sh{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none}
+.node{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:grid;place-items:center;font-family:var(--mono);
+  font-weight:700;font-size:14px;border:1px solid var(--line);background:rgba(244,237,225,.04);color:var(--dim)}
+.stage.on .node{border-color:var(--teal);color:var(--teal);background:rgba(31,182,201,.14);box-shadow:0 0 22px rgba(31,182,201,.45)}
+.stage.done .node{border-color:var(--mint);color:var(--mint);background:rgba(79,232,202,.12);box-shadow:0 0 20px rgba(79,232,202,.35)}
+.sh h3{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.sh p{font-size:12.5px;color:var(--dim);margin-top:2px}
+.tag{margin-left:auto;font-size:8.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;
+  padding:6px 11px;border-radius:99px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+.stage.on .tag{color:var(--teal);border-color:rgba(31,182,201,.5)}
+.stage.done .tag{color:var(--mint);border-color:rgba(79,232,202,.45)}
+.body{display:none;padding:0 18px 20px 72px}
+.stage.open .body{display:block}
+.stage.locked{opacity:.4;pointer-events:none}
+
+.seaBanner{position:relative;width:100%;height:172px;border-radius:14px;overflow:hidden;margin:2px 0 18px;
+  border:1px solid var(--line);background:linear-gradient(180deg,#0A1F27,#040D11)}
+.seaBanner svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.seaShip{transform-origin:50% 88%;animation:seaRock 3.4s ease-in-out infinite}
+@keyframes seaRock{0%,100%{transform:rotate(-3.5deg) translateY(0)}50%{transform:rotate(3.5deg) translateY(-5px)}}
+.waveBack{animation:waveDriftBack 11s linear infinite}
+.waveFront{animation:waveDriftFront 7s linear infinite reverse}
+@keyframes waveDriftBack{from{transform:translateX(0)}to{transform:translateX(-120px)}}
+@keyframes waveDriftFront{from{transform:translateX(0)}to{transform:translateX(-140px)}}
+.mateForm{max-width:420px;margin:0 auto}
+
+/* ===== Captain's Log console ===== */
+.consoleHead{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.chip{font-size:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--teal);
+  border:1px solid rgba(31,182,201,.4);padding:7px 14px;border-radius:99px}
+.chip.gold{color:var(--gold);border-color:rgba(255,199,0,.4)}
+.objectives{display:grid;gap:14px;margin-bottom:22px}
+@media (min-width:760px){.objectives{grid-template-columns:1fr 1fr 1fr}}
+.objCard{border:1px solid var(--line);border-radius:12px;padding:16px;background:rgba(244,237,225,.03)}
+.objTop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;gap:8px}
+.objTop b{font-size:19px}
+.objxp{font-size:13.5px;color:var(--gold);font-family:var(--mono);white-space:nowrap}
+.objPrev{font-size:16px;color:var(--dim);line-height:1.7;margin-bottom:14px;white-space:pre-line}
+.objActs{display:flex;gap:8px}
+.btn.small{padding:9px 13px;font-size:12px}
+.captainsConsole{border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.32);padding:22px;margin-bottom:20px}
+.consoleTitle{font-size:14px;font-family:var(--mono);letter-spacing:.14em;color:var(--teal);margin-bottom:5px}
+.consoleSub{font-size:14px;color:var(--dim);margin-bottom:16px}
+#consoleText{width:100%;min-height:120px;padding:15px;border-radius:10px;background:rgba(0,0,0,.4);
+  border:1px solid var(--line);color:var(--text);font-family:var(--mono);font-size:15px;line-height:1.6;
+  margin-bottom:16px;resize:vertical}
+#consoleText:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,182,201,.14)}
+.btn.wide{width:100%;justify-content:center;padding:16px;font-size:16px}
+.consoleHint{font-size:12.5px;color:var(--dim);margin-top:12px;text-align:center}
+.learned{border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.learnedTitle{font-size:12px;font-family:var(--mono);letter-spacing:.16em;color:var(--sand);margin-bottom:12px}
+.learnedRow{display:flex;gap:12px;align-items:baseline;font-size:15px;margin-bottom:8px;color:var(--dim)}
+.learnedRow i{font-style:normal;font-family:var(--mono);color:var(--teal);font-weight:700;font-size:15px}
+input[type=text]{width:100%;padding:11px;border-radius:10px;background:rgba(0,0,0,.42);
+  border:1px solid var(--line);color:var(--text);font-family:var(--hn);font-size:14px;margin-bottom:12px}
+input[type=text]:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,182,201,.14)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:11px;cursor:pointer;
+  font-family:var(--hn);font-size:13.5px;font-weight:700;color:#fff;background:linear-gradient(180deg,var(--teal),var(--deepteal));
+  border-bottom:4px solid #063E46;box-shadow:0 0 24px rgba(31,182,201,.45);transition:transform .07s,filter .2s}
+.btn:hover{filter:brightness(1.12)}
+.btn:active{transform:translateY(3px);border-bottom-width:1px}
+.btn.gold{background:linear-gradient(180deg,#FFDA5C,var(--gold));border-bottom-color:#A88100;color:#2A2000}
+.btn.crs{background:linear-gradient(180deg,#2A7BEF,var(--coursera));border-bottom-color:#003B93}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+a.btn{text-decoration:none}
+.acts{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
+
+.course{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  margin-bottom:4px;background:rgba(244,237,225,.028)}
+.course .dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#3F5257}
+.course.ready .dot{background:var(--teal);box-shadow:0 0 14px var(--teal)}
+.course .meta{flex:1;min-width:0}
+.course b{font-size:14px;font-weight:700;display:block}
+.course em{font-style:normal;display:block;font-size:10.5px;color:var(--teal);font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:.14em;margin:3px 0 2px}
+.course span{font-size:11.5px;color:var(--dim)}
+.course .btn{padding:9px 14px;font-size:12px}
+
+.quiz{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.22);padding:15px 16px;margin-bottom:12px}
+.quiz .qhead{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:6px}
+.qstem{font-size:14.5px;font-weight:700;margin-bottom:11px;line-height:1.4}
+.qopts{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.qopt{text-align:left;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:rgba(244,237,225,.03);
+  color:var(--text);font-family:var(--hn);font-size:13px;cursor:pointer;transition:border-color .2s,background .2s}
+.qopt:hover:not(:disabled){border-color:var(--teal);background:rgba(31,182,201,.08)}
+.qopt:disabled{cursor:default}
+.qopt.correct{border-color:var(--mint);background:rgba(79,232,202,.14);color:var(--mint)}
+.qopt.wrong{border-color:#FF9A9A;background:rgba(255,90,90,.1);color:#FF9A9A}
+.qfeedback{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.qfeedback.show{display:block}
+.qfeedback .fbmain{font-size:13.5px;line-height:1.55;color:var(--text);margin-bottom:9px}
+.qfeedback .fbreflect{font-size:12.5px;line-height:1.5;color:var(--sand)}
+@media (min-width:760px){
+  .quiz.answered{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+  .quiz.answered .qhead,.quiz.answered .qstem,.quiz.answered .qopts{grid-column:1}
+  .quiz.answered .qfeedback{grid-column:2;grid-row:1/4;border-top:none;border-left:1px dashed var(--line);
+    padding-top:0;padding-left:24px;margin-top:0}
+}
+
+.recap{text-align:center;padding:10px 0 4px}
+.recap .cup{font-size:40px;filter:drop-shadow(0 0 24px rgba(255,199,0,.7))}
+.recap p{color:var(--dim);font-size:14px;max-width:44ch;margin:8px auto 16px;line-height:1.5}
+
+.toasts{position:fixed;right:20px;bottom:22px;z-index:90;display:flex;flex-direction:column;gap:9px}
+.toast{padding:12px 18px;border-radius:11px;font-weight:700;font-size:12.5px;font-family:var(--mono);text-transform:uppercase;
+  letter-spacing:.1em;background:linear-gradient(180deg,rgba(31,182,201,.96),rgba(11,110,122,.96));
+  border:1px solid rgba(140,220,230,.6);box-shadow:0 0 32px rgba(31,182,201,.6);animation:pop .35s cubic-bezier(.2,1.4,.3,1)}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow"><b>The Marked Chart</b><i>Leg 03</i></div>
+  <a class="backlink" href="index.html">◀ Back to the Chart Room</a>
+  <h1>Twin Voyages</h1>
+  <p class="sub">Land ho — two islands lie ahead. Name your fellow pirate, then chart both voyages and clear both mission checks before the narrows will open.</p>
+
+  <section class="stage on open" id="tvMate">
+    <div class="sh"><div class="node">🧭</div>
+      <div><h3>Meet your fellow pirate</h3><p>Every voyage needs two hands on deck</p></div>
+      <span class="tag">start</span></div>
+    <div class="body">
+      <div class="seaBanner" aria-hidden="true">
+        <svg viewBox="0 0 900 172" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="deepSea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0E2E36"/><stop offset="100%" stop-color="#050F14"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="900" height="172" fill="url(#deepSea)"/>
+          <g class="waveBack" fill="#123842" opacity=".9">
+            <path d="M-120,120 Q-90,104 -60,120 T0,120 T60,120 T120,120 T180,120 T240,120 T300,120 T360,120 T420,120 T480,120 T540,120 T600,120 T660,120 T720,120 T780,120 T840,120 T900,120 T960,120 T1020,120 V172 H-120 Z"/>
+          </g>
+          <g class="waveFront" fill="#0B6E7A" opacity=".95">
+            <path d="M-140,138 Q-108,120 -76,138 T-12,138 T52,138 T116,138 T180,138 T244,138 T308,138 T372,138 T436,138 T500,138 T564,138 T628,138 T692,138 T756,138 T820,138 T884,138 T948,138 T1012,138 V172 H-140 Z"/>
+            <path d="M-64,132 l14,-8 M20,134 l14,-9 M104,131 l14,-8 M540,133 l14,-8 M624,130 l14,-8" stroke="#E8F3F0" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+          </g>
+          <g class="seaShip" transform="translate(150,108) scale(1.9)">
+            <path d="M-20,10 Q0,20 20,10 L16,18 Q0,25 -16,18 Z" fill="#D9A66C"/>
+            <path d="M-20,10 L20,10 L17,15 L-17,15 Z" fill="#123842" opacity=".5"/>
+            <line x1="0" y1="10" x2="0" y2="-22" stroke="#F4EDE1" stroke-width="1.7"/>
+            <path d="M0,-22 L17,-4 L0,-4 Z" fill="#F4EDE1" opacity=".93"/>
+            <path d="M0,-18 L-13,-2 L0,-2 Z" fill="#F4EDE1" opacity=".68"/>
+            <path d="M0,-22 L9,-27 L0,-30 Z" fill="#FFC700"/>
+            <circle cx="-9" cy="13" r="1.6" fill="#050F14"/><circle cx="9" cy="13" r="1.6" fill="#050F14"/>
+          </g>
+          <g fill="none" stroke="#E8F3F0" stroke-width="1.3" opacity=".35">
+            <path d="M60,150 q6,-6 12,0 q6,-6 12,0"/>
+            <path d="M760,44 q5,-5 10,0 q5,-5 10,0"/>
+          </g>
+        </svg>
+      </div>
+      <div class="mateForm">
+        <label style="display:block;font-size:13px;margin-bottom:8px;color:var(--dim)">What do you call your fellow pirate?</label>
+        <input type="text" id="mateInput" placeholder="Your mate's name" maxlength="20">
+        <div class="acts"><button class="btn" id="mateGo">Name your mate ▶</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="tvConsole">
+    <div class="sh"><div class="node">📡</div>
+      <div><h3>Captain's Log · First Transmission</h3><p>Load an objective, edit it, send it to your Claude</p></div>
+      <span class="tag">Live practice</span></div>
+    <div class="body">
+      <div class="consoleHead">
+        <span class="chip">⚓ Under sail</span>
+        <span class="chip gold">Doubloons +40</span>
+      </div>
+      <div class="objectives" id="tvObjectives"></div>
+      <div class="captainsConsole">
+        <div class="consoleTitle">📡 CAPTAIN'S LOG · CLAUDE</div>
+        <p class="consoleSub">Load an objective above, edit it freely, then transmit.</p>
+        <textarea id="consoleText" placeholder="Load an objective above, or write your own message to the crew..."></textarea>
+        <button class="btn gold wide" id="transmitBtn">⚓ TRANSMIT — COPY FOR YOUR CLAUDE</button>
+        <p class="consoleHint">This copies your message. Paste it into your own Claude (with Gmail/Slack connected) to run it for real.</p>
+      </div>
+      <div class="learned">
+        <div class="learnedTitle">WHAT YOU LEARNED</div>
+        <div class="learnedRow"><i>1</i>The situation</div>
+        <div class="learnedRow"><i>2</i>What you want it to do</div>
+        <div class="learnedRow"><i>3</i>How you want the answer</div>
+      </div>
+      <div class="acts"><button class="btn" id="consoleContinue">Continue to Voyage One ▶</button></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="tvV1">
+    <div class="sh"><div class="node">01</div>
+      <div><h3>Voyage One · Foundations</h3><p>First island in sight</p></div>
+      <span class="tag">Learn</span></div>
+    <div class="body">
+      <div class="course ready"><span class="dot"></span>
+        <div class="meta"><em>Learn · Coursera</em><b>AI Fundamentals with Claude</b>
+          <span>Builds your baseline for everything that follows</span></div>
+        <div class="acts"><a class="btn crs" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-fundamentals-with-claude">Set Sail</a>
+          <button class="btn" id="v1Go">Charted</button></div></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="tvMA">
+    <div class="sh"><div class="node">02</div>
+      <div><h3>Mission Check A</h3><p id="tvMAsub">Answer both to open the second voyage</p></div>
+      <span class="tag">Mission</span></div>
+    <div class="body">
+      <div class="quiz" data-qid="q2">
+        <div class="qhead">Question · Tokens</div>
+        <p class="qstem">What are tokens in Claude?</p>
+        <div class="qopts">
+          <button class="qopt" data-correct="true">A. Units of text/data that Claude processes in the input and output</button>
+          <button class="qopt" data-correct="false">B. Money that you pay Claude for each response</button>
+        </div>
+        <div class="qfeedback">
+          <p class="fbmain">✅ Correct! Tokens are units of text/data that models process. Example: A long document uses more tokens than a short paragraph — one reason it helps to give Claude only the relevant information it needs.</p>
+          <p class="fbreflect">💭 Apply it to your work: Where could you reduce unnecessary information or provide only the most relevant content when working with Claude?</p>
+        </div>
+      </div>
+      <div class="quiz" data-qid="q3">
+        <div class="qhead">Question · Role + Goal + Tone</div>
+        <p class="qstem">Why include a role, goal, and tone in a prompt?</p>
+        <div class="qopts">
+          <button class="qopt" data-correct="true">A. To give Claude clearer instructions about the task and the response you want</button>
+          <button class="qopt" data-correct="false">B. To make Claude respond faster</button>
+        </div>
+        <div class="qfeedback">
+          <p class="fbmain">✅ Correct! Role, goal, and tone make your instructions clearer. Example — Role: Act as an L&amp;D instructional designer. Goal: Create 5 formative assessment questions. Tone: Simple and encouraging.</p>
+          <p class="fbreflect">💭 Apply it to your work: Think of one prompt you regularly use. How could you add a role, goal, or tone to make it clearer?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="tvV2">
+    <div class="sh"><div class="node">03</div>
+      <div><h3>Voyage Two · Craft</h3><p>Second island in sight</p></div>
+      <span class="tag">Learn</span></div>
+    <div class="body">
+      <div class="course ready"><span class="dot"></span>
+        <div class="meta"><em>Learn · Coursera</em><b>Start Writing Prompts like a Pro</b>
+          <span>Builds on Voyage One with hands-on prompt writing</span></div>
+        <div class="acts"><a class="btn crs" target="_blank" rel="noopener" href="https://www.coursera.org/learn/google-start-writing-prompts-like-a-pro">Set Sail</a>
+          <button class="btn" id="v2Go">Charted</button></div></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="tvMB">
+    <div class="sh"><div class="node">04</div>
+      <div><h3>Mission Check B</h3><p>Answer both to clear the twin voyages</p></div>
+      <span class="tag">Mission</span></div>
+    <div class="body">
+      <div class="quiz" data-qid="q4">
+        <div class="qhead">Question · Evaluate and Iterate</div>
+        <p class="qstem">Claude gives you an answer, but it isn't quite right. What should you do?</p>
+        <div class="qopts">
+          <button class="qopt" data-correct="true">A. Review the output, explain what needs to change, and ask Claude to improve it</button>
+          <button class="qopt" data-correct="false">B. Start over and assume Claude cannot do the task</button>
+        </div>
+        <div class="qfeedback">
+          <p class="fbmain">✅ Correct! Prompting is often an iterative process. Review, give feedback, and refine the output. Example: "The questions are too difficult for beginners. Simplify the language and make the incorrect options obviously wrong."</p>
+          <p class="fbreflect">💭 Apply it to your work: What is one Claude output you've received recently that you could improve by giving it more specific feedback?</p>
+        </div>
+      </div>
+      <div class="quiz" data-qid="q5">
+        <div class="qhead">Question · Skeptical Prompting</div>
+        <p class="qstem">What is the purpose of a skeptical prompt?</p>
+        <div class="qopts">
+          <button class="qopt" data-correct="true">A. To ask Claude to challenge your idea and identify weaknesses or risks</button>
+          <button class="qopt" data-correct="false">B. To make Claude disagree with everything you say</button>
+        </div>
+        <div class="qfeedback">
+          <p class="fbmain">✅ Correct! A skeptical prompt helps you stress-test your thinking. Example: "Act as a skeptical reviewer. Look at this onboarding plan and identify the 5 biggest risks or gaps I may have missed."</p>
+          <p class="fbreflect">💭 Apply it to your work: What idea, plan, or deliverable in your current work could benefit from Claude challenging it before you move forward?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="tvDone">
+    <div class="sh"><div class="node">★</div>
+      <div><h3>Twin Voyages charted</h3><p id="tvDoneSub">The narrows are open</p></div>
+      <span class="tag">Complete</span></div>
+    <div class="body">
+      <div class="recap"><div class="cup">🏴‍☠️</div>
+        <p id="recapBody">You cleared both islands. Head back and continue toward the narrows.</p>
+        <a class="btn gold" href="index.html">◀ Back to the Chart Room</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+const USER={email:(window.BU_USER&&window.BU_USER.email)||'you@betterup.co'};
+const KEY='tmc:'+USER.email;
+const S={pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,reflectOpen:false,mailed:false,badges:{},streak:0,mateName:'',consoleDone:false};
+function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+let ac=null;
+function ping(f){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+  const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f||520;
+  g.gain.setValueAtTime(.05,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0008,ac.currentTime+.13);
+  o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.14);}catch(e){}}
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;
+  document.getElementById('toasts').appendChild(d);
+  setTimeout(()=>{d.style.transition='opacity .4s,transform .4s';d.style.opacity=0;d.style.transform='translateY(10px)';},2200);
+  setTimeout(()=>d.remove(),2700);}
+function addXp(n){S.xp=(S.xp||0)+n;save();toast('+'+n+' XP');}
+
+function openStage(id){
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('open'));
+  const el=document.getElementById(id);
+  el.classList.remove('locked');el.classList.add('on','open');
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function markDone(id){
+  const el=document.getElementById(id);
+  el.classList.remove('on');el.classList.add('done');
+}
+document.querySelectorAll('.sh').forEach(h=>h.addEventListener('click',()=>{
+  const s=h.parentElement;if(s.classList.contains('locked'))return;ping(420);s.classList.toggle('open');}));
+
+/* ---------- name your mate ---------- */
+function nameSet(){
+  document.getElementById('tvMAsub').textContent=`${S.mateName} is listening — answer both to open the second voyage`;
+  document.getElementById('recapBody').textContent=`You and ${S.mateName} cleared both islands. Head back and continue toward the narrows.`;
+}
+document.getElementById('mateGo').addEventListener('click',()=>{
+  const v=document.getElementById('mateInput').value.trim();
+  S.mateName=v||'Mate';save();nameSet();
+  ping(680);addXp(30);
+  markDone('tvMate');openStage('tvConsole');
+});
+
+/* ---------- Captain's Log console ---------- */
+const OBJECTIVES=[
+  {icon:'🗺️',title:'Chart a repeatable Skill',xp:40,
+    prompt:"Turn my weekly team update into a reusable Skill:\n- Capture the steps I follow\n- Capture the structure and tone I use\n- Let me reuse it without re-explaining each time"},
+  {icon:'🧭',title:'Coordinate the fleet',xp:10,
+    prompt:"Review 5 vendor proposals as one workflow:\n- Score each against our criteria\n- Summarise findings per proposal\n- Combine into one comparison table + a recommendation"},
+  {icon:'⚓',title:'Standardize the crew’s approach',xp:10,
+    prompt:"Create a Skill for our team's status updates:\n- Define what to include and what to skip\n- Set a consistent tone\n- Let anyone on the team use it for the same result"}
+];
+document.getElementById('tvObjectives').innerHTML=OBJECTIVES.map((o,i)=>`
+  <div class="objCard">
+    <div class="objTop"><b>${o.icon} ${o.title}</b><span class="objxp">+${o.xp} XP</span></div>
+    <p class="objPrev">${o.prompt}</p>
+    <div class="objActs">
+      <button class="btn small" data-load="${i}">▶ LOAD</button>
+    </div>
+  </div>`).join('');
+document.querySelectorAll('[data-load]').forEach(b=>b.addEventListener('click',()=>{
+  document.getElementById('consoleText').value=OBJECTIVES[+b.dataset.load].prompt;
+  ping(500);
+}));
+document.getElementById('transmitBtn').addEventListener('click',async()=>{
+  const txt=document.getElementById('consoleText').value.trim();
+  if(!txt){toast('Load or write a message first');return;}
+  ping(700);
+  try{await navigator.clipboard.writeText(txt);}catch(e){}
+  if(!S.transmitted){S.transmitted=true;addXp(40);}
+  toast('Transmitted — paste it into your own Claude',2);
+  save();
+});
+document.getElementById('consoleContinue').addEventListener('click',()=>{
+  S.consoleDone=true;save();ping(680);
+  markDone('tvConsole');openStage('tvV1');
+});
+
+/* ---------- voyage cards ---------- */
+document.getElementById('v1Go').addEventListener('click',()=>{
+  S.courses.v1=1;save();ping(720);addXp(120);toast('Voyage One charted');
+  markDone('tvV1');openStage('tvMA');
+});
+document.getElementById('v2Go').addEventListener('click',()=>{
+  S.courses.v2=1;save();ping(720);addXp(120);toast('Voyage Two charted');
+  markDone('tvV2');openStage('tvMB');
+});
+
+/* ---------- quiz ---------- */
+function answered(qid){return !!S.quiz[qid];}
+function allAnswered(ids){return ids.every(answered);}
+function applyQuizVisual(block,qid){
+  const data=S.quiz[qid];if(!data)return;
+  block.dataset.answered='1';
+  block.classList.add('answered');
+  block.querySelectorAll('.qopt').forEach(b=>{b.disabled=true;
+    if(b.dataset.correct==='true')b.classList.add('correct');
+    else if(b.textContent.trim()[0]===data.sel)b.classList.add('wrong');});
+  block.querySelector('.qfeedback').classList.add('show');
+}
+function onAnswered(qid){
+  if((qid==='q2'||qid==='q3')&&allAnswered(['q2','q3'])){markDone('tvMA');openStage('tvV2');}
+  if((qid==='q4'||qid==='q5')&&allAnswered(['q4','q5'])){
+    markDone('tvMB');markDone('tvDone');
+    document.getElementById('tvDone').classList.remove('locked');
+    document.getElementById('tvDone').classList.add('on','open');
+    document.getElementById('tvDone').scrollIntoView({behavior:'smooth',block:'start'});
+    S.cleared[3]=1;save();
+  }
+}
+document.querySelectorAll('.quiz').forEach(q=>{
+  const qid=q.dataset.qid;
+  q.querySelectorAll('.qopt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(q.dataset.answered)return;
+      const correct=btn.dataset.correct==='true';
+      S.quiz[qid]={sel:btn.textContent.trim()[0],correct};
+      applyQuizVisual(q,qid);
+      ping(correct?680:300);addXp(20);save();
+      onAnswered(qid);
+    });
+  });
+});
+
+/* ---------- restore ---------- */
+(function init(){
+  load();
+  if(S.mateName){document.getElementById('mateInput').value=S.mateName;nameSet();}
+  Object.keys(S.quiz).forEach(qid=>{
+    const block=document.querySelector(`.quiz[data-qid="${qid}"]`);
+    if(block)applyQuizVisual(block,qid);
+  });
+
+  let target='tvMate';
+  if(S.mateName){
+    markDone('tvMate');target='tvConsole';
+    if(S.consoleDone){
+      markDone('tvConsole');target='tvV1';
+      if(S.courses.v1){
+        markDone('tvV1');target='tvMA';
+        if(allAnswered(['q2','q3'])){
+          markDone('tvMA');target='tvV2';
+          if(S.courses.v2){
+            markDone('tvV2');target='tvMB';
+            if(allAnswered(['q4','q5'])){
+              markDone('tvMB');markDone('tvDone');target='tvDone';
+              if(!S.cleared[3]){S.cleared[3]=1;save();}
+            }
+          }
+        }
+      }
+    }
+  }
+  document.querySelectorAll('.stage').forEach(s=>{if(!s.classList.contains('done'))s.classList.add('locked');});
+  document.getElementById(target).classList.remove('locked');
+  document.getElementById(target).classList.add('on','open');
+})();
+</script>
+</body>
+</html>

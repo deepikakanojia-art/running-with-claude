@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Marked Chart — BU Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#071C24;--panel:rgba(18,40,46,.62);--line:rgba(31,182,201,.22);
+  --teal:#1FB6C9;--deepteal:#0B6E7A;--mint:#4FE8CA;--gold:#FFC700;--sand:#D9A66C;
+  --cream:#F4EDE1;--coursera:#0056D2;--text:#F4EDE1;--dim:#8FA3A8;
+  --hn:"Helvetica Neue",Helvetica,Arial,sans-serif;--mono:"Roboto Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--hn);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+.sky{position:fixed;inset:0;z-index:0;background:linear-gradient(#040E13 0%,var(--bg) 42%,#0E2731 100%)}
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none}
+.aurora span{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5}
+.aurora span:nth-child(1){width:60vw;height:34vw;left:52%;top:-14vw;background:radial-gradient(circle,rgba(31,182,201,.36),transparent 68%);animation:drift1 26s ease-in-out infinite alternate}
+.aurora span:nth-child(2){width:48vw;height:30vw;left:-8vw;top:-8vw;background:radial-gradient(circle,rgba(217,166,108,.30),transparent 68%);animation:drift2 34s ease-in-out infinite alternate}
+.aurora span:nth-child(3){width:40vw;height:24vw;left:22%;top:6vw;background:radial-gradient(circle,rgba(79,232,202,.16),transparent 70%);animation:drift3 44s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(-9vw,5vw) scale(1.12)}}
+@keyframes drift2{to{transform:translate(11vw,7vw) scale(1.08)}}
+@keyframes drift3{to{transform:translate(-7vw,-4vw) scale(1.15)}}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+.stars circle{animation:tw 5s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.15}to{opacity:.75}}
+.snow{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.snow b{position:absolute;top:-8px;border-radius:50%;background:#F2E4C2;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(-8vh) translateX(0);opacity:0}10%{opacity:.7}90%{opacity:.5}100%{transform:translateY(108vh) translateX(5vw);opacity:0}}
+@media (prefers-reduced-motion:reduce){.aurora span,.snow b,.stars circle{animation:none!important}.snow{display:none}}
+
+.hide{display:none!important}
+.screen{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.landCard{max-width:480px;width:100%;border:1px solid var(--line);border-radius:18px;background:var(--panel);
+  backdrop-filter:blur(12px);padding:30px 28px}
+.landTag{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--teal);margin-bottom:10px}
+.landCard h1{font-size:30px;letter-spacing:-.02em;margin-bottom:10px}
+.landCard h2{font-size:22px;margin-bottom:8px}
+.landCard .sub{color:var(--dim);font-size:13.5px;line-height:1.55;margin-bottom:18px}
+.landCard input{width:100%;padding:12px;border-radius:10px;background:rgba(0,0,0,.42);border:1px solid var(--line);
+  color:var(--text);font-family:var(--hn);font-size:14px;margin-bottom:14px}
+.landCard input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,182,201,.14)}
+
+/* ===== HUD ===== */
+.hud{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:10px 20px;background:rgba(4,14,19,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand b{font-size:15px;font-weight:700;color:var(--cream)}
+.brand i{font-style:normal;font-size:9.5px;color:var(--teal);font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;text-shadow:0 0 12px rgba(31,182,201,.7)}
+.stat{display:flex;flex-direction:column;gap:2px;min-width:72px}
+.stat u{text-decoration:none;font-size:8.5px;color:var(--dim);font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em}
+.stat b{font-size:15.5px;font-weight:700;font-family:var(--mono)}
+.stat b.p{color:var(--teal);text-shadow:0 0 14px rgba(31,182,201,.6)}
+.bar{flex:1;min-width:120px;height:8px;border-radius:99px;background:rgba(244,237,225,.09);border:1px solid var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--deepteal),var(--teal) 55%,var(--mint));box-shadow:0 0 16px rgba(31,182,201,.8);transition:width .8s cubic-bezier(.2,.9,.2,1)}
+.libbtn{font-size:11px;color:var(--dim);text-decoration:none;border:1px solid var(--line);padding:7px 11px;border-radius:8px;white-space:nowrap;font-family:var(--mono);letter-spacing:.05em}
+.libbtn:hover{color:var(--text);border-color:var(--teal)}
+.me{display:flex;align-items:center;gap:9px;margin-left:auto}
+.me .who{text-align:right;line-height:1.25}
+.me .who b{display:block;font-size:12px;font-weight:700}
+.me .who span{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.1em}
+.av{width:36px;height:36px;flex:0 0 36px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:12.5px;font-weight:700;color:#052A23;background:linear-gradient(145deg,var(--teal),var(--deepteal));box-shadow:0 0 18px rgba(31,182,201,.5);border:1px solid rgba(140,220,230,.5)}
+
+/* ===== layout ===== */
+.wrap{position:relative;z-index:10;max-width:1060px;margin:0 auto;padding:24px 18px 96px}
+h1.title{font-size:clamp(30px,5.6vw,54px);font-weight:700;line-height:1.02;letter-spacing:-.025em;margin-bottom:6px}
+h1.title em{font-style:normal;color:var(--teal);text-shadow:0 0 30px rgba(31,182,201,.55)}
+.programTag{display:inline-block;font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;
+  color:var(--sand);border:1px solid rgba(217,166,108,.4);padding:5px 10px;border-radius:99px;margin-bottom:14px}
+.sub{color:var(--dim);max-width:60ch;font-size:15px;line-height:1.55;margin-bottom:20px}
+
+.backToRoute{margin-bottom:16px}
+.map{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:16px;background:linear-gradient(180deg,#0C232B,#050F14)}
+.map svg{display:block;width:100%;height:auto}
+.map .cap,.map .hint{position:absolute;font-size:8.5px;color:var(--dim);font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em}
+.map .cap{top:13px;left:17px}.map .hint{bottom:12px;right:16px}
+.pin{cursor:pointer}.pin:hover .ring{opacity:.55}
+.pin:hover .legLabel{fill:#F4EDE1!important}
+.ringPulse{transform-origin:center;transform-box:fill-box;animation:mapRingPulse 2.6s ease-out infinite;opacity:0}
+.ringPulse.r2{animation-delay:1.3s}
+@keyframes mapRingPulse{0%{transform:scale(.55);opacity:.75}100%{transform:scale(1.7);opacity:0}}
+.activeShip{animation:mapShipBob 2.6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes mapShipBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-3px) rotate(4deg)}}
+
+.rail{border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(10px);padding:14px 16px;margin-bottom:26px}
+.railHead{font-size:9.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--dim);margin-bottom:10px;display:flex;justify-content:space-between}
+.railHead span{color:#4C6064;font-size:8.5px}
+.railList{list-style:none;display:flex;flex-direction:column;gap:6px}
+.railList li{display:flex;justify-content:space-between;font-size:12.5px;padding:7px 10px;border-radius:8px;background:rgba(244,237,225,.03)}
+.railList li.me{background:rgba(31,182,201,.12);border:1px solid rgba(31,182,201,.4);font-weight:700}
+.railList li b{font-family:var(--mono);color:var(--gold)}
+
+.stage{border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(10px);margin-bottom:13px;overflow:hidden;transition:border-color .3s,box-shadow .3s;scroll-margin-top:76px}
+.stage.on{border-color:rgba(31,182,201,.55);box-shadow:0 0 0 1px rgba(31,182,201,.14),0 22px 60px -30px rgba(31,182,201,.75)}
+.stage.done{border-color:rgba(79,232,202,.42)}
+.sh{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none}
+.node{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:14px;border:1px solid var(--line);background:rgba(244,237,225,.04);color:var(--dim)}
+.stage.on .node{border-color:var(--teal);color:var(--teal);background:rgba(31,182,201,.14);box-shadow:0 0 22px rgba(31,182,201,.45)}
+.stage.done .node{border-color:var(--mint);color:var(--mint);background:rgba(79,232,202,.12);box-shadow:0 0 20px rgba(79,232,202,.35)}
+.sh h3{font-size:16.5px;font-weight:700;letter-spacing:-.01em}
+.sh p{font-size:12.5px;color:var(--dim);margin-top:2px}
+.tag{margin-left:auto;font-size:8.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;padding:6px 11px;border-radius:99px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+.stage.on .tag{color:var(--teal);border-color:rgba(31,182,201,.5)}
+.stage.done .tag{color:var(--mint);border-color:rgba(79,232,202,.45)}
+.body{display:none;padding:0 18px 20px 72px}
+.stage.open .body{display:block}
+.stage.locked{opacity:.4;pointer-events:none}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:11px;cursor:pointer;font-family:var(--hn);font-size:13.5px;font-weight:700;color:#fff;background:linear-gradient(180deg,var(--teal),var(--deepteal));border-bottom:4px solid #063E46;box-shadow:0 0 24px rgba(31,182,201,.45);transition:transform .07s,box-shadow .25s,filter .2s}
+.btn:hover{filter:brightness(1.12);box-shadow:0 0 34px rgba(31,182,201,.7)}
+.btn:active{transform:translateY(3px);border-bottom-width:1px}
+.btn.ghost{background:rgba(244,237,225,.05);border-bottom:4px solid rgba(244,237,225,.14);color:var(--text);box-shadow:none}
+.btn.ghost:hover{background:rgba(217,166,108,.14)}
+.btn.gold{background:linear-gradient(180deg,#FFDA5C,var(--gold));border-bottom-color:#A88100;color:#2A2000;box-shadow:0 0 30px rgba(255,199,0,.55)}
+.btn.mint{background:linear-gradient(180deg,#7DF3DC,var(--mint));border-bottom-color:#159A80;color:#052A23;box-shadow:0 0 26px rgba(79,232,202,.5)}
+.btn.crs{background:linear-gradient(180deg,#2A7BEF,var(--coursera));border-bottom-color:#003B93;box-shadow:0 0 20px rgba(0,86,210,.5)}
+.btn:disabled,.btn.off{opacity:.36;cursor:not-allowed;box-shadow:none;filter:none}
+.btn.off{pointer-events:none}
+a.btn{text-decoration:none}
+.acts{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
+
+.pbox{border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.4);padding:14px;margin:10px 0}
+.pbox code{color:var(--mint);font-family:var(--mono);font-size:12.5px}
+ol.steps{counter-reset:s;list-style:none;margin:12px 0 14px}
+ol.steps li{counter-increment:s;position:relative;padding-left:31px;margin-bottom:8px;font-size:13.5px;color:var(--dim)}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:21px;height:21px;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:700;background:rgba(31,182,201,.15);color:var(--teal);border:1px solid rgba(31,182,201,.35)}
+textarea{width:100%;padding:11px;border-radius:10px;resize:vertical;background:rgba(0,0,0,.42);border:1px solid var(--line);color:var(--text);font-family:var(--hn);font-size:13.5px;margin-bottom:11px}
+textarea.mono{font-family:var(--mono);font-size:12.5px;min-height:82px}
+textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,182,201,.14)}
+label.q{display:block;font-size:13.5px;margin:0 0 6px;line-height:1.45}
+label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.14em;display:block;margin-bottom:3px}
+.err{color:#FF9A9A;font-size:12.5px;margin-bottom:9px;display:none}
+
+.chart{display:none;margin-top:18px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.34);padding:16px}
+.chart.show{display:block}
+.chart h4{font-size:8.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--dim);margin-bottom:12px}
+.edge{margin-top:12px;font-size:13.5px;color:var(--dim);line-height:1.5}
+.edge b{color:var(--gold)}
+
+.course{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;background:rgba(244,237,225,.028)}
+.course .dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#3F5257}
+.course.ready .dot{background:var(--teal);box-shadow:0 0 14px var(--teal)}
+.course.done .dot{background:var(--mint);box-shadow:0 0 14px var(--mint)}
+.course .meta{flex:1;min-width:0}
+.course b{font-size:14px;font-weight:700;display:block}
+.course em{font-style:normal;display:block;font-size:10.5px;color:var(--teal);font-family:var(--mono);text-transform:uppercase;letter-spacing:.14em;margin:3px 0 2px}
+.course span{font-size:11.5px;color:var(--dim)}
+.course .btn{padding:9px 14px;font-size:12px}
+
+.panel{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.24);padding:16px;margin-bottom:12px}
+.panel.dim{opacity:.5}
+.panel h5{font-size:8.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--sand);margin-bottom:12px}
+.callout{border:1px solid rgba(79,232,202,.45);background:rgba(79,232,202,.09);border-radius:12px;padding:15px 17px;margin-bottom:12px;display:none}
+.callout.show{display:block}
+.callout b{display:block;font-size:15px;margin-bottom:5px;color:var(--mint)}
+.callout p{font-size:13.5px;color:var(--dim);line-height:1.5}
+
+.quiz{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.22);padding:15px 16px;margin-bottom:14px}
+.quiz .qhead{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:6px}
+.quiz .qstem{font-size:14.5px;font-weight:700;margin-bottom:11px;line-height:1.4}
+.qopts{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.qopt{text-align:left;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:rgba(244,237,225,.03);color:var(--text);font-family:var(--hn);font-size:13px;cursor:pointer;transition:border-color .2s,background .2s}
+.qopt:hover:not(:disabled){border-color:var(--teal);background:rgba(31,182,201,.08)}
+.qopt:disabled{cursor:default}
+.qopt.correct{border-color:var(--mint);background:rgba(79,232,202,.14);color:var(--mint)}
+.qopt.wrong{border-color:#FF9A9A;background:rgba(255,90,90,.1);color:#FF9A9A}
+.qfeedback{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.qfeedback.show{display:block}
+.qfeedback .fbmain{font-size:13.5px;line-height:1.55;color:var(--text);margin-bottom:9px}
+.qfeedback .fbreflect{font-size:12.5px;line-height:1.5;color:var(--sand);margin-bottom:7px}
+@media (min-width:760px){
+  .quiz.answered{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+  .quiz.answered .qhead,.quiz.answered .qstem,.quiz.answered .qopts{grid-column:1}
+  .quiz.answered .qfeedback{grid-column:2;grid-row:1/4;border-top:none;border-left:1px dashed var(--line);
+    padding-top:0;padding-left:24px;margin-top:0}
+}
+
+.summit{text-align:center;padding:6px 0 2px}
+.summit .cup{font-size:46px;filter:drop-shadow(0 0 30px rgba(255,199,0,.8))}
+.summit h3{font-size:23px;margin:8px 0 6px}
+.summit p{color:var(--dim);font-size:14px;max-width:46ch;margin:0 auto 16px;line-height:1.5}
+
+.dossierOverlay{position:fixed;inset:0;z-index:95;background:rgba(2,8,11,.72);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.dossierCard{position:relative;max-width:440px;width:100%;border:1px solid var(--line);border-radius:16px;
+  background:#0C232B;padding:26px 24px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.dClose{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--dim);font-size:16px;cursor:pointer}
+.dClose:hover{color:var(--text)}
+.dTag{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:8px}
+.dossierCard h3{font-size:20px;margin-bottom:8px}
+.dossierCard p{font-size:13.5px;color:var(--dim);line-height:1.55;margin-bottom:14px}
+.dReward{font-size:11px;font-family:var(--mono);color:var(--gold);margin-bottom:16px}
+
+/* ===== sea radar (Twin Voyages) ===== */
+.seaRadar{width:150px;height:150px;border-radius:50%;position:relative;margin:4px auto 6px;
+  background:radial-gradient(circle,rgba(31,182,201,.14),rgba(4,14,19,.92) 72%);
+  border:1px solid rgba(31,182,201,.35);overflow:hidden}
+.seaRadar::before{content:"";position:absolute;inset:22%;border-radius:50%;border:1px solid rgba(31,182,201,.3)}
+.seaRadar::after{content:"";position:absolute;inset:44%;border-radius:50%;border:1px solid rgba(31,182,201,.25)}
+.radarSweep{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(31,182,201,.5),transparent 32%);
+  animation:radarSweep 3.4s linear infinite}
+@keyframes radarSweep{to{transform:rotate(360deg)}}
+.radarRing{position:absolute;inset:0;border-radius:50%;border:1px solid var(--teal);opacity:0;animation:radarRingOut 2.6s ease-out infinite}
+.radarRing.r2{animation-delay:1.3s}
+@keyframes radarRingOut{0%{transform:scale(.3);opacity:.7}100%{transform:scale(1.05);opacity:0}}
+.radarShip{position:absolute;top:68%;font-size:16px;transform:translate(-50%,-50%);
+  animation:radarDrift 4.2s ease-in-out infinite;filter:drop-shadow(0 0 4px rgba(31,182,201,.7))}
+@keyframes radarDrift{0%,100%{left:38%}50%{left:60%}}
+.radarBlip{position:absolute;left:70%;top:26%;width:8px;height:8px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 10px var(--gold);transform:translate(-50%,-50%);animation:radarBlip 1.8s ease-in-out infinite}
+@keyframes radarBlip{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.5)}}
+.radarIsland{position:absolute;left:70%;top:16%;font-size:13px;transform:translate(-50%,-50%);opacity:.9}
+.radarCap{text-align:center;font-size:11px;color:var(--dim);font-family:var(--mono);text-transform:uppercase;
+  letter-spacing:.12em;margin:2px 0 18px}
+
+.badgeRow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+  background:rgba(244,237,225,.03);margin-bottom:9px}
+.badgeRow.locked{opacity:.4}
+.badgeRow .bIcon{font-size:20px;width:30px;text-align:center;flex:0 0 30px}
+.badgeRow b{display:block;font-size:13px}
+.badgeRow span{font-size:11.5px;color:var(--dim)}
+
+.peers{position:fixed;left:20px;bottom:22px;z-index:85;display:inline-flex;align-items:center;gap:9px;padding:12px 17px;border-radius:99px;cursor:pointer;border:1px solid rgba(217,166,108,.5);background:rgba(18,40,46,.9);backdrop-filter:blur(12px);color:var(--text);font-family:var(--hn);font-size:13px;font-weight:700;box-shadow:0 0 26px rgba(217,166,108,.3);transition:transform .07s,box-shadow .25s}
+.peers:hover{box-shadow:0 0 36px rgba(217,166,108,.55)}
+.peers:active{transform:translateY(2px)}
+.peers em{font-style:normal;width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint)}
+
+.toasts{position:fixed;right:20px;bottom:22px;z-index:90;display:flex;flex-direction:column;gap:9px}
+.toast{padding:12px 18px;border-radius:11px;font-weight:700;font-size:12.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;background:linear-gradient(180deg,rgba(31,182,201,.96),rgba(11,110,122,.96));border:1px solid rgba(140,220,230,.6);box-shadow:0 0 32px rgba(31,182,201,.6);animation:pop .35s cubic-bezier(.2,1.4,.3,1)}
+.toast.m{background:linear-gradient(180deg,rgba(79,232,202,.96),rgba(20,160,135,.96));border-color:rgba(150,255,235,.65);color:#052A23}
+.toast.g{background:linear-gradient(180deg,rgba(255,218,92,.97),rgba(200,150,0,.97));border-color:rgba(255,240,180,.7);color:#2A2000}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:none}}
+
+.foot{margin-top:30px;text-align:center;font-size:11px;color:var(--dim);line-height:1.8}
+.foot a{color:var(--sand);text-decoration:none}
+.foot a:hover{text-decoration:underline}
+.foot .mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;font-size:8.5px;display:block;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="sky"></div>
+<div class="aurora"><span></span><span></span><span></span></div>
+<svg class="stars" aria-hidden="true"></svg>
+<div class="snow" id="snow" aria-hidden="true"></div>
+
+<!-- ================= LANDING ================= -->
+<div id="landingScreen" class="screen">
+  <div class="landCard">
+    <div class="landTag">BU Learning · Program 2 · Running with Claude</div>
+    <h1>THE MARKED CHART</h1>
+    <p class="sub">Half a chart, five legs, one hoard. Claude reads the winds — the pirate at the helm makes the call.</p>
+    <label class="q"><i>What do the crew call you?</i></label>
+    <input type="text" id="pirateNameInput" placeholder="Your pirate name" maxlength="24">
+    <button class="btn" id="setSailBtn">Set Sail ▶</button>
+  </div>
+</div>
+
+<!-- ================= GAME ROOT ================= -->
+<div id="gameRoot" class="hide">
+<header class="hud">
+  <div class="brand"><b>BU Learning</b><i>The Marked Chart</i></div>
+  <div class="stat"><u>Rank</u><b id="hRank" class="p">Deckhand</b></div>
+  <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
+  <div class="stat"><u>Leg</u><b id="hStep">0/5</b></div>
+  <div class="bar"><i id="hBar"></i></div>
+  <button class="libbtn" id="badgeBtn" style="cursor:pointer">🏅 <span id="badgeCount">0</span>/8</button>
+  <a class="libbtn" href="https://www.coursera.org/learn/claude-ai-comprehensive-guide" target="_blank" rel="noopener">📖 Captain's Library</a>
+  <a class="libbtn" href="#" id="libEnrollBtn">✉ Request Enrollment</a>
+  <div class="me">
+    <div class="who"><b id="meName">—</b><span id="meMail">signed in</span></div>
+    <div class="av" id="meAv">—</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1 class="title">Chart your <em>RANGE</em>.</h1>
+  <div><span class="programTag">Program 2 · Running with Claude</span></div>
+  <p class="sub">Five legs to the hoard. Answer what you know, read your own bearing, clear two voyages and the mission checks between them, thread the narrows, then set off on a solo voyage into real work. Tap a marker below to open its dossier.</p>
+
+  <div id="mapView">
+    <div class="map">
+      <span class="cap">Route · The Marked Chart</span>
+      <svg viewBox="0 0 900 340" id="mapSvg" aria-label="Sea route with five legs"></svg>
+      <span class="hint">Tap the glowing marker</span>
+    </div>
+
+    <div class="rail" id="crewRail">
+      <div class="railHead">Crew Rankings <span>sample data</span></div>
+      <ul class="railList" id="railList"></ul>
+    </div>
+  </div>
+
+  <div id="stagesView" class="hide">
+    <button class="btn ghost backToRoute" id="backToRoute">◀ Back to the Route</button>
+
+  <section class="stage on open" id="s1">
+    <div class="sh"><div class="node">01</div>
+      <div><h3>The weathered page</h3><p>A torn fragment asks the first question</p></div>
+      <span class="tag">1 min</span></div>
+    <div class="body">
+      <div class="quiz" data-qid="q1">
+        <div class="qhead">Question 1 · /context</div>
+        <p class="qstem">What is /context used for in Claude?</p>
+        <div class="qopts">
+          <button class="qopt" data-correct="true">A. Giving Claude relevant background or reference information for the task</button>
+          <button class="qopt" data-correct="false">B. Changing Claude's screen settings</button>
+        </div>
+        <div class="qfeedback">
+          <p class="fbmain">✅ Correct! Context gives Claude the information it needs to understand the task. Example: If you ask Claude to improve a proposal, you can provide the existing proposal and explain who the audience is. That information becomes part of the context Claude uses to respond.</p>
+          <p class="fbreflect">💭 Apply it to your work: Can you think of a task or project where giving Claude more context would improve the output?</p>
+          <textarea class="mono" rows="2" data-f="q1refl" placeholder="Jot a note to yourself (optional)"></textarea>
+        </div>
+      </div>
+      <div class="acts"><button class="btn" data-next="1">I've charted it — continue</button></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="s2">
+    <div class="sh"><div class="node">02</div>
+      <div><h3>Chart your bearing</h3><p>Run the RANGE evaluator in your own Claude, then bring the score back</p></div>
+      <span class="tag">5 min</span></div>
+    <div class="body">
+      <ol class="steps"><li>Copy the prompt below.</li><li>Open Claude, paste it, let it run.</li>
+        <li>Copy the Score Card line it gives you.</li><li>Paste it back here.</li></ol>
+      <div class="pbox"><code id="pTxt">evaluate my RANGE</code></div>
+      <button class="btn ghost" id="pCopy">Copy the prompt</button>
+      <div style="height:16px"></div>
+      <textarea class="mono" id="scoreIn" placeholder="RANGE | 2026-09-01 | R:2 A:2 N:1 G:2 EF:3 | Total:10/25 | first run"></textarea>
+      <div class="err" id="scoreErr">Couldn't read that. Paste the line beginning with RANGE, including R: A: N: G: EF: values.</div>
+      <div class="acts">
+        <button class="btn" id="scoreGo">Plot my bearing</button>
+        <button class="btn ghost" data-next="2">Don't have a score yet — skip for now ▶</button>
+      </div>
+      <div class="chart" id="chartWrap">
+        <h4>Your RANGE profile</h4>
+        <svg id="chart" viewBox="0 0 620 250" aria-label="RANGE profile chart"></svg>
+        <p class="edge" id="edgeTxt"></p>
+        <div class="acts"><button class="btn" data-next="2">Got it — continue</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="s3">
+    <div class="sh"><div class="node">03</div>
+      <div><h3>Twin voyages</h3><p>Critical — clear both voyages, and both mission checks, before the narrows open</p></div>
+      <span class="tag">critical</span></div>
+    <div class="body">
+      <div class="seaRadar" aria-hidden="true">
+        <div class="radarRing"></div><div class="radarRing r2"></div>
+        <div class="radarSweep"></div>
+        <div class="radarShip">⛵</div>
+        <div class="radarBlip"></div>
+        <div class="radarIsland">🏝️</div>
+      </div>
+      <p class="radarCap">🏴‍☠️ Sonar's picked up land — two voyages lie ahead</p>
+      <div class="course ready" id="v1"><span class="dot"></span>
+        <div class="meta"><em>Voyage One · Foundations · Learn</em>
+          <b>AI Fundamentals with Claude</b>
+          <span>Coursera · builds your baseline for everything that follows</span></div>
+        <div class="acts"><a class="btn crs" id="v1open" data-ev="open-v1" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-fundamentals-with-claude">Set Sail</a>
+          <button class="btn ghost" data-course="v1">Charted</button></div></div>
+
+      <div class="panel dim" id="missionA">
+        <h5>Mission Check A — locked until Voyage One is charted</h5>
+        <div id="missionAQs" class="hide">
+          <div class="quiz" data-qid="q2">
+            <div class="qhead">Question 2 · Tokens</div>
+            <p class="qstem">What are tokens in Claude?</p>
+            <div class="qopts">
+              <button class="qopt" data-correct="true">A. Units of text/data that Claude processes in the input and output</button>
+              <button class="qopt" data-correct="false">B. Money that you pay Claude for each response</button>
+            </div>
+            <div class="qfeedback">
+              <p class="fbmain">✅ Correct! Tokens are units of text/data that models process. Example: A long document uses more tokens than a short paragraph — one reason it helps to give Claude only the relevant information it needs.</p>
+              <p class="fbreflect">💭 Apply it to your work: Where could you reduce unnecessary information or provide only the most relevant content when working with Claude?</p>
+              <textarea class="mono" rows="2" data-f="q2refl" placeholder="Jot a note to yourself (optional)"></textarea>
+            </div>
+          </div>
+          <div class="quiz" data-qid="q3">
+            <div class="qhead">Question 3 · Role + Goal + Tone</div>
+            <p class="qstem">Why include a role, goal, and tone in a prompt?</p>
+            <div class="qopts">
+              <button class="qopt" data-correct="true">A. To give Claude clearer instructions about the task and the response you want</button>
+              <button class="qopt" data-correct="false">B. To make Claude respond faster</button>
+            </div>
+            <div class="qfeedback">
+              <p class="fbmain">✅ Correct! Role, goal, and tone make your instructions clearer. Example — Role: Act as an L&amp;D instructional designer. Goal: Create 5 formative assessment questions. Tone: Simple and encouraging.</p>
+              <p class="fbreflect">💭 Apply it to your work: Think of one prompt you regularly use. How could you add a role, goal, or tone to make it clearer?</p>
+              <textarea class="mono" rows="2" data-f="q3refl" placeholder="Jot a note to yourself (optional)"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="course" id="v2"><span class="dot"></span>
+        <div class="meta"><em>Voyage Two · Craft · Learn</em>
+          <b>Start Writing Prompts like a Pro</b>
+          <span id="v2s">Coursera · opens once Mission Check A is answered</span></div>
+        <div class="acts"><a class="btn crs off" id="v2open" data-ev="open-v2">Set Sail</a>
+          <button class="btn ghost" data-course="v2" disabled>Locked</button></div></div>
+
+      <div class="panel dim" id="missionB">
+        <h5>Mission Check B — locked until Voyage Two is charted</h5>
+        <div id="missionBQs" class="hide">
+          <div class="quiz" data-qid="q4">
+            <div class="qhead">Question 4 · Evaluate and Iterate</div>
+            <p class="qstem">Claude gives you an answer, but it isn't quite right. What should you do?</p>
+            <div class="qopts">
+              <button class="qopt" data-correct="true">A. Review the output, explain what needs to change, and ask Claude to improve it</button>
+              <button class="qopt" data-correct="false">B. Start over and assume Claude cannot do the task</button>
+            </div>
+            <div class="qfeedback">
+              <p class="fbmain">✅ Correct! Prompting is often an iterative process. Review, give feedback, and refine the output. Example: "The questions are too difficult for beginners. Simplify the language and make the incorrect options obviously wrong."</p>
+              <p class="fbreflect">💭 Apply it to your work: What is one Claude output you've received recently that you could improve by giving it more specific feedback?</p>
+              <textarea class="mono" rows="2" data-f="q4refl" placeholder="Jot a note to yourself (optional)"></textarea>
+            </div>
+          </div>
+          <div class="quiz" data-qid="q5">
+            <div class="qhead">Question 5 · Skeptical Prompting</div>
+            <p class="qstem">What is the purpose of a skeptical prompt?</p>
+            <div class="qopts">
+              <button class="qopt" data-correct="true">A. To ask Claude to challenge your idea and identify weaknesses or risks</button>
+              <button class="qopt" data-correct="false">B. To make Claude disagree with everything you say</button>
+            </div>
+            <div class="qfeedback">
+              <p class="fbmain">✅ Correct! A skeptical prompt helps you stress-test your thinking. Example: "Act as a skeptical reviewer. Look at this onboarding plan and identify the 5 biggest risks or gaps I may have missed."</p>
+              <p class="fbreflect">💭 Apply it to your work: What idea, plan, or deliverable in your current work could benefit from Claude challenging it before you move forward?</p>
+              <textarea class="mono" rows="2" data-f="q5refl" placeholder="Jot a note to yourself (optional)"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="course ready" id="bonus"><span class="dot"></span>
+        <div class="meta"><em>Bonus Cove · optional</em>
+          <b>AI Collaboration with Claude</b>
+          <span>Coursera · recommended — not required to continue</span></div>
+        <div class="acts"><a class="btn crs" id="bonusopen" data-ev="open-bonus" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-collaboration-with-claude">Set Sail</a>
+          <button class="btn ghost" data-course="bonus">Charted</button></div></div>
+
+      <div class="acts hide" id="n3"><button class="btn" data-next="3">Both voyages charted — continue</button></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="s4">
+    <div class="sh"><div class="node">04</div>
+      <div><h3>The narrows</h3><p>Core — steady hands through the pinch point</p></div>
+      <span class="tag">gate</span></div>
+    <div class="body">
+      <p style="font-size:13.5px;color:var(--dim);line-height:1.55;margin-bottom:14px">No course here — just the pinch point between what you've charted and what you do next. Crews who cleared both voyages and both mission checks read it clean.</p>
+      <div class="acts"><button class="btn" data-next="4">Continue to solo voyage</button></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="s5">
+    <div class="sh"><div class="node">05</div>
+      <div><h3>Solo voyage</h3><p>Apply it to real work, then report back from the field</p></div>
+      <span class="tag">Mission</span></div>
+    <div class="body">
+      <div class="panel" id="applyPanel">
+        <h5>Apply — before you set off</h5>
+        <label class="q"><i>01</i>What's one thing from these courses you'll use in your work this week?</label>
+        <textarea rows="2" data-f="a1"></textarea>
+        <div class="acts"><button class="btn" id="applyGo">Save and set off</button></div>
+      </div>
+      <div class="callout" id="comeBack">
+        <b>Plan logged. Now go and try it.</b>
+        <p>Put it to work on the task you named. When you've had a go — even a half-finished one — come back here and tell us how it went. Your progress is saved, so you can close this page.</p>
+        <div class="acts"><button class="btn mint" id="openReflect">I've tried it — open my reflection</button></div>
+      </div>
+      <div class="panel dim" id="reflectPanel">
+        <h5>Reflect — locked until you've applied it</h5>
+        <div id="reflectQs" class="hide">
+          <label class="q"><i>01</i>What did you try, and how did it go?</label>
+          <textarea rows="2" data-f="r1" placeholder="Half-finished counts."></textarea>
+          <div class="acts"><button class="btn gold" data-next="5">Log my voyage</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="s6">
+    <div class="sh"><div class="node">★</div>
+      <div><h3>Hoard found</h3><p>Flag planted</p></div><span class="tag">Complete</span></div>
+    <div class="body">
+      <div class="summit"><div class="cup">🏴‍☠️</div><h3>You found the hoard</h3>
+        <p>You didn't just finish the courses — you put it to work. Log what you built so other people can see what's possible.</p>
+        <button class="btn gold" data-ev="log-build">Log your build in #ai-builds</button></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="s7">
+    <div class="sh"><div class="node">📖</div>
+      <div><h3>Enroll in Your Next Course</h3><p>Keep going — the crew's library has more to chart</p></div>
+      <span class="tag">Optional</span></div>
+    <div class="body">
+      <div class="course ready"><span class="dot"></span>
+        <div class="meta"><em>Program 3 · Coursera</em>
+          <b>Augment &amp; Automate Your Business</b>
+          <span>Take automation further — pick up where this voyage leaves off</span></div>
+        <div class="acts"><a class="btn crs" id="nextCourseOpen" data-ev="open-next" target="_blank" rel="noopener" href="#">Enroll ▶</a>
+          <button class="btn ghost" id="nextCourseGo">Enrolled</button></div></div>
+      <div class="callout" id="enrollOk"><b>Nice — you're on your way.</b>
+        <p>Keep sailing. There's always another chart to mark.</p></div>
+    </div>
+  </section>
+
+  <p class="foot">
+    Stuck or curious? <a href="#" id="slackLink">Ask your peers in Slack</a> — channel link coming.<br>
+    Built by BU L&amp;D. Suggestions or questions: <a href="mailto:bu.learning@betterup.co">bu.learning@betterup.co</a>
+    <span class="mono">We track progress and page activity to improve the programme</span>
+  </p>
+  </div><!-- /stagesView -->
+</main>
+
+<button class="peers" id="peersBtn"><em></em> Ask your peers</button>
+</div><!-- /gameRoot -->
+
+<div class="dossierOverlay hide" id="dossierOverlay">
+  <div class="dossierCard">
+    <button class="dClose" id="dClose">✕</button>
+    <div class="dTag" id="dTag"></div>
+    <h3 id="dTitle"></h3>
+    <p id="dBlurb"></p>
+    <div class="dReward" id="dReward"></div>
+    <button class="btn" id="dBegin">Begin ▶</button>
+  </div>
+</div>
+
+<div class="dossierOverlay hide" id="badgeOverlay">
+  <div class="dossierCard" style="max-width:480px">
+    <button class="dClose" id="badgeClose">✕</button>
+    <div class="dTag">Achievements</div>
+    <h3>Ship's Log of Deeds</h3>
+    <div id="badgeList" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+const API=null;
+const USER={email:(window.BU_USER&&window.BU_USER.email)||'you@betterup.co'};
+
+/* ---------- ambient ---------- */
+(function(){let h='';for(let i=0;i<34;i++){const s=Math.random()*2.4+1.2;
+  h+=`<b style="left:${Math.random()*100}%;width:${s}px;height:${s}px;animation-duration:${Math.random()*16+14}s;animation-delay:-${Math.random()*24}s;opacity:${Math.random()*.4+.25}"></b>`;}
+  document.getElementById('snow').innerHTML=h;})();
+(function(){let h='';for(let i=0;i<90;i++){h+=`<circle cx="${Math.random()*100}%" cy="${Math.random()*56}%" r="${Math.random()*1.3+.3}" fill="#F4EDE1" style="animation-delay:-${Math.random()*5}s"/>`;}
+  document.querySelector('.stars').innerHTML=h;})();
+
+let ac=null;
+function ping(f){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+  const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f||520;
+  g.gain.setValueAtTime(.05,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0008,ac.currentTime+.13);
+  o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.14);}catch(e){}}
+
+/* ---------- state + persistence ---------- */
+const KEY='tmc:'+USER.email;
+const S={pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,reflectOpen:false,mailed:false,badges:{},streak:0};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(API)post('save',{state:S});}
+function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));}catch(e){}}
+
+const SESSION=Math.random().toString(36).slice(2,10);
+let visible=0,lastTick=Date.now(),queue=[];
+function ev(type,target,extra){queue.push({email:USER.email,session:SESSION,ts:new Date().toISOString(),type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
+function flush(){if(!queue.length)return;const batch=queue.slice();queue=[];if(!API){console.log('[events]',batch);return;}post('events',{events:batch});}
+function post(action,payload){try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,email:USER.email},payload))});}catch(e){}}
+setInterval(()=>{const n=Date.now();if(document.visibilityState==='visible')visible+=n-lastTick;lastTick=n;},1000);
+setInterval(flush,20000);
+document.addEventListener('visibilitychange',()=>{ev(document.visibilityState==='visible'?'focus':'blur');if(document.visibilityState!=='visible')flush();});
+window.addEventListener('beforeunload',()=>{ev('session-end','',Math.round(visible/1000));flush();});
+document.addEventListener('click',e=>{const b=e.target.closest('button,a');if(!b)return;
+  ev('click',b.dataset.ev||b.dataset.next||b.dataset.course||b.id||b.textContent.trim().slice(0,32));},true);
+
+function setIdentity(){
+  const name=S.pirateName||USER.email.split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  const ini=name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'BU';
+  document.getElementById('meName').textContent=name;
+  document.getElementById('meMail').textContent=USER.email;
+  document.getElementById('meAv').textContent=ini;
+}
+
+/* ---------- landing ---------- */
+document.getElementById('setSailBtn').addEventListener('click',()=>{
+  const val=document.getElementById('pirateNameInput').value.trim();
+  S.pirateName=val||'Anonymous Pirate';save();setIdentity();
+  document.getElementById('landingScreen').classList.add('hide');
+  document.getElementById('gameRoot').classList.remove('hide');
+  refresh();
+});
+
+/* ---------- dossier ---------- */
+const LEG_INFO={
+  1:{tag:'Leg 01',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
+  2:{tag:'Leg 02',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
+  3:{tag:'Leg 03 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
+  4:{tag:'Leg 04',title:'The narrows',blurb:'No course, no quiz — just the pinch point. Read it clean and the solo voyage opens.',reward:'★ 200 XP'},
+  5:{tag:'Leg 05',title:'Solo voyage',blurb:'Apply it to real work, then report back from the field.',reward:'★ 350 XP'},
+  6:{tag:'Final',title:'Hoard found',blurb:'The chart is whole. What did you build with it?',reward:'Complete'}
+};
+function openDossier(id){
+  const d=LEG_INFO[id];if(!d)return;
+  document.getElementById('dTag').textContent=d.tag;
+  document.getElementById('dTitle').textContent=d.title;
+  document.getElementById('dBlurb').textContent=d.blurb;
+  document.getElementById('dReward').textContent=d.reward;
+  document.getElementById('dossierOverlay').dataset.go=id;
+  document.getElementById('dossierOverlay').classList.remove('hide');
+}
+function closeDossier(){document.getElementById('dossierOverlay').classList.add('hide');}
+document.getElementById('dClose').addEventListener('click',closeDossier);
+document.getElementById('dossierOverlay').addEventListener('click',e=>{if(e.target.id==='dossierOverlay')closeDossier();});
+document.getElementById('dBegin').addEventListener('click',()=>{
+  const id=+document.getElementById('dossierOverlay').dataset.go;
+  if(id===3){ev('dossier-begin','twin-voyages.html');window.location.href='twin-voyages.html';return;}
+  closeDossier();
+  showStage(id);
+  ev('dossier-begin','s'+id);
+});
+
+/* ---------- route <-> stage tab switching ---------- */
+function showMap(){
+  document.getElementById('stagesView').classList.add('hide');
+  document.getElementById('mapView').classList.remove('hide');
+  window.scrollTo({top:0,behavior:'smooth'});
+  refresh();
+}
+function showStage(id){
+  const el=document.getElementById('s'+id);
+  if(!el)return;
+  document.getElementById('mapView').classList.add('hide');
+  document.getElementById('stagesView').classList.remove('hide');
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('open'));
+  el.classList.remove('locked');
+  el.classList.add('open');
+  if(id===6){const s7=document.getElementById('s7');if(s7&&!s7.classList.contains('locked'))s7.classList.add('open');}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('backToRoute').addEventListener('click',()=>{ping(420);showMap();});
+
+/* ---------- ui ---------- */
+const XP={1:100,2:150,3:400,4:200,5:350};
+const DIMS=[['Reach','R'],['Autonomy','A'],['Navigation','N'],['Generalization','G'],['Execution','EF']];
+const PTS=[[92,268],[268,214],[430,178],[598,132],[730,96],[832,52]];
+
+const BADGES=[
+  {id:'weathered',icon:'🗞️',title:'First Read',desc:'Answered your first question'},
+  {id:'bearing',icon:'🧭',title:'True Bearing',desc:'Plotted your RANGE profile'},
+  {id:'voyager1',icon:'⛵',title:'Voyager',desc:'Charted Voyage One'},
+  {id:'twinvoyager',icon:'🌊',title:'Twin Voyager',desc:'Charted both voyages'},
+  {id:'sharpshooter',icon:'🎯',title:'Sharpshooter',desc:'Answered 3 questions correctly in a row'},
+  {id:'bonusseeker',icon:'🗺️',title:'Chart Collector',desc:'Explored the Bonus Cove'},
+  {id:'narrows',icon:'⚔️',title:'Steady Hands',desc:'Threaded the Narrows'},
+  {id:'hoard',icon:'🏴‍☠️',title:'Hoard Finder',desc:'Found the hoard'}
+];
+const RANKS=[
+  {min:0,title:'Deckhand'},{min:200,title:'Quartermaster'},{min:500,title:'Navigator'},
+  {min:900,title:'Captain'},{min:1400,title:'Legend of the Marked Chart'}
+];
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS)if(xp>=x.min)r=x;return r.title;}
+function renderBadges(){
+  document.getElementById('badgeCount').textContent=Object.keys(S.badges).length;
+  document.getElementById('badgeList').innerHTML=BADGES.map(b=>{
+    const got=!!S.badges[b.id];
+    return `<div class="badgeRow${got?'':' locked'}"><div class="bIcon">${got?b.icon:'🔒'}</div>
+      <div><b>${b.title}</b><span>${b.desc}</span></div></div>`;
+  }).join('');
+}
+function awardBadge(id,silent){
+  if(S.badges[id])return;
+  S.badges[id]=1;
+  const b=BADGES.find(x=>x.id===id);
+  renderBadges();
+  if(!silent){ping(760);addXp(50);ev('badge',id);toast(`${b.icon} Badge earned — ${b.title}`,1);}
+  save();
+}
+function updateRank(){
+  const title=rankFor(S.xp);
+  const el=document.getElementById('hRank');
+  if(el.dataset.title&&el.dataset.title!==title)toast(`Promoted to ${title}!`,1);
+  el.textContent=title;el.dataset.title=title;
+}
+
+function toast(m,k){const d=document.createElement('div');d.className='toast'+(k===1?' g':k===2?' m':'');d.textContent=m;
+  document.getElementById('toasts').appendChild(d);
+  setTimeout(()=>{d.style.transition='opacity .4s,transform .4s';d.style.opacity=0;d.style.transform='translateY(10px)';},2200);
+  setTimeout(()=>d.remove(),2700);}
+function setXp(){document.getElementById('hXp').textContent=S.xp+' XP';updateRank();}
+function addXp(n){S.xp+=n;setXp();toast('+'+n+' XP');save();}
+
+function renderRail(){
+  const sample=[{name:"Salt",xp:640},{name:"Bo'sun J",xp:410},{name:"Half-Moon",xp:260},{name:"Crow",xp:150}];
+  const me={name:S.pirateName||'You',xp:S.xp,me:true};
+  const all=[...sample,me].sort((a,b)=>b.xp-a.xp);
+  document.getElementById('railList').innerHTML=all.map(p=>
+    `<li${p.me?' class="me"':''}><span>${p.name}</span><b>${p.xp} XP</b></li>`).join('');
+}
+
+function islandMark(x,y,col,big){
+  const s=big?1.35:1;
+  return `<ellipse cx="${x}" cy="${y+7*s}" rx="${15*s}" ry="${5.5*s}" fill="${col}" opacity=".92"/>
+    <ellipse cx="${x}" cy="${y+7*s}" rx="${15*s}" ry="${5.5*s}" fill="none" stroke="#050F14" stroke-width="1" opacity=".25"/>
+    ${big?
+      `<rect x="${x-7*s}" y="${y-6*s}" width="${14*s}" height="${9*s}" rx="1.5" fill="${col}"/>
+       <path d="M${x-7*s},${y-6*s} Q${x},${y-13*s} ${x+7*s},${y-6*s}" fill="none" stroke="${col}" stroke-width="1.6"/>
+       <line x1="${x-4*s}" y1="${y-2*s}" x2="${x+4*s}" y2="${y-2*s}" stroke="#050F14" stroke-width="1" opacity=".3"/>`
+      :
+      `<line x1="${x-2}" y1="${y+4}" x2="${x-2}" y2="${y-9}" stroke="${col}" stroke-width="1.4"/>
+       <path d="M${x-2},${y-9} Q${x-10},${y-11} ${x-12},${y-4}" fill="none" stroke="${col}" stroke-width="1.4" stroke-linecap="round"/>
+       <path d="M${x-2},${y-7} Q${x+7},${y-10} ${x+10},${y-3}" fill="none" stroke="${col}" stroke-width="1.4" stroke-linecap="round"/>`}`;
+}
+const MAP_LABELS={1:'WEATHERED PAGE',2:'CHART BEARING',3:'TWIN VOYAGES',4:'THE NARROWS',5:'SOLO VOYAGE',6:'HOARD'};
+function activeBuoy(x,y){
+  return `<circle class="ringPulse" cx="${x}" cy="${y}" r="24" fill="none" stroke="#1FB6C9" stroke-width="2"/>
+    <circle class="ringPulse r2" cx="${x}" cy="${y}" r="24" fill="none" stroke="#1FB6C9" stroke-width="2"/>
+    <circle cx="${x}" cy="${y}" r="17" fill="#04141A" stroke="#1FB6C9" stroke-width="2"/>
+    <g class="activeShip" transform="translate(${x},${y+2})">
+      <path d="M-8,3 Q0,8 8,3 L6,6 Q0,10 -6,6 Z" fill="#D9A66C"/>
+      <line x1="0" y1="3" x2="0" y2="-9" stroke="#F4EDE1" stroke-width="1.4"/>
+      <path d="M0,-9 L7,-1 L0,-1 Z" fill="#F4EDE1" opacity=".9"/>
+    </g>`;
+}
+function drawMap(){
+  const n=Object.keys(S.cleared).length;
+  let h=`<defs>
+   <linearGradient id="tr" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1FB6C9"/><stop offset="60%" stop-color="#D9A66C"/><stop offset="100%" stop-color="#FFC700"/></linearGradient>
+   <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#123842"/><stop offset="100%" stop-color="#0A2830"/></linearGradient>
+   <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0E2E36"/><stop offset="100%" stop-color="#071E24"/></linearGradient>
+   <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0A222A"/><stop offset="100%" stop-color="#050F14"/></linearGradient>
+   <filter id="gl"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#1FB6C9" flood-opacity=".85"/></filter>
+   <filter id="gg"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#FFC700" flood-opacity=".9"/></filter></defs>
+   <path d="M680,34 q6,-6 12,0 q6,-6 12,0" stroke="#F4EDE1" stroke-width="1.3" fill="none" opacity=".35"/>
+   <path d="M120,52 q5,-5 10,0 q5,-5 10,0" stroke="#F4EDE1" stroke-width="1.2" fill="none" opacity=".3"/>
+   <path d="M0,340 L0,214 L112,150 L196,192 L300,116 L404,178 L520,104 L640,166 L748,92 L860,150 L900,124 L900,340 Z" fill="url(#m1)" opacity=".85"/>
+   <path d="M0,340 L0,258 L150,206 L266,244 L430,150 L560,206 L700,96 L800,150 L900,110 L900,340 Z" fill="url(#m2)"/>
+   <path d="M0,340 L0,300 L160,268 L300,296 L470,246 L620,286 L780,238 L900,272 L900,340 Z" fill="url(#m3)"/>
+   <path d="M92,268 C170,252 210,224 268,214 S380,196 430,178 S540,152 598,132 S700,112 730,96 S810,72 832,52"
+     fill="none" stroke="url(#tr)" stroke-width="2.6" stroke-dasharray="8 8" opacity=".55"/>`;
+  let firstIncomplete=null;
+  for(let k=1;k<=5;k++){if(!S.cleared[k]){firstIncomplete=k;break;}}
+  PTS.forEach((p,i)=>{
+    const id=i+1,summit=i===5,done=summit?!!S.cleared[6]:!!S.cleared[id],active=!summit&&!done&&id===firstIncomplete;
+    if(!done&&!active)return; /* undiscovered — hidden until reached */
+    const label=MAP_LABELS[summit?6:id];
+    if(active){
+      h+=`<g class="pin" data-go="${id}">
+        <circle cx="${p[0]}" cy="${p[1]}" r="26" fill="transparent"/>
+        ${activeBuoy(p[0],p[1])}</g>
+        <text x="${p[0]}" y="${p[1]+40}" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10"
+          font-weight="700" letter-spacing="1.4" fill="#1FB6C9">${label}</text>`;
+    }else{
+      const col=summit?'#FFC700':'#4FE8CA';
+      h+=`<g class="pin" data-go="${summit?6:id}"><circle cx="${p[0]}" cy="${p[1]}" r="20" fill="transparent"/>
+        ${islandMark(p[0],p[1],col,summit)}</g>
+        <text x="${p[0]}" y="${p[1]+30}" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8.5"
+          letter-spacing="1.4" fill="${col}">${label}</text>`;
+      if(summit){
+        h+=`<g transform="translate(${p[0]+16},${p[1]-10})" filter="url(#gg)">
+          <line x1="0" y1="0" x2="0" y2="-13" stroke="#FFC700" stroke-width="1.6"/>
+          <path d="M0,-13 L11,-9 L0,-6 Z" fill="#FFC700"/></g>`;
+      }
+    }
+  });
+  const svg=document.getElementById('mapSvg');svg.innerHTML=h;
+  svg.querySelectorAll('.pin').forEach(p=>p.addEventListener('click',()=>{
+    const el=document.getElementById('s'+p.dataset.go);
+    if(!el){ping(200);toast('Nothing here yet');return;}
+    ping(600);openDossier(+p.dataset.go);ev('map-jump','s'+p.dataset.go);}));
+}
+function refresh(){const n=Object.keys(S.cleared).length;
+  document.getElementById('hStep').textContent=Math.min(n,5)+'/5';
+  document.getElementById('hBar').style.width=(n/6*100)+'%';drawMap();renderRail();}
+
+function advance(id,silent){
+  if(S.cleared[id])return;
+  S.cleared[id]=1;
+  if(!silent){ping(680);addXp(XP[id]||200);ev('clear','stage-'+id);}
+  const el=document.getElementById('s'+id);
+  el.classList.remove('on');el.classList.add('done');if(!silent)el.classList.remove('open');
+  const nx=document.getElementById('s'+(id+1));
+  if(nx){nx.classList.remove('locked');nx.classList.add('on');if(!silent)nx.classList.add('open');}
+  if(id===4)awardBadge('narrows',silent);
+  if(id===5){S.cleared[6]=1;
+    const s7=document.getElementById('s7');
+    if(s7){s7.classList.remove('locked');s7.classList.add('on');if(!silent)s7.classList.add('open');}
+    if(!silent)toast('Hoard found',1);
+    awardBadge('hoard',silent);}
+  refresh();save();
+  if(!silent)showMap();
+}
+document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>advance(+b.dataset.next)));
+document.querySelectorAll('.sh').forEach(h=>h.addEventListener('click',()=>{
+  const s=h.parentElement;if(s.classList.contains('locked'))return;ping(420);s.classList.toggle('open');}));
+
+/* ---------- quiz ---------- */
+function answered(qid){return !!S.quiz[qid];}
+function allAnswered(ids){return ids.every(answered);}
+function applyQuizVisual(block,qid){
+  const data=S.quiz[qid];if(!data)return;
+  block.dataset.answered='1';
+  block.classList.add('answered');
+  block.querySelectorAll('.qopt').forEach(b=>{b.disabled=true;
+    if(b.dataset.correct==='true')b.classList.add('correct');
+    else if(b.textContent.trim()[0]===data.sel)b.classList.add('wrong');});
+  block.querySelector('.qfeedback').classList.add('show');
+}
+function onQuizAnswered(qid,silent){
+  if(qid==='q2'||qid==='q3')unlockVoyageTwo(silent);
+  if(qid==='q4'||qid==='q5')checkContinue();
+}
+function unlockVoyageTwo(silent){
+  if(!allAnswered(['q2','q3']))return;
+  const row=document.getElementById('v2');
+  if(row.classList.contains('ready'))return;
+  row.classList.add('ready');
+  row.querySelectorAll('button').forEach(x=>x.disabled=false);
+  row.querySelector('[data-course]').textContent='Charted';
+  const a=document.getElementById('v2open');
+  a.classList.remove('off');a.target='_blank';a.rel='noopener';
+  a.href='https://www.coursera.org/learn/google-start-writing-prompts-like-a-pro';
+  document.getElementById('v2s').textContent='Coursera · builds on Voyage One with hands-on prompt writing';
+  if(!silent)toast('Second voyage open',2);
+}
+function checkContinue(){if(S.courses.v2&&allAnswered(['q4','q5']))document.getElementById('n3').classList.remove('hide');}
+function wireQuiz(){
+  document.querySelectorAll('.quiz').forEach(q=>{
+    const qid=q.dataset.qid;
+    q.querySelectorAll('.qopt').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        if(q.dataset.answered)return;
+        const correct=btn.dataset.correct==='true';
+        S.quiz[qid]={sel:btn.textContent.trim()[0],correct};
+        applyQuizVisual(q,qid);
+        ping(correct?680:300);addXp(20);
+        ev('quiz-answer',qid,correct?'correct':'wrong');
+        onQuizAnswered(qid,false);
+        if(Object.keys(S.quiz).length===1)awardBadge('weathered',false);
+        S.streak=correct?(S.streak||0)+1:0;
+        if(S.streak>=3)awardBadge('sharpshooter',false);
+        save();
+      });
+    });
+  });
+}
+wireQuiz();
+
+function markCourse(k,silent){
+  const row=document.getElementById(k),b=row.querySelector('[data-course]');
+  S.courses[k]=1;row.classList.remove('ready');row.classList.add('done');
+  b.textContent='Done';b.disabled=true;
+  if(!silent){ping(720);addXp(120);ev('course-done',k);}
+  if(k==='v1'){
+    document.getElementById('missionA').classList.remove('dim');
+    document.getElementById('missionA').querySelector('h5').textContent='Mission Check A — answer both to continue';
+    document.getElementById('missionAQs').classList.remove('hide');
+    if(!silent)toast('Mission Check A open',2);
+    awardBadge('voyager1',silent);
+  }
+  if(k==='v2'){
+    document.getElementById('missionB').classList.remove('dim');
+    document.getElementById('missionB').querySelector('h5').textContent='Mission Check B — answer both to continue';
+    document.getElementById('missionBQs').classList.remove('hide');
+    checkContinue();
+    if(!silent)toast('Mission Check B open',2);
+    awardBadge('twinvoyager',silent);
+  }
+  if(k==='bonus')awardBadge('bonusseeker',silent);
+  save();
+}
+document.querySelectorAll('[data-course]').forEach(b=>b.addEventListener('click',()=>markCourse(b.dataset.course)));
+
+document.querySelectorAll('[data-f]').forEach(t=>{
+  t.addEventListener('input',()=>{S.fields[t.dataset.f]=t.value;});
+  t.addEventListener('blur',()=>{save();ev('field',t.dataset.f);});
+});
+
+function doApply(silent){
+  S.applied=true;
+  const p=document.getElementById('applyPanel');
+  p.querySelectorAll('textarea').forEach(t=>t.disabled=true);
+  document.getElementById('applyGo').disabled=true;
+  p.querySelector('h5').textContent='Apply — logged';
+  document.getElementById('comeBack').classList.add('show');
+  if(!silent){ping(700);addXp(150);ev('apply-saved');toast('Plan logged — go and try it',2);
+    setTimeout(()=>document.getElementById('comeBack').scrollIntoView({behavior:'smooth',block:'center'}),200);}
+  save();
+}
+function doReflect(silent){
+  S.reflectOpen=true;
+  const p=document.getElementById('reflectPanel');
+  p.classList.remove('dim');p.querySelector('h5').textContent='Reflect — how did it go?';
+  document.getElementById('reflectQs').classList.remove('hide');
+  document.getElementById('openReflect').disabled=true;
+  if(!silent){ping(640);ev('reflect-opened');setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),180);}
+  save();
+}
+function doEnroll(silent){
+  S.mailed=true;
+  const b=document.getElementById('nextCourseGo');
+  b.disabled=true;b.textContent='Enrolled ✓';
+  document.getElementById('enrollOk').classList.add('show');
+  if(!silent){ping(720);addXp(100);ev('next-course-enrolled');}
+  save();
+}
+document.getElementById('nextCourseGo').addEventListener('click',()=>doEnroll());
+document.getElementById('applyGo').addEventListener('click',()=>doApply());
+document.getElementById('openReflect').addEventListener('click',()=>doReflect());
+document.getElementById('pCopy').addEventListener('click',async()=>{ping(500);
+  try{await navigator.clipboard.writeText(document.getElementById('pTxt').textContent);toast('Copied — paste it in Claude',2);}
+  catch(e){toast('Select and copy above');}});
+
+/* ---------- chart ---------- */
+function parse(t){const o={};let hit=0;
+  const rx={EF:/\bEF\s*[:=]\s*([1-5])/i,R:/\bR\s*[:=]\s*([1-5])/i,A:/\bA\s*[:=]\s*([1-5])/i,N:/\bN\s*[:=]\s*([1-5])/i,G:/\bG\s*[:=]\s*([1-5])/i};
+  for(const k of ['EF','R','A','N','G']){const m=t.match(rx[k]);if(m){o[k]=+m[1];hit++;}}
+  return hit===5?o:null;}
+function drawChart(v){
+  const W=620,H=250,L=54,R=20,T=20,B=44,iw=W-L-R,ih=H-T-B;
+  const y=s=>T+ih-((s-1)/4)*ih,x=i=>L+(i/4)*iw;
+  let h=`<defs><filter id="lg"><feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="#1FB6C9" flood-opacity=".8"/></filter></defs>`;
+  for(let s=1;s<=5;s++)h+=`<line x1="${L}" y1="${y(s)}" x2="${W-R}" y2="${y(s)}" stroke="rgba(217,166,108,.15)"/>
+    <text x="${L-11}" y="${y(s)+4}" text-anchor="end" font-family="Roboto Mono,monospace" font-size="9.5" fill="#8FA3A8">${s}</text>`;
+  const pts=DIMS.map((d,i)=>[x(i),y(v[d[1]])]),lo=Math.min(...DIMS.map(d=>v[d[1]]));
+  h+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#1FB6C9" stroke-width="2.6" stroke-linejoin="round" filter="url(#lg)"/>`;
+  pts.forEach((p,i)=>{const low=v[DIMS[i][1]]===lo;
+    if(low)h+=`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="#FFC700" opacity=".22"/>`;
+    h+=`<circle cx="${p[0]}" cy="${p[1]}" r="5.5" fill="${low?'#FFC700':'#1FB6C9'}"/>
+     <text x="${p[0]}" y="${H-24}" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8.5" letter-spacing="1.2" fill="${low?'#FFC700':'#8FA3A8'}">${DIMS[i][0].toUpperCase()}</text>
+     <text x="${p[0]}" y="${p[1]-14}" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="11" font-weight="700" fill="#F4EDE1">${v[DIMS[i][1]]}</text>`;});
+  h+=`<text x="${L-11}" y="${T-5}" text-anchor="end" font-family="Roboto Mono,monospace" font-size="7.5" letter-spacing="1.4" fill="#8FA3A8">LEVEL</text>`;
+  document.getElementById('chart').innerHTML=h;
+  document.getElementById('edgeTxt').innerHTML=
+    `Your growth edge is <b>${DIMS.find(d=>v[d[1]]===lo)[0]}</b>, lowest at ${lo}. `+
+    `Levels: 1–2 pre-pilot · 3 pilot · 4 builder · 5 multiplier. You'll run this again at the end to see the shift.`;
+  document.getElementById('chartWrap').classList.add('show');
+}
+document.getElementById('scoreGo').addEventListener('click',()=>{
+  const raw=document.getElementById('scoreIn').value,v=parse(raw),e=document.getElementById('scoreErr');
+  if(!v){e.style.display='block';ping(200);ev('range-parse-fail');return;}
+  e.style.display='none';S.range=v;drawChart(v);addXp(100);
+  document.getElementById('scoreGo').textContent='Re-plot';
+  ev('range-saved','',JSON.stringify(v));toast('Bearing plotted',2);
+  awardBadge('bearing',false);save();
+  setTimeout(()=>document.getElementById('chartWrap').scrollIntoView({behavior:'smooth',block:'center'}),160);
+});
+
+const SLACK='';
+function peers(){ping(460);ev('peers-click');if(SLACK){window.open(SLACK,'_blank');}else{toast('Slack channel coming soon');}}
+document.getElementById('peersBtn').addEventListener('click',peers);
+document.getElementById('slackLink').addEventListener('click',e=>{e.preventDefault();peers();});
+
+document.getElementById('badgeBtn').addEventListener('click',()=>{ping(500);document.getElementById('badgeOverlay').classList.remove('hide');});
+document.getElementById('libEnrollBtn').addEventListener('click',e=>{
+  e.preventDefault();ping(600);addXp(20);
+  const body='I would like to enroll in Claude AI Comprehensive Guide.\n\n'
+    +'Name: '+(S.pirateName||'')+'\nDate: '
+    +new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'\n';
+  window.location.href='mailto:bu.learning@betterup.co'
+    +'?cc=deepika.kanojia@betterup.co'
+    +'&subject='+encodeURIComponent('Enrollment request — Claude AI Comprehensive Guide')
+    +'&body='+encodeURIComponent(body);
+  toast('Email drafted — check your mail app',2);
+});
+document.querySelector('[data-ev="log-build"]').addEventListener('click',()=>{
+  ping(700);addXp(30);toast('Logged — nice work, pirate 🏴‍☠️',1);
+});
+document.getElementById('badgeClose').addEventListener('click',()=>document.getElementById('badgeOverlay').classList.add('hide'));
+document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target.id==='badgeOverlay')document.getElementById('badgeOverlay').classList.add('hide');});
+
+/* ---------- restore ---------- */
+(function restore(){
+  load();setXp();setIdentity();renderBadges();
+  if(!S.cleared[3]&&S.courses.v2&&allAnswered(['q4','q5']))S.cleared[3]=1;
+  const done=Object.keys(S.cleared).map(Number).filter(n=>n<=5).sort();
+  const saved={...S.cleared};S.cleared={};
+  done.forEach(id=>advance(id,true));
+  if(saved[6])S.cleared[6]=1;
+
+  Object.keys(S.quiz).forEach(qid=>{
+    const block=document.querySelector(`.quiz[data-qid="${qid}"]`);
+    if(block)applyQuizVisual(block,qid);
+  });
+  Object.keys(S.courses).forEach(k=>markCourse(k,true));
+  Object.keys(S.quiz).forEach(qid=>onQuizAnswered(qid,true));
+
+  if(S.range)drawChart(S.range);
+  Object.entries(S.fields).forEach(([k,val])=>{const t=document.querySelector(`[data-f="${k}"]`);if(t)t.value=val;});
+  if(S.applied)doApply(true);
+  if(S.reflectOpen)doReflect(true);
+  if(S.mailed)doEnroll(true);
+
+  document.getElementById('mapView').classList.remove('hide');
+  document.getElementById('stagesView').classList.add('hide');
+  refresh();
+  ev('session-start','',done.length?'resumed at leg '+Math.min(done.length+1,6):'first visit');
+
+  if(S.pirateName){
+    document.getElementById('landingScreen').classList.add('hide');
+    document.getElementById('gameRoot').classList.remove('hide');
+    if(done.length)toast('Welcome back — leg '+Math.min(done.length,5),2);
+  }
+})();
+</script>
+</body>
+</html>
