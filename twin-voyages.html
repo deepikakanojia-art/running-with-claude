@@ -328,9 +328,10 @@ function resolveEmail(){
     const cached=localStorage.getItem(WHOAMI_KEY);
     if(cached){const w=JSON.parse(cached);if(w&&w.email)return w.email;}
   }catch(e){}
-  let email=null;
-  try{email=window.prompt("Welcome aboard — what's your BetterUp email? (used to save your progress)");}catch(e){}
-  const resolved=(email&&email.trim())?email.trim():'guest+'+Math.random().toString(36).slice(2,8)+'@betterup.co';
+  let local=null;
+  try{local=window.prompt("Welcome aboard — what's your BetterUp email? (just the part before @betterup.co, used to save your progress)");}catch(e){}
+  local=local?local.trim().replace(/@.*$/,''):'';
+  const resolved=local?local+'@betterup.co':'guest+'+Math.random().toString(36).slice(2,8)+'@betterup.co';
   try{localStorage.setItem(WHOAMI_KEY,JSON.stringify({email:resolved}));}catch(e){}
   return resolved;
 }

@@ -300,8 +300,6 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <div class="stat"><u>Leg</u><b id="hStep">0/5</b></div>
   <div class="bar"><i id="hBar"></i></div>
   <button class="libbtn hudBtn" id="badgeBtn">🏅 <span id="badgeCount">0</span>/8</button>
-  <a class="libbtn hudBtn" id="libraryLink" href="https://www.coursera.org/learn/claude-ai-comprehensive-guide" target="_blank" rel="noopener">📖 Library</a>
-  <a class="libbtn hudBtn" href="#" id="libEnrollBtn">✉ Enroll</a>
   <button class="libbtn hudBtn peersChip" id="peersBtn"><em></em> Peers</button>
   <button class="libbtn hudBtn navChip" id="navBtn">🧭 Navigator</button>
   <div class="me">
@@ -631,9 +629,10 @@ function resolveEmail(){
     const cached=localStorage.getItem(WHOAMI_KEY);
     if(cached){const w=JSON.parse(cached);if(w&&w.email)return w.email;}
   }catch(e){}
-  let email=null;
-  try{email=window.prompt("Welcome aboard — what's your BetterUp email? (used to save your progress)");}catch(e){}
-  const resolved=(email&&email.trim())?email.trim():'guest+'+Math.random().toString(36).slice(2,8)+'@betterup.co';
+  let local=null;
+  try{local=window.prompt("Welcome aboard — what's your BetterUp email? (just the part before @betterup.co, used to save your progress)");}catch(e){}
+  local=local?local.trim().replace(/@.*$/,''):'';
+  const resolved=local?local+'@betterup.co':'guest+'+Math.random().toString(36).slice(2,8)+'@betterup.co';
   try{localStorage.setItem(WHOAMI_KEY,JSON.stringify({email:resolved}));}catch(e){}
   return resolved;
 }
@@ -1103,17 +1102,6 @@ document.getElementById('navChart').addEventListener('click',async()=>{
   catch(e){toast('Select and copy the message above');}
 });
 document.getElementById('navOpenClaude').addEventListener('click',()=>ev('nav-open-claude'));
-document.getElementById('libEnrollBtn').addEventListener('click',e=>{
-  e.preventDefault();ping(600);addXp(20);
-  const body='I would like to enroll in Claude AI Comprehensive Guide.\n\n'
-    +'Name: '+(S.pirateName||'')+'\nDate: '
-    +new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'\n';
-  window.location.href='mailto:bu.learning@betterup.co'
-    +'?cc=deepika.kanojia@betterup.co'
-    +'&subject='+encodeURIComponent('Enrollment request — Claude AI Comprehensive Guide')
-    +'&body='+encodeURIComponent(body);
-  toast('Email drafted — check your mail app',2);
-});
 document.querySelector('[data-ev="log-build"]').addEventListener('click',()=>{
   ping(700);addXp(30);toast('Logged — nice work, pirate 🏴‍☠️',1);
 });
