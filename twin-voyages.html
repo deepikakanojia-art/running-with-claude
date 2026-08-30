@@ -49,10 +49,9 @@ h1{font-size:clamp(24px,4.6vw,34px);margin-bottom:8px;letter-spacing:-.02em}
 .seaBanner svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .seaShip{transform-origin:50% 88%;animation:seaRock 3.4s ease-in-out infinite}
 @keyframes seaRock{0%,100%{transform:rotate(-3.5deg) translateY(0)}50%{transform:rotate(3.5deg) translateY(-5px)}}
-.waveBack{animation:waveDriftBack 11s linear infinite}
-.waveFront{animation:waveDriftFront 7s linear infinite reverse}
-@keyframes waveDriftBack{from{transform:translateX(0)}to{transform:translateX(-120px)}}
-@keyframes waveDriftFront{from{transform:translateX(0)}to{transform:translateX(-140px)}}
+.waveBack{animation:waveBob 5.5s ease-in-out infinite}
+.waveFront{animation:waveBob 4.2s ease-in-out infinite reverse}
+@keyframes waveBob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 .mateForm{max-width:420px;margin:0 auto}
 
 /* ===== Captain's Log console ===== */
@@ -323,17 +322,38 @@ a.btn{text-decoration:none}
 <div class="toasts" id="toasts"></div>
 
 <script>
-const USER={email:(window.BU_USER&&window.BU_USER.email)||'you@betterup.co'};
+function resolveEmail(){
+  const WHOAMI_KEY='tmc:whoami';
+  try{
+    const cached=localStorage.getItem(WHOAMI_KEY);
+    if(cached){const w=JSON.parse(cached);if(w&&w.email)return w.email;}
+  }catch(e){}
+  let email=null;
+  try{email=window.prompt("Welcome aboard — what's your BetterUp email? (used to save your progress)");}catch(e){}
+  const resolved=(email&&email.trim())?email.trim():'guest+'+Math.random().toString(36).slice(2,8)+'@betterup.co';
+  try{localStorage.setItem(WHOAMI_KEY,JSON.stringify({email:resolved}));}catch(e){}
+  return resolved;
+}
+const API=null; // set to the deployed Apps Script /exec URL to enable saving to the Sheet
+const USER={email:(window.BU_USER&&window.BU_USER.email)||resolveEmail()};
 const KEY='tmc:'+USER.email;
 const S={pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,reflectOpen:false,mailed:false,badges:{},streak:0,mateName:'',consoleDone:false};
 function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(API)post('save',{state:S});}
 
-let ac=null;
-function ping(f){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();
-  const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f||520;
-  g.gain.setValueAtTime(.05,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0008,ac.currentTime+.13);
-  o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.14);}catch(e){}}
+const SESSION=Math.random().toString(36).slice(2,10);
+let visible=0,lastTick=Date.now(),queue=[];
+function ev(type,target,extra){queue.push({email:USER.email,session:SESSION,ts:new Date().toISOString(),type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
+function flush(){if(!queue.length)return;if(!API){queue=[];return;}const batch=queue.slice();queue=[];post('events',{events:batch});}
+function post(action,payload){try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,email:USER.email,game:'marked-chart'},payload))});}catch(e){}}
+setInterval(()=>{const n=Date.now();if(document.visibilityState==='visible')visible+=n-lastTick;lastTick=n;},1000);
+setInterval(flush,20000);
+document.addEventListener('visibilitychange',()=>{ev(document.visibilityState==='visible'?'focus':'blur');if(document.visibilityState!=='visible')flush();});
+window.addEventListener('beforeunload',()=>{ev('session-end','',Math.round(visible/1000));flush();});
+document.addEventListener('click',e=>{const b=e.target.closest('button,a');if(!b)return;
+  ev('click',b.dataset.ev||b.id||b.textContent.trim().slice(0,32));},true);
+
+function ping(f){/* deliberate no-op — no sound. Call sites depend on this existing, so it stays as a stub. */}
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;
   document.getElementById('toasts').appendChild(d);
   setTimeout(()=>{d.style.transition='opacity .4s,transform .4s';d.style.opacity=0;d.style.transform='translateY(10px)';},2200);
@@ -391,8 +411,10 @@ document.getElementById('transmitBtn').addEventListener('click',async()=>{
   const txt=document.getElementById('consoleText').value.trim();
   if(!txt){toast('Load or write a message first');return;}
   ping(700);
+  S.fields.consoleMsg=txt;
   try{await navigator.clipboard.writeText(txt);}catch(e){}
   if(!S.transmitted){S.transmitted=true;addXp(40);}
+  ev('console-transmit','',txt.slice(0,80));
   toast('Transmitted — paste it into your own Claude',2);
   save();
 });
