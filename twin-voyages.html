@@ -143,7 +143,7 @@ a.btn{text-decoration:none}
 <body>
 <div class="wrap">
   <div class="eyebrow"><b>The Marked Chart</b><i>Leg 03</i></div>
-  <a class="backlink" href="index.html">◀ Back to the Chart Room</a>
+  <a class="backlink" href="the-marked-chart.html">◀ Back to the Chart Room</a>
   <h1>Twin Voyages</h1>
   <p class="sub">Land ho — two islands lie ahead. Name your fellow pirate, then chart both voyages and clear both mission checks before the narrows will open.</p>
 
@@ -314,7 +314,7 @@ a.btn{text-decoration:none}
     <div class="body">
       <div class="recap"><div class="cup">🏴‍☠️</div>
         <p id="recapBody">You cleared both islands. Head back and continue toward the narrows.</p>
-        <a class="btn gold" href="index.html">◀ Back to the Chart Room</a>
+        <a class="btn gold" href="the-marked-chart.html">◀ Back to the Chart Room</a>
       </div>
     </div>
   </section>
@@ -359,9 +359,10 @@ function nameSet(){
   document.getElementById('recapBody').textContent=`You and ${S.mateName} cleared both islands. Head back and continue toward the narrows.`;
 }
 document.getElementById('mateGo').addEventListener('click',()=>{
+  const already=!!S.mateName;
   const v=document.getElementById('mateInput').value.trim();
   S.mateName=v||'Mate';save();nameSet();
-  ping(680);addXp(30);
+  ping(680);if(!already)addXp(30);
   markDone('tvMate');openStage('tvConsole');
 });
 
@@ -402,11 +403,13 @@ document.getElementById('consoleContinue').addEventListener('click',()=>{
 
 /* ---------- voyage cards ---------- */
 document.getElementById('v1Go').addEventListener('click',()=>{
-  S.courses.v1=1;save();ping(720);addXp(120);toast('Voyage One charted');
+  const already=!!S.courses.v1;
+  S.courses.v1=1;save();ping(720);if(!already){addXp(120);toast('Voyage One charted');}
   markDone('tvV1');openStage('tvMA');
 });
 document.getElementById('v2Go').addEventListener('click',()=>{
-  S.courses.v2=1;save();ping(720);addXp(120);toast('Voyage Two charted');
+  const already=!!S.courses.v2;
+  S.courses.v2=1;save();ping(720);if(!already){addXp(120);toast('Voyage Two charted');}
   markDone('tvV2');openStage('tvMB');
 });
 
