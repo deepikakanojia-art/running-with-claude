@@ -623,7 +623,8 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 <div class="toasts" id="toasts"></div>
 
 <script>
-const API=null;
+const API='https://script.google.com/a/macros/betterup.co/s/AKfycbwhQ2-lyLIVj--aVVCW3OSHVDc1-N08f02NyLoSZak-bvzYSGx5PUXFyjvsJEgRlm2zmQ/exec';
+const GAME='marked-chart';
 function resolveEmail(){
   const WHOAMI_KEY='tmc:whoami';
   try{
@@ -637,6 +638,7 @@ function resolveEmail(){
   return resolved;
 }
 const USER={email:(window.BU_USER&&window.BU_USER.email)||resolveEmail()};
+USER.name=(window.BU_USER&&window.BU_USER.name)||USER.email.split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 
 /* ---------- ambient ---------- */
 (function(){let h='';for(let i=0;i<34;i++){const s=Math.random()*2.4+1.2;
@@ -655,9 +657,9 @@ function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.
 
 const SESSION=Math.random().toString(36).slice(2,10);
 let visible=0,lastTick=Date.now(),queue=[];
-function ev(type,target,extra){queue.push({email:USER.email,session:SESSION,ts:new Date().toISOString(),type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
+function ev(type,target,extra){queue.push({ts:new Date().toISOString(),email:USER.email,name:USER.name,session:SESSION,type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
 function flush(){if(!queue.length)return;if(!API){queue=[];return;}const batch=queue.slice();queue=[];post('events',{events:batch});}
-function post(action,payload){try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,email:USER.email,game:'marked-chart'},payload))});}catch(e){}}
+function post(action,payload){if(!API)return;try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email,name:USER.name,session:SESSION},payload))});}catch(e){}}
 setInterval(()=>{const n=Date.now();if(document.visibilityState==='visible')visible+=n-lastTick;lastTick=n;},1000);
 setInterval(flush,20000);
 document.addEventListener('visibilitychange',()=>{ev(document.visibilityState==='visible'?'focus':'blur');if(document.visibilityState!=='visible')flush();});
@@ -803,7 +805,7 @@ function renderRail(){
 async function loadLeaderboard(){
   if(!API)return; // no backend configured yet — stay on the Preview fallback
   try{
-    const res=await fetch(API+'?leaderboard=1&game=marked-chart');
+    const res=await fetch(API+'?action=leaderboard&game='+encodeURIComponent(GAME));
     if(!res.ok)throw new Error('bad status '+res.status);
     const data=await res.json();
     if(!Array.isArray(data))throw new Error('unexpected shape');

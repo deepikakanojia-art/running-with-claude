@@ -334,8 +334,10 @@ function resolveEmail(){
   try{localStorage.setItem(WHOAMI_KEY,JSON.stringify({email:resolved}));}catch(e){}
   return resolved;
 }
-const API=null; // set to the deployed Apps Script /exec URL to enable saving to the Sheet
+const API='https://script.google.com/a/macros/betterup.co/s/AKfycbwhQ2-lyLIVj--aVVCW3OSHVDc1-N08f02NyLoSZak-bvzYSGx5PUXFyjvsJEgRlm2zmQ/exec';
+const GAME='marked-chart';
 const USER={email:(window.BU_USER&&window.BU_USER.email)||resolveEmail()};
+USER.name=(window.BU_USER&&window.BU_USER.name)||USER.email.split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 const KEY='tmc:'+USER.email;
 const S={pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,reflectOpen:false,mailed:false,badges:{},streak:0,mateName:'',consoleDone:false};
 function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));}catch(e){}}
@@ -343,9 +345,9 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(AP
 
 const SESSION=Math.random().toString(36).slice(2,10);
 let visible=0,lastTick=Date.now(),queue=[];
-function ev(type,target,extra){queue.push({email:USER.email,session:SESSION,ts:new Date().toISOString(),type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
+function ev(type,target,extra){queue.push({ts:new Date().toISOString(),email:USER.email,name:USER.name,session:SESSION,type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
 function flush(){if(!queue.length)return;if(!API){queue=[];return;}const batch=queue.slice();queue=[];post('events',{events:batch});}
-function post(action,payload){try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,email:USER.email,game:'marked-chart'},payload))});}catch(e){}}
+function post(action,payload){if(!API)return;try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email,name:USER.name,session:SESSION},payload))});}catch(e){}}
 setInterval(()=>{const n=Date.now();if(document.visibilityState==='visible')visible+=n-lastTick;lastTick=n;},1000);
 setInterval(flush,20000);
 document.addEventListener('visibilitychange',()=>{ev(document.visibilityState==='visible'?'focus':'blur');if(document.visibilityState!=='visible')flush();});
