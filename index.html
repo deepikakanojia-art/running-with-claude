@@ -235,6 +235,21 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 .toast.g{background:linear-gradient(180deg,rgba(255,218,92,.97),rgba(200,150,0,.97));border-color:rgba(255,240,180,.7);color:#2A2000}
 @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:none}}
 
+.fxPop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:120;
+  display:flex;align-items:center;gap:12px;padding:16px 24px;border-radius:14px;
+  font-family:var(--hn);font-weight:700;font-size:14px;color:var(--text);
+  background:rgba(4,14,19,.94);border:1px solid var(--line);box-shadow:0 24px 70px -12px rgba(0,0,0,.65);
+  animation:fxIn .3s cubic-bezier(.2,1.4,.3,1);pointer-events:none;max-width:88vw}
+.fxPop.out{animation:fxOut .5s ease-in forwards}
+@keyframes fxIn{from{opacity:0;transform:translate(-50%,-50%) scale(.85)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes fxOut{to{opacity:0;transform:translate(-50%,-50%) scale(.9)}}
+.fxPop.fxGold{border-color:rgba(255,199,0,.5)}
+.fxPop.fxGold .fxIcon{font-size:30px;display:inline-block;animation:fxBounce .55s ease-in-out infinite alternate}
+@keyframes fxBounce{to{transform:translateY(-5px) scale(1.12)}}
+.fxPop.fxSink{border-color:rgba(31,182,201,.4)}
+.fxPop.fxSink .fxIcon{font-size:26px;display:inline-block;animation:fxShipSink 1.3s ease-in forwards}
+@keyframes fxShipSink{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(16px) rotate(20deg);opacity:.25}}
+
 .foot{margin-top:30px;text-align:center;font-size:11px;color:var(--dim);line-height:1.8}
 .foot a{color:var(--sand);text-decoration:none}
 .foot a:hover{text-decoration:underline}
@@ -435,13 +450,6 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
         </div>
       </div>
 
-      <div class="course ready" id="bonus"><span class="dot"></span>
-        <div class="meta"><em>Bonus Cove · optional</em>
-          <b>AI Collaboration with Claude</b>
-          <span>Coursera · recommended — not required to continue</span></div>
-        <div class="acts"><a class="btn crs" id="bonusopen" data-ev="open-bonus" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-collaboration-with-claude">Set Sail</a>
-          <button class="btn ghost" data-course="bonus">Charted</button></div></div>
-
       <div class="acts hide" id="n3"><button class="btn" data-next="3">Both voyages charted — continue</button></div>
     </div>
   </section>
@@ -449,10 +457,50 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <section class="stage locked" id="s4">
     <div class="sh"><div class="node">04</div>
       <div><h3>The narrows</h3><p>Core — steady hands through the pinch point</p></div>
-      <span class="tag">gate</span></div>
+      <span class="tag">core</span></div>
     <div class="body">
-      <p style="font-size:13.5px;color:var(--dim);line-height:1.55;margin-bottom:14px">No course here — just the pinch point between what you've charted and what you do next. Crews who cleared both voyages and both mission checks read it clean.</p>
-      <div class="acts"><button class="btn" data-next="4">Continue to solo voyage</button></div>
+      <p style="font-size:13.5px;color:var(--dim);line-height:1.55;margin-bottom:14px">One more course before the solo voyage — this one builds on what the twin voyages taught you.</p>
+
+      <div class="course ready" id="core3"><span class="dot"></span>
+        <div class="meta"><em>Core · Coursera</em>
+          <b>AI Collaboration with Claude</b>
+          <span>Choosing a prompting strategy for the situation, and shaping one body of knowledge for different audiences</span></div>
+        <div class="acts"><a class="btn crs" id="core3open" data-ev="open-core3" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-collaboration-with-claude">Set Sail</a>
+          <button class="btn ghost" data-course="core3">Charted</button></div></div>
+
+      <div class="panel dim" id="narrowsMission">
+        <h5>Mission Check — locked until charted</h5>
+        <div id="narrowsQs" class="hide">
+          <div class="quiz" data-qid="q6">
+            <div class="qhead">Question 6 · Choosing a Strategy</div>
+            <p class="qstem">You need Claude's help on a task with lots of small, interdependent steps, where each step's output shapes the next. Which approach fits best?</p>
+            <div class="qopts">
+              <button class="qopt" data-correct="true">A. Step-by-step — work through it one exchange at a time, checking each step before moving on</button>
+              <button class="qopt" data-correct="false">B. All-at-once — ask for everything in a single message with no back-and-forth</button>
+            </div>
+            <div class="qfeedback">
+              <p class="fbmain">✅ Correct! When steps depend on each other, working step-by-step lets you catch problems early instead of finding them at the end. All-at-once suits simpler, self-contained tasks.</p>
+              <p class="fbreflect">💭 Apply it to your work: Think of a task you usually ask Claude to do in one big request — would breaking it into steps produce a better result?</p>
+              <textarea class="mono" rows="2" data-f="q6refl" placeholder="Jot a note to yourself (optional)"></textarea>
+            </div>
+          </div>
+          <div class="quiz" data-qid="q7">
+            <div class="qhead">Question 7 · Audience-Specific Deliverables</div>
+            <p class="qstem">You have one research summary and need to brief both your VP (wants the bottom line) and your team (wants the detail). What's the best approach?</p>
+            <div class="qopts">
+              <button class="qopt" data-correct="true">A. Ask Claude to reshape the same source material into two different outputs — one framed for each audience</button>
+              <button class="qopt" data-correct="false">B. Write one generic summary and send it to both audiences unchanged</button>
+            </div>
+            <div class="qfeedback">
+              <p class="fbmain">✅ Correct! The same body of knowledge can produce very different deliverables depending on who's reading it. Reshaping for the audience beats a one-size-fits-all version.</p>
+              <p class="fbreflect">💭 Apply it to your work: What's one piece of work you've created that could be reshaped for a different audience instead of written from scratch again?</p>
+              <textarea class="mono" rows="2" data-f="q7refl" placeholder="Jot a note to yourself (optional)"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acts hide" id="n4"><button class="btn" data-next="4">Continue to solo voyage</button></div>
     </div>
   </section>
 
@@ -599,7 +647,7 @@ const LEG_INFO={
   1:{tag:'Leg 01',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
   2:{tag:'Leg 02',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
   3:{tag:'Leg 03 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
-  4:{tag:'Leg 04',title:'The narrows',blurb:'No course, no quiz — just the pinch point. Read it clean and the solo voyage opens.',reward:'★ 200 XP'},
+  4:{tag:'Leg 04 · Core',title:'The narrows',blurb:'One core course and a two-question mission check before the solo voyage opens.',reward:'★ 200 XP'},
   5:{tag:'Leg 05',title:'Solo voyage',blurb:'Apply it to real work, then report back from the field.',reward:'★ 350 XP'},
   6:{tag:'Final',title:'Hoard found',blurb:'The chart is whole. What did you build with it?',reward:'Complete'}
 };
@@ -654,7 +702,7 @@ const BADGES=[
   {id:'voyager1',icon:'⛵',title:'Voyager',desc:'Charted Voyage One'},
   {id:'twinvoyager',icon:'🌊',title:'Twin Voyager',desc:'Charted both voyages'},
   {id:'sharpshooter',icon:'🎯',title:'Sharpshooter',desc:'Answered 3 questions correctly in a row'},
-  {id:'bonusseeker',icon:'🗺️',title:'Chart Collector',desc:'Explored the Bonus Cove'},
+  {id:'bonusseeker',icon:'🗺️',title:'Chart Collector',desc:'Charted the Core voyage through the Narrows'},
   {id:'narrows',icon:'⚔️',title:'Steady Hands',desc:'Threaded the Narrows'},
   {id:'hoard',icon:'🏴‍☠️',title:'Hoard Finder',desc:'Found the hoard'}
 ];
@@ -690,6 +738,16 @@ function toast(m,k){const d=document.createElement('div');d.className='toast'+(k
   document.getElementById('toasts').appendChild(d);
   setTimeout(()=>{d.style.transition='opacity .4s,transform .4s';d.style.opacity=0;d.style.transform='translateY(10px)';},2200);
   setTimeout(()=>d.remove(),2700);}
+function feedbackPop(correct){
+  const d=document.createElement('div');
+  d.className='fxPop '+(correct?'fxGold':'fxSink');
+  d.innerHTML=correct
+    ?'<span class="fxIcon">💰</span><span>Treasure found — sharp reasoning!</span>'
+    :'<span class="fxIcon">⛵</span><span>Took on water — the crew presses on.</span>';
+  document.body.appendChild(d);
+  setTimeout(()=>d.classList.add('out'),1300);
+  setTimeout(()=>d.remove(),1800);
+}
 function setXp(){document.getElementById('hXp').textContent=S.xp+' XP';updateRank();}
 function addXp(n){S.xp+=n;setXp();toast('+'+n+' XP');save();}
 
@@ -812,6 +870,7 @@ function applyQuizVisual(block,qid){
 function onQuizAnswered(qid,silent){
   if(qid==='q2'||qid==='q3')unlockVoyageTwo(silent);
   if(qid==='q4'||qid==='q5')checkContinue();
+  if(qid==='q6'||qid==='q7')checkNarrowsContinue();
 }
 function unlockVoyageTwo(silent){
   if(!allAnswered(['q2','q3']))return;
@@ -827,6 +886,7 @@ function unlockVoyageTwo(silent){
   if(!silent)toast('Second voyage open',2);
 }
 function checkContinue(){if(S.courses.v2&&allAnswered(['q4','q5']))document.getElementById('n3').classList.remove('hide');}
+function checkNarrowsContinue(){if(S.courses.core3&&allAnswered(['q6','q7']))document.getElementById('n4').classList.remove('hide');}
 function wireQuiz(){
   document.querySelectorAll('.quiz').forEach(q=>{
     const qid=q.dataset.qid;
@@ -837,6 +897,7 @@ function wireQuiz(){
         S.quiz[qid]={sel:btn.textContent.trim()[0],correct};
         applyQuizVisual(q,qid);
         ping(correct?680:300);addXp(20);
+        feedbackPop(correct);
         ev('quiz-answer',qid,correct?'correct':'wrong');
         onQuizAnswered(qid,false);
         if(Object.keys(S.quiz).length===1)awardBadge('weathered',false);
@@ -869,7 +930,14 @@ function markCourse(k,silent){
     if(!silent)toast('Mission Check B open',2);
     awardBadge('twinvoyager',silent);
   }
-  if(k==='bonus')awardBadge('bonusseeker',silent);
+  if(k==='core3'){
+    document.getElementById('narrowsMission').classList.remove('dim');
+    document.getElementById('narrowsMission').querySelector('h5').textContent='Mission Check — answer both to continue';
+    document.getElementById('narrowsQs').classList.remove('hide');
+    checkNarrowsContinue();
+    if(!silent)toast('Mission Check open',2);
+    awardBadge('bonusseeker',silent);
+  }
   save();
 }
 document.querySelectorAll('[data-course]').forEach(b=>b.addEventListener('click',()=>markCourse(b.dataset.course)));
