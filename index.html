@@ -160,10 +160,10 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 .callout p{font-size:13.5px;color:var(--dim);line-height:1.5}
 
 .quiz{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.22);padding:15px 16px;margin-bottom:14px}
-.quiz .qhead{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:6px}
-.quiz .qstem{font-size:14.5px;font-weight:700;margin-bottom:11px;line-height:1.4}
+.quiz .qhead{font-size:11.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:7px}
+.quiz .qstem{font-size:17px;font-weight:700;margin-bottom:13px;line-height:1.45}
 .qopts{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
-.qopt{text-align:left;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:rgba(244,237,225,.03);color:var(--text);font-family:var(--hn);font-size:13px;cursor:pointer;transition:border-color .2s,background .2s}
+.qopt{text-align:left;padding:12px 14px;border-radius:9px;border:1px solid var(--line);background:rgba(244,237,225,.03);color:var(--text);font-family:var(--hn);font-size:15px;cursor:pointer;transition:border-color .2s,background .2s}
 .qopt:hover:not(:disabled){border-color:var(--teal);background:rgba(31,182,201,.08)}
 .qopt:disabled{cursor:default}
 .qopt.correct{border-color:var(--mint);background:rgba(79,232,202,.14);color:var(--mint)}
@@ -189,6 +189,8 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 .dossierCard{position:relative;max-width:440px;width:100%;border:1px solid var(--line);border-radius:16px;
   background:#0C232B;padding:26px 24px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
 .dClose{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--dim);font-size:16px;cursor:pointer}
+.dossierQuick{position:absolute;top:14px;left:14px;display:flex;gap:8px}
+.dossierQuick .libbtn{padding:6px 9px;font-size:13px}
 .dClose:hover{color:var(--text)}
 .dTag{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:8px}
 .dossierCard h3{font-size:20px;margin-bottom:8px}
@@ -299,9 +301,9 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
   <div class="stat"><u>Leg</u><b id="hStep">0/5</b></div>
   <div class="bar"><i id="hBar"></i></div>
-  <button class="libbtn hudBtn" id="badgeBtn">🏅 <span id="badgeCount">0</span>/8</button>
+  <button class="libbtn hudBtn openBadgeBtn" id="badgeBtn">🏅 <span id="badgeCount">0</span>/8</button>
   <button class="libbtn hudBtn peersChip" id="peersBtn"><em></em> Peers</button>
-  <button class="libbtn hudBtn navChip" id="navBtn">🧭 Navigator</button>
+  <button class="libbtn hudBtn navChip openNavBtn" id="navBtn">🧭 Navigator</button>
   <div class="me">
     <div class="who"><b id="meName">—</b><span id="meMail">signed in</span></div>
     <div class="av" id="meAv">—</div>
@@ -535,14 +537,16 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
       <div class="callout" id="comeBack">
         <b>Plan logged. Now go and try it.</b>
         <p>Put it to work on the task you named. When you've had a go — even a half-finished one — come back here and tell us how it went. Your progress is saved, so you can close this page.</p>
-        <div class="acts"><button class="btn mint" id="openReflect">I've tried it — open my reflection</button></div>
+        <div class="acts"><button class="btn mint" id="openReflect">I've tried it — open my reflection</button>
+          <button class="btn ghost" id="editApply1">◀ Edit my plan</button></div>
       </div>
       <div class="panel dim" id="reflectPanel">
         <h5>Reflect — locked until you've applied it</h5>
         <div id="reflectQs" class="hide">
           <label class="q"><i>01</i>What did you try, and how did it go?</label>
           <textarea rows="2" data-f="r1" placeholder="Optional — half-finished counts, or leave blank and still continue"></textarea>
-          <div class="acts"><button class="btn gold" data-next="5">Log my voyage</button></div>
+          <div class="acts"><button class="btn gold" data-next="5">Log my voyage</button>
+            <button class="btn ghost" id="editApply2">◀ Edit my plan</button></div>
         </div>
       </div>
     </div>
@@ -586,6 +590,10 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 <div class="dossierOverlay hide" id="dossierOverlay">
   <div class="dossierCard">
     <button class="dClose" id="dClose">✕</button>
+    <div class="dossierQuick">
+      <button class="libbtn openBadgeBtn" title="Achievements">🏅</button>
+      <button class="libbtn openNavBtn" title="Ask the Navigator">🧭</button>
+    </div>
     <div class="dTag" id="dTag"></div>
     <h3 id="dTitle"></h3>
     <p id="dBlurb"></p>
@@ -728,7 +736,20 @@ function showStage(id){
   el.classList.remove('locked');
   el.classList.add('open');
   if(id===6){const s7=document.getElementById('s7');if(s7&&!s7.classList.contains('locked'))s7.classList.add('open');}
-  window.scrollTo({top:0,behavior:'smooth'});
+  // Scroll to the target stage itself, not the top of the page — with several
+  // collapsed stage headers stacked above it (s1..s4), scrolling to page-top
+  // for a later stage like Solo Voyage left its actual inputs far below the
+  // fold, which read as "the input is locked" when it was really just off-screen.
+  // Header height varies by width (single vs wrapped rows), so the clearance
+  // is measured live rather than hardcoded — a static offset left the sticky
+  // header covering the "Back to the Route" button at some widths.
+  requestAnimationFrame(()=>{
+    const hudH=document.querySelector('.hud').getBoundingClientRect().height;
+    const backBtn=document.getElementById('backToRoute');
+    const backH=backBtn?backBtn.getBoundingClientRect().height+24:0;
+    const targetY=el.getBoundingClientRect().top+window.scrollY-hudH-backH-10;
+    window.scrollTo({top:Math.max(0,targetY),behavior:'smooth'});
+  });
 }
 document.getElementById('backToRoute').addEventListener('click',()=>{ping(420);showMap();});
 
@@ -1011,22 +1032,26 @@ document.querySelectorAll('[data-f]').forEach(t=>{
 });
 
 function doApply(silent){
+  const already=!!S.applied;
   S.applied=true;
   const p=document.getElementById('applyPanel');
-  p.querySelectorAll('textarea').forEach(t=>t.disabled=true);
-  document.getElementById('applyGo').disabled=true;
-  p.querySelector('h5').textContent='Apply — logged';
+  // Never disable the input or the button — a returning learner can always
+  // come back and edit or re-save their answer. XP is awarded once only.
+  document.getElementById('applyGo').textContent='Save again';
+  p.querySelector('h5').textContent='Apply — logged (you can still edit and re-save)';
+  p.classList.add('hide'); // Apply and Reflect are separate, one-at-a-time views
   document.getElementById('comeBack').classList.add('show');
-  if(!silent){ping(700);addXp(150);ev('apply-saved');toast('Plan logged — go and try it',2);
+  document.getElementById('reflectPanel').classList.add('hide');
+  if(!silent){ping(700);if(!already)addXp(150);ev('apply-saved');toast(already?'Answer updated':'Plan logged — go and try it',2);
     setTimeout(()=>document.getElementById('comeBack').scrollIntoView({behavior:'smooth',block:'center'}),200);}
   save();
 }
 function doReflect(silent){
   S.reflectOpen=true;
+  document.getElementById('comeBack').classList.remove('show');
   const p=document.getElementById('reflectPanel');
-  p.classList.remove('dim');p.querySelector('h5').textContent='Reflect — how did it go?';
+  p.classList.remove('dim','hide');p.querySelector('h5').textContent='Reflect — how did it go?';
   document.getElementById('reflectQs').classList.remove('hide');
-  document.getElementById('openReflect').disabled=true;
   if(!silent){ping(640);ev('reflect-opened');setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),180);}
   save();
 }
@@ -1041,6 +1066,14 @@ function doEnroll(silent){
 document.getElementById('nextCourseGo').addEventListener('click',()=>doEnroll());
 document.getElementById('applyGo').addEventListener('click',()=>doApply());
 document.getElementById('openReflect').addEventListener('click',()=>doReflect());
+function reopenApply(){
+  document.getElementById('applyPanel').classList.remove('hide');
+  document.getElementById('comeBack').classList.remove('show');
+  document.getElementById('reflectPanel').classList.add('hide');
+  ping(420);
+}
+document.getElementById('editApply1').addEventListener('click',reopenApply);
+document.getElementById('editApply2').addEventListener('click',reopenApply);
 document.getElementById('pCopy').addEventListener('click',async()=>{ping(500);
   try{await navigator.clipboard.writeText(document.getElementById('pTxt').textContent);toast('Copied — paste it in Claude',2);}
   catch(e){toast('Select and copy above');}});
@@ -1085,12 +1118,10 @@ function peers(){ping(460);ev('peers-click');if(SLACK){window.open(SLACK,'_blank
 document.getElementById('peersBtn').addEventListener('click',peers);
 document.getElementById('slackLink').addEventListener('click',e=>{e.preventDefault();peers();});
 
-document.getElementById('badgeBtn').addEventListener('click',()=>{ping(500);document.getElementById('badgeOverlay').classList.remove('hide');});
-
-document.getElementById('navBtn').addEventListener('click',()=>{
-  ping(500);ev('nav-open');
-  document.getElementById('navOverlay').classList.remove('hide');
-});
+function openBadgeOverlay(){ping(500);document.getElementById('badgeOverlay').classList.remove('hide');}
+function openNavOverlay(){ping(500);ev('nav-open');document.getElementById('navOverlay').classList.remove('hide');}
+document.querySelectorAll('.openBadgeBtn').forEach(b=>b.addEventListener('click',openBadgeOverlay));
+document.querySelectorAll('.openNavBtn').forEach(b=>b.addEventListener('click',openNavOverlay));
 document.getElementById('navClose').addEventListener('click',()=>document.getElementById('navOverlay').classList.add('hide'));
 document.getElementById('navOverlay').addEventListener('click',e=>{if(e.target.id==='navOverlay')document.getElementById('navOverlay').classList.add('hide');});
 document.getElementById('navChart').addEventListener('click',async()=>{
