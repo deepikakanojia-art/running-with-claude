@@ -490,7 +490,8 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
         <div class="meta"><em>Program 3 · Coursera</em>
           <b>Augment &amp; Automate Your Business</b>
           <span>Take automation further — pick up where this voyage leaves off</span></div>
-        <div class="acts"><a class="btn crs" id="nextCourseOpen" data-ev="open-next" target="_blank" rel="noopener" href="#">Enroll ▶</a>
+        <!-- URL taken from the Program 3 site (The Loom), whose core Coursera course card links here — confirm with the program owner before launch -->
+        <div class="acts"><a class="btn crs" id="nextCourseOpen" data-ev="open-next" target="_blank" rel="noopener" href="https://www.coursera.org/learn/betterup-process-automation">Enroll ▶</a>
           <button class="btn ghost" id="nextCourseGo">Enrolled</button></div></div>
       <div class="callout" id="enrollOk"><b>Nice — you're on your way.</b>
         <p>Keep sailing. There's always another chart to mark.</p></div>
@@ -532,8 +533,24 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbwhQ2-lyLIVj--aVVCW3OSHVDc1-N08f02NyLoSZak-bvzYSGx5PUXFyjvsJEgRlm2zmQ/exec';
-const GAME='marked-chart'; // routes data to the "RWC — …" tabs in the shared sheet
-const USER={email:(window.BU_USER&&window.BU_USER.email)||'you@betterup.co'};
+const GAME='marked-chart';
+function resolveEmail(){
+  const WHOAMI_KEY='tmc:whoami';
+  try{
+    const cached=localStorage.getItem(WHOAMI_KEY);
+    if(cached){const w=JSON.parse(cached);
+      if(w&&w.email){const lc=w.email.toLowerCase(); /* normalize case even for a pre-existing mixed-case cache entry */
+        if(lc!==w.email){try{const old=localStorage.getItem('tmc:'+w.email);if(old&&!localStorage.getItem('tmc:'+lc))localStorage.setItem('tmc:'+lc,old);}catch(e){}} /* migrate progress saved under the pre-normalization mixed-case key so it isn't orphaned */
+        return lc;}}
+  }catch(e){}
+  let local=null;
+  try{local=window.prompt("Welcome aboard — what's your BetterUp email? (just the part before @betterup.co, used to save your progress)");}catch(e){}
+  local=local?local.trim().replace(/@.*$/,''):'';
+  const resolved=(local?local+'@betterup.co':'guest+'+Math.random().toString(36).slice(2,8)+'@betterup.co').toLowerCase();
+  try{localStorage.setItem(WHOAMI_KEY,JSON.stringify({email:resolved}));}catch(e){}
+  return resolved;
+}
+const USER={email:String((window.BU_USER&&window.BU_USER.email)||resolveEmail()).toLowerCase()}; /* lowercase even the injected BU_USER path so KEY and isMe always agree on casing */
 
 /* ---------- ambient ---------- */
 (function(){let h='';for(let i=0;i<34;i++){const s=Math.random()*2.4+1.2;
@@ -550,7 +567,7 @@ function ping(f){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)(
 
 /* ---------- state + persistence ---------- */
 const KEY='tmc:'+USER.email;
-const S={pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,reflectOpen:false,mailed:false,badges:{},streak:0};
+const S={pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,applyXpAwarded:false,reflectOpen:false,mailed:false,badges:{},streak:0,libRequested:false,buildLogged:false};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(API)post('save',{state:S});}
 function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));}catch(e){}}
 
@@ -558,7 +575,7 @@ const SESSION=Math.random().toString(36).slice(2,10);
 let visible=0,lastTick=Date.now(),queue=[];
 function ev(type,target,extra){queue.push({email:USER.email,session:SESSION,ts:new Date().toISOString(),type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
 function flush(){if(!queue.length)return;const batch=queue.slice();queue=[];if(!API)return;post('events',{events:batch});}
-function post(action,payload){try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email},payload))});}catch(e){}}
+function post(action,payload){try{fetch(API,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email},payload))});}catch(e){}} /* keepalive so the request survives a refresh/tab-close (e.g. the beforeunload flush) instead of being aborted mid-flight */
 setInterval(()=>{const n=Date.now();if(document.visibilityState==='visible')visible+=n-lastTick;lastTick=n;},1000);
 setInterval(flush,20000);
 document.addEventListener('visibilitychange',()=>{ev(document.visibilityState==='visible'?'focus':'blur');if(document.visibilityState!=='visible')flush();});
@@ -664,7 +681,7 @@ function awardBadge(id,silent){
   const b=BADGES.find(x=>x.id===id);
   renderBadges();
   if(!silent){ping(760);addXp(50);ev('badge',id);toast(`${b.icon} Badge earned — ${b.title}`,1);}
-  save();
+  if(!silent)save(); /* silent = restore() replay, which ends in one consolidated save(); avoids mid-restore POSTs of partially-rebuilt state */
 }
 function updateRank(){
   const title=rankFor(S.xp);
@@ -680,12 +697,42 @@ function toast(m,k){const d=document.createElement('div');d.className='toast'+(k
 function setXp(){document.getElementById('hXp').textContent=S.xp+' XP';updateRank();}
 function addXp(n){S.xp+=n;setXp();toast('+'+n+' XP');save();}
 
-function renderRail(){
-  const sample=[{name:"Salt",xp:640},{name:"Bo'sun J",xp:410},{name:"Half-Moon",xp:260},{name:"Crow",xp:150}];
-  const me={name:S.pirateName||'You',xp:S.xp,me:true};
-  const all=[...sample,me].sort((a,b)=>b.xp-a.xp);
-  document.getElementById('railList').innerHTML=all.map(p=>
-    `<li${p.me?' class="me"':''}><span>${p.name}</span><b>${p.xp} XP</b></li>`).join('');
+const RAIL_FALLBACK=[{name:"Salt",xp:640},{name:"Bo'sun J",xp:410},{name:"Half-Moon",xp:260},{name:"Crow",xp:150}];
+async function fetchLeaderboard(){
+  if(!API)return null;
+  try{
+    const res=await fetch(API+'?action=leaderboard&game='+encodeURIComponent(GAME),{method:'GET'});
+    if(!res.ok)return null;
+    const data=await res.json();
+    return Array.isArray(data)?data:null;
+  }catch(e){return null;}
+}
+function isMe(r){return r.email?r.email.toLowerCase()===USER.email:r.name===(S.pirateName||'You');} /* case-insensitive so a mixed-case backend row still matches */
+let railSeq=0;
+async function renderRail(){
+  const seq=++railSeq; /* refresh() runs this on every advance/map-return — only the most recently started render may draw, so a slow earlier fetch can't clobber a newer one */
+  let rows=await fetchLeaderboard();
+  if(seq!==railSeq)return;
+  const isFallback=!rows; /* null = fetch genuinely failed; a real empty array ([]) is live data and must not be replaced with sample names (same rule as the sister sites) */
+  if(isFallback)rows=RAIL_FALLBACK.slice();
+  const railTag=document.querySelector('#crewRail .railHead span');
+  if(railTag)railTag.textContent=isFallback?'sample data':'live';
+  rows=rows.slice();
+  const mine=rows.find(isMe);
+  if(mine)mine.xp=S.xp;else rows.push({name:S.pirateName||'You',email:USER.email,xp:S.xp}); /* the client's own S.xp is always at least as fresh as a backend row that may predate a pending save (same rule as the sister sites) */
+  rows.sort((a,b)=>(+b.xp||0)-(+a.xp||0));
+  let rank=0,prevXp=null;
+  rows.forEach((r,i)=>{const xp=+r.xp||0;if(prevXp===null||xp!==prevXp)rank=i+1;r.rank=rank;prevXp=xp;}); /* coerce before comparing — backend xp can arrive as a numeric string, which breaks tie-detection under strict !== */
+  const top=rows.slice(0,10);
+  const meRow=rows.find(isMe);
+  let html=top.map(p=>
+    `<li${isMe(p)?' class="me"':''}><span>${p.rank}. ${String(p.name||'').replace(/[<>&]/g,'')}</span><b>${+p.xp||0} XP</b></li>`).join(''); /* coerce xp — backend rows are untrusted JSON and this lands in innerHTML (same fix as the sister sites) */
+  const meTiedInTop=top.length&&meRow&&meRow.rank===top[top.length-1].rank; /* tied with the visible group even though the slice cut them off — not a distinct lower rank (same rule as the sister sites) */
+  if(meRow&&!top.some(isMe)&&!meTiedInTop){
+    html+=`<li class="me" style="border-top:1px dashed var(--line);margin-top:6px;padding-top:10px">`
+      +`<span>${meRow.rank}. ${String(meRow.name||'').replace(/[<>&]/g,'')} (you)</span><b>${+meRow.xp||0} XP</b></li>`;
+  }
+  document.getElementById('railList').innerHTML=html;
 }
 
 function islandMark(x,y,col,big){
@@ -777,7 +824,7 @@ function advance(id,silent){
     if(s7){s7.classList.remove('locked');s7.classList.add('on');}
     if(!silent)toast('Hoard found',1);
     awardBadge('hoard',silent);}
-  refresh();save();
+  if(!silent){refresh();save();} /* silent replay during restore() only reproduces already-saved state; skip re-POSTing it and skip the per-call refresh() (which fires its own leaderboard fetch) — restore() does one consolidated refresh() after the whole replay loop */
   if(!silent)showStage(id+1);
 }
 document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>advance(+b.dataset.next)));
@@ -808,7 +855,7 @@ function onQuizAnswered(qid,silent){
 function unlockVoyageTwo(silent){
   if(!allAnswered(['q2']))return;
   const row=document.getElementById('v2');
-  if(row.classList.contains('ready'))return;
+  if(row.classList.contains('ready')||row.classList.contains('done'))return; /* 'done' means markCourse already completed it — don't re-open/re-enable */
   row.classList.add('ready');
   row.querySelectorAll('button').forEach(x=>x.disabled=false);
   row.querySelector('[data-course]').textContent='Charted';
@@ -843,7 +890,8 @@ function wireQuiz(){
 wireQuiz();
 
 function markCourse(k,silent){
-  const row=document.getElementById(k),b=row.querySelector('[data-course]');
+  const row=document.getElementById(k);if(!row)return; /* guard against a stray/mismatched S.courses key aborting restore() */
+  const b=row.querySelector('[data-course]');
   S.courses[k]=1;row.classList.remove('ready');row.classList.add('done');
   b.textContent='Done';b.disabled=true;
   if(!silent){ping(720);addXp(120);ev('course-done',k);}
@@ -863,12 +911,12 @@ function markCourse(k,silent){
     awardBadge('twinvoyager',silent);
   }
   if(k==='bonus')awardBadge('bonusseeker',silent);
-  save();
+  if(!silent)save(); /* silent replay during restore() only reproduces already-saved state; skip re-POSTing it */
 }
 document.querySelectorAll('[data-course]').forEach(b=>b.addEventListener('click',()=>markCourse(b.dataset.course)));
 
 document.querySelectorAll('[data-f]').forEach(t=>{
-  t.addEventListener('input',()=>{S.fields[t.dataset.f]=t.value;});
+  t.addEventListener('input',()=>{S.fields[t.dataset.f]=t.value;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}); /* local-only persist per keystroke so a refresh before blur doesn't lose the text; backend POST still waits for blur */
   t.addEventListener('blur',()=>{save();ev('field',t.dataset.f);});
 });
 
@@ -879,9 +927,11 @@ function doApply(silent){
   document.getElementById('applyGo').disabled=true;
   p.querySelector('h5').textContent='Apply — logged';
   document.getElementById('comeBack').classList.add('show');
-  if(!silent){ping(700);addXp(150);ev('apply-saved');toast('Plan logged — go and try it',2);
+  if(!silent){ping(700);
+    if(!S.applyXpAwarded){S.applyXpAwarded=true;addXp(150);} /* one-time XP — the Edit-my-plan → re-save loop no longer re-awards +150 each time */
+    ev('apply-saved');toast('Plan logged — go and try it',2);
     setTimeout(()=>document.getElementById('comeBack').scrollIntoView({behavior:'smooth',block:'center'}),200);}
-  save();
+  if(!silent)save(); /* silent replay during restore() only reproduces already-saved state; skip re-POSTing it */
 }
 function doReflect(silent){
   S.reflectOpen=true;
@@ -890,7 +940,7 @@ function doReflect(silent){
   document.getElementById('reflectQs').classList.remove('hide');
   document.getElementById('openReflect').disabled=true;
   if(!silent){ping(640);ev('reflect-opened');setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),180);}
-  save();
+  if(!silent)save();
 }
 function doEnroll(silent){
   S.mailed=true;
@@ -898,7 +948,7 @@ function doEnroll(silent){
   b.disabled=true;b.textContent='Enrolled ✓';
   document.getElementById('enrollOk').classList.add('show');
   if(!silent){ping(720);addXp(100);ev('next-course-enrolled');}
-  save();
+  if(!silent)save();
 }
 function editApply(){
   S.applied=false;
@@ -907,6 +957,12 @@ function editApply(){
   document.getElementById('applyGo').disabled=false;
   p.querySelector('h5').textContent='Apply — before you set off';
   document.getElementById('comeBack').classList.remove('show');
+  /* re-lock Reflect so "Log my voyage" can't complete stage 5 while S.applied is false again */
+  S.reflectOpen=false;
+  const rp=document.getElementById('reflectPanel');
+  rp.classList.add('dim');rp.querySelector('h5').textContent="Reflect — locked until you've applied it";
+  document.getElementById('reflectQs').classList.add('hide');
+  document.getElementById('openReflect').disabled=false;
   ev('apply-edit');save();
   setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),180);
 }
@@ -940,13 +996,15 @@ function drawChart(v){
   document.getElementById('chart').innerHTML=h;
   document.getElementById('edgeTxt').innerHTML=
     `Your growth edge is <b>${DIMS.find(d=>v[d[1]]===lo)[0]}</b>, lowest at ${lo}. `+
-    `Levels: 1–2 pre-pilot · 3 pilot · 4 builder · 5 multiplier. You'll run this again at the end to see the shift.`;
+    `Levels: 1–2 pre-pilot · 3 pilot · 4 builder · 5 multiplier.`;
   document.getElementById('chartWrap').classList.add('show');
 }
 document.getElementById('scoreGo').addEventListener('click',()=>{
   const raw=document.getElementById('scoreIn').value,v=parse(raw),e=document.getElementById('scoreErr');
   if(!v){e.style.display='block';ping(200);ev('range-parse-fail');return;}
-  e.style.display='none';S.range=v;drawChart(v);addXp(100);
+  e.style.display='none';
+  const firstPlot=!S.range; /* XP only on the first plot — 'Re-plot' updates the chart/score without re-awarding */
+  S.range=Object.assign({},v,{raw:raw.trim()});drawChart(v);if(firstPlot)addXp(100); /* persist the raw score line too, so restore() can refill the box (same pattern as the sister sites) */
   document.getElementById('scoreGo').textContent='Re-plot';
   ev('range-saved','',JSON.stringify(v));toast('Bearing plotted',2);
   awardBadge('bearing',false);save();
@@ -960,7 +1018,8 @@ document.getElementById('slackLink').addEventListener('click',e=>{e.preventDefau
 
 document.getElementById('badgeBtn').addEventListener('click',()=>{ping(500);document.getElementById('badgeOverlay').classList.remove('hide');});
 document.getElementById('libEnrollBtn').addEventListener('click',e=>{
-  e.preventDefault();ping(600);addXp(20);
+  e.preventDefault();ping(600);
+  if(!S.libRequested){S.libRequested=true;addXp(20);save();} /* one-time XP — button is otherwise re-clickable to resend the email */
   const body='I would like to enroll in Claude AI Comprehensive Guide.\n\n'
     +'Name: '+(S.pirateName||'')+'\nDate: '
     +new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'\n';
@@ -971,7 +1030,9 @@ document.getElementById('libEnrollBtn').addEventListener('click',e=>{
   toast('Email drafted — check your mail app',2);
 });
 document.querySelector('[data-ev="log-build"]').addEventListener('click',()=>{
-  ping(700);addXp(30);toast('Logged — nice work, pirate 🏴‍☠️',1);
+  ping(700);
+  if(!S.buildLogged){S.buildLogged=true;addXp(30);save();} /* one-time XP — repeat clicks still toast but no longer farm XP */
+  toast('Logged — nice work, pirate 🏴‍☠️',1);
 });
 document.getElementById('badgeClose').addEventListener('click',()=>document.getElementById('badgeOverlay').classList.add('hide'));
 document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target.id==='badgeOverlay')document.getElementById('badgeOverlay').classList.add('hide');});
@@ -979,7 +1040,7 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
 /* ---------- restore ---------- */
 (function restore(){
   load();setXp();setIdentity();renderBadges();
-  if(!S.cleared[3]&&S.courses.v2&&allAnswered(['q4']))S.cleared[3]=1;
+  if(!S.cleared[3]&&S.courses.v2&&allAnswered(['q4'])){S.cleared[3]=1;addXp(XP[3]||400);} /* legacy backfill — award the leg's XP once since it was never earned via a real advance() */
   const done=Object.keys(S.cleared).map(Number).filter(n=>n<=5).sort();
   const saved={...S.cleared};S.cleared={};
   done.forEach(id=>advance(id,true));
@@ -989,10 +1050,19 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
     const block=document.querySelector(`.quiz[data-qid="${qid}"]`);
     if(block)applyQuizVisual(block,qid);
   });
-  Object.keys(S.courses).forEach(k=>markCourse(k,true));
+  /* run quiz-answered effects (incl. unlockVoyageTwo, which sets #v2open's real href) before
+     replaying course completion — markCourse('v2') tags the row 'done', and unlockVoyageTwo
+     bails out early on a 'ready'/'done' row, so completing v1 first left v2's Set Sail anchor
+     permanently href-less/off after any reload where Voyage Two was already charted */
   Object.keys(S.quiz).forEach(qid=>onQuizAnswered(qid,true));
+  Object.keys(S.courses).forEach(k=>markCourse(k,true));
 
-  if(S.range)drawChart(S.range);
+  if(S.range){drawChart(S.range);
+    /* restore the plotted-state UI too (same fix as the sister sites): refill the
+       saved score line and relabel the button, so a reload doesn't show an empty
+       box + 'Plot my bearing' that errors even though a chart is already drawn */
+    const si=document.getElementById('scoreIn');if(si&&S.range.raw)si.value=S.range.raw;
+    const sg=document.getElementById('scoreGo');if(sg)sg.textContent='Re-plot';}
   Object.entries(S.fields).forEach(([k,val])=>{const t=document.querySelector(`[data-f="${k}"]`);if(t)t.value=val;});
   if(S.applied)doApply(true);
   if(S.reflectOpen)doReflect(true);
@@ -1000,7 +1070,7 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
 
   document.getElementById('mapView').classList.remove('hide');
   document.getElementById('stagesView').classList.add('hide');
-  refresh();
+  refresh();save(); /* one consolidated save (covers the cleared[3] backfill above) instead of one POST per silently-replayed step */
   ev('session-start','',done.length?'resumed at leg '+Math.min(done.length+1,6):'first visit');
 
   if(S.pirateName){
