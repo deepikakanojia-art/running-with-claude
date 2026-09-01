@@ -432,7 +432,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 
       <div class="course" id="v2"><span class="dot"></span>
         <div class="meta"><em>Voyage Two · Craft · Learn</em>
-          <b>Start Writing Prompts like a Pro</b>
+          <b>AI Automation with Claude</b>
           <span id="v2s">Coursera · opens once Mission Check A is answered</span></div>
         <div class="acts"><a class="btn crs off" id="v2open" data-ev="open-v2">Set Sail</a>
           <button class="btn ghost" data-course="v2" disabled>Locked</button></div></div>
@@ -965,8 +965,8 @@ function unlockVoyageTwo(silent){
   row.querySelector('[data-course]').textContent='Charted';
   const a=document.getElementById('v2open');
   a.classList.remove('off');a.target='_blank';a.rel='noopener';
-  a.href='https://www.coursera.org/learn/google-start-writing-prompts-like-a-pro';
-  document.getElementById('v2s').textContent='Coursera · builds on Voyage One with hands-on prompt writing';
+  a.href='https://www.coursera.org/learn/ai-for-everyone-ai-automation-with-claude';
+  document.getElementById('v2s').textContent='Coursera · use Claude Projects and RAG to automate repeatable work';
   if(!silent)toast('Second voyage open',2);
 }
 function checkContinue(){if(S.courses.v2&&allAnswered(['q4','q5']))document.getElementById('n3').classList.remove('hide');}
