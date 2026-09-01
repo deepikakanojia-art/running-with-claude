@@ -571,7 +571,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
         <div class="meta"><em>Program 3 · Coursera</em>
           <b>Augment &amp; Automate Your Business</b>
           <span>Take automation further — pick up where this voyage leaves off</span></div>
-        <div class="acts"><a class="btn crs" id="nextCourseOpen" data-ev="open-next" target="_blank" rel="noopener" href="#">Enroll ▶</a>
+        <div class="acts"><a class="btn crs" id="nextCourseOpen" data-ev="open-next" target="_blank" rel="noopener" href="https://coursera.org/programs/automate-augment-your-betterup-business-processes-1iljk">Enroll ▶</a>
           <button class="btn ghost" id="nextCourseGo">Enrolled</button></div></div>
       <div class="callout" id="enrollOk"><b>Nice — you're on your way.</b>
         <p>Keep sailing. There's always another chart to mark.</p></div>
@@ -579,7 +579,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   </section>
 
   <p class="foot">
-    Stuck or curious? <a href="#" id="slackLink">Ask your peers in Slack</a> — channel link coming.<br>
+    Stuck or curious? <a href="https://betterup.enterprise.slack.com/archives/C0BUVGZHFR6" id="slackLink" target="_blank" rel="noopener">Ask your peers in Slack</a>.<br>
     Built by BU L&amp;D. Suggestions or questions: <a href="mailto:bu.learning@betterup.co">bu.learning@betterup.co</a>
     <span class="mono">We track progress and page activity to improve the programme</span>
   </p>
@@ -1113,7 +1113,7 @@ document.getElementById('scoreGo').addEventListener('click',()=>{
   setTimeout(()=>document.getElementById('chartWrap').scrollIntoView({behavior:'smooth',block:'center'}),160);
 });
 
-const SLACK='';
+const SLACK='https://betterup.enterprise.slack.com/archives/C0BUVGZHFR6';
 function peers(){ping(460);ev('peers-click');if(SLACK){window.open(SLACK,'_blank');}else{toast('Slack channel coming soon');}}
 document.getElementById('peersBtn').addEventListener('click',peers);
 document.getElementById('slackLink').addEventListener('click',e=>{e.preventDefault();peers();});

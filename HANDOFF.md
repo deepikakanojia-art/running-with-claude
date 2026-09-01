@@ -10,7 +10,27 @@ Full change history is in `git log`.
 
 ---
 
-## Most recent task: fix Apps Script CORS/auth failure (commit `55fdf84`)
+## Most recent task: wire the real "Ask your peers" Slack link
+
+**What changed:** `const SLACK=''` in `index.html` was a placeholder — `peers()` fell
+back to a "Slack channel coming soon" toast and the footer link pointed at `#` with
+"— channel link coming." text. Set `SLACK` to the real channel URL
+(`https://betterup.enterprise.slack.com/archives/C0BUVGZHFR6`), gave the footer
+`#slackLink` anchor that same real `href` (plus `target="_blank" rel="noopener"`) instead
+of `#`, and dropped the now-stale "channel link coming" text. `twin-voyages.html` doesn't
+have this feature at all, so nothing to change there.
+
+**Note:** the same placeholder existed in the sibling `Augment-sample-` and
+`sample-expand-your-range.` repos (same copy-and-paste feature, `const SLACK=''` with the
+same `// paste the #ai-upskilling link here once the channel exists` comment) — updated
+those to the same URL in the same pass, so all three gamified courses now point at the
+same real Slack channel.
+
+**Verification:** not re-tested in a browser this pass — this is a one-line constant plus
+matching href/text change, not new logic; the `peers()`/`SLACK` gating logic itself was
+already live and working (just pointed nowhere).
+
+## Most recent task before this: fix Apps Script CORS/auth failure (commit `55fdf84`)
 
 **What changed:** `API` in both `index.html` and `twin-voyages.html` pointed
 to a domain-restricted deployment URL
@@ -41,8 +61,6 @@ deployment's access setting was changed to "Anyone."
 
 - **"Enroll in Your Next Course" card** (final leg) still links to `#` —
   no real Coursera URL provided yet for "Augment & Automate Your Business."
-- **"Ask your peers" Slack link** is still a `#` placeholder — needs the real
-  channel URL.
 - **Quiz question presentation** — a request to restructure Mission Check
   questions into one-at-a-time popups (vs. current stacked-in-panel layout)
   was explicitly deferred pre-launch, at the requester's instruction, to
