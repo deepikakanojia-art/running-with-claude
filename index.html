@@ -58,15 +58,14 @@ body{font-family:var(--hn);background:var(--bg);color:var(--text);min-height:100
 .bar>i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--deepteal),var(--teal) 55%,var(--mint));box-shadow:0 0 16px rgba(31,182,201,.8);transition:width .8s cubic-bezier(.2,.9,.2,1)}
 .libbtn{font-size:11px;color:var(--dim);text-decoration:none;border:1px solid var(--line);padding:7px 11px;border-radius:8px;white-space:nowrap;font-family:var(--mono);letter-spacing:.05em}
 .libbtn:hover{color:var(--text);border-color:var(--teal)}
-.me{display:flex;align-items:center;gap:9px;margin-left:auto;max-width:220px;flex-shrink:1;min-width:0}
-.me .who{text-align:right;line-height:1.25;min-width:0;overflow:hidden}
-.me .who b,.me .who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.me{display:flex;align-items:center;gap:9px;margin-left:auto}
+.me .who{text-align:right;line-height:1.25}
 .me .who b{display:block;font-size:12px;font-weight:700}
 .me .who span{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.1em}
 .av{width:36px;height:36px;flex:0 0 36px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:12.5px;font-weight:700;color:#052A23;background:linear-gradient(145deg,var(--teal),var(--deepteal));box-shadow:0 0 18px rgba(31,182,201,.5);border:1px solid rgba(140,220,230,.5)}
 
 /* ===== layout ===== */
-.wrap{position:relative;z-index:10;max-width:1060px;margin:0 auto;padding:24px 18px 150px}
+.wrap{position:relative;z-index:10;max-width:1060px;margin:0 auto;padding:24px 18px 96px}
 h1.title{font-size:clamp(30px,5.6vw,54px);font-weight:700;line-height:1.02;letter-spacing:-.025em;margin-bottom:6px}
 h1.title em{font-style:normal;color:var(--teal);text-shadow:0 0 30px rgba(31,182,201,.55)}
 .programTag{display:inline-block;font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;
@@ -160,10 +159,10 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 .callout p{font-size:13.5px;color:var(--dim);line-height:1.5}
 
 .quiz{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.22);padding:15px 16px;margin-bottom:14px}
-.quiz .qhead{font-size:11.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:7px}
-.quiz .qstem{font-size:17px;font-weight:700;margin-bottom:13px;line-height:1.45}
+.quiz .qhead{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:6px}
+.quiz .qstem{font-size:14.5px;font-weight:700;margin-bottom:11px;line-height:1.4}
 .qopts{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
-.qopt{text-align:left;padding:12px 14px;border-radius:9px;border:1px solid var(--line);background:rgba(244,237,225,.03);color:var(--text);font-family:var(--hn);font-size:15px;cursor:pointer;transition:border-color .2s,background .2s}
+.qopt{text-align:left;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:rgba(244,237,225,.03);color:var(--text);font-family:var(--hn);font-size:13px;cursor:pointer;transition:border-color .2s,background .2s}
 .qopt:hover:not(:disabled){border-color:var(--teal);background:rgba(31,182,201,.08)}
 .qopt:disabled{cursor:default}
 .qopt.correct{border-color:var(--mint);background:rgba(79,232,202,.14);color:var(--mint)}
@@ -189,8 +188,6 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 .dossierCard{position:relative;max-width:440px;width:100%;border:1px solid var(--line);border-radius:16px;
   background:#0C232B;padding:26px 24px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
 .dClose{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--dim);font-size:16px;cursor:pointer}
-.dossierQuick{position:absolute;top:14px;left:14px;display:flex;gap:8px}
-.dossierQuick .libbtn{padding:6px 9px;font-size:13px}
 .dClose:hover{color:var(--text)}
 .dTag{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--teal);margin-bottom:8px}
 .dossierCard h3{font-size:20px;margin-bottom:8px}
@@ -203,10 +200,10 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   border:1px solid rgba(31,182,201,.35);overflow:hidden}
 .seaRadar::before{content:"";position:absolute;inset:22%;border-radius:50%;border:1px solid rgba(31,182,201,.3)}
 .seaRadar::after{content:"";position:absolute;inset:44%;border-radius:50%;border:1px solid rgba(31,182,201,.25)}
-.radarGlow{position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,rgba(31,182,201,.4),transparent 60%);
-  animation:radarPulse 2.8s ease-in-out infinite}
-@keyframes radarPulse{0%,100%{opacity:.35}50%{opacity:.75}}
+.radarSweep{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(31,182,201,.5),transparent 32%);
+  animation:radarSweep 3.4s linear infinite}
+@keyframes radarSweep{to{transform:rotate(360deg)}}
 .radarRing{position:absolute;inset:0;border-radius:50%;border:1px solid var(--teal);opacity:0;animation:radarRingOut 2.6s ease-out infinite}
 .radarRing.r2{animation-delay:1.3s}
 @keyframes radarRingOut{0%{transform:scale(.3);opacity:.7}100%{transform:scale(1.05);opacity:0}}
@@ -227,47 +224,16 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 .badgeRow b{display:block;font-size:13px}
 .badgeRow span{font-size:11.5px;color:var(--dim)}
 
-/* Peers/Navigator live in the header's normal flex flow now (R3 structural
-   fix) — they can't overlap other content by construction, since flex-wrap
-   just pushes them to a new row instead of floating over anything. */
-.hudBtn{cursor:pointer}
-.peersChip em{font-style:normal;width:8px;height:8px;border-radius:50%;background:var(--mint);
-  box-shadow:0 0 12px var(--mint);display:inline-block;margin-right:2px}
-.navChip{border-color:rgba(255,199,0,.5)!important;color:var(--gold)}
-.navChip:hover{border-color:var(--gold)}
+.peers{position:fixed;left:20px;bottom:22px;z-index:85;display:inline-flex;align-items:center;gap:9px;padding:12px 17px;border-radius:99px;cursor:pointer;border:1px solid rgba(217,166,108,.5);background:rgba(18,40,46,.9);backdrop-filter:blur(12px);color:var(--text);font-family:var(--hn);font-size:13px;font-weight:700;box-shadow:0 0 26px rgba(217,166,108,.3);transition:transform .07s,box-shadow .25s}
+.peers:hover{box-shadow:0 0 36px rgba(217,166,108,.55)}
+.peers:active{transform:translateY(2px)}
+.peers em{font-style:normal;width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint)}
 
 .toasts{position:fixed;right:20px;bottom:22px;z-index:90;display:flex;flex-direction:column;gap:9px}
-/* Below ~1060px, bottom-right can collide with in-flow content (confirmed by
-   testing) — toasts dock to the top instead, which is always clear since
-   nothing else is fixed/sticky there beyond the header itself. */
-@media (max-width:1060px){
-  .toasts{top:120px;right:8px;left:8px;bottom:auto;align-items:center}
-}
-@media (max-width:600px){
-  .toasts{top:224px} /* header wraps to two lines below this width — sit under it, not over it */
-}
-@media (max-width:400px){
-  .toasts{top:274px} /* header wraps to three lines at this width — measured live, not guessed */
-}
 .toast{padding:12px 18px;border-radius:11px;font-weight:700;font-size:12.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;background:linear-gradient(180deg,rgba(31,182,201,.96),rgba(11,110,122,.96));border:1px solid rgba(140,220,230,.6);box-shadow:0 0 32px rgba(31,182,201,.6);animation:pop .35s cubic-bezier(.2,1.4,.3,1)}
 .toast.m{background:linear-gradient(180deg,rgba(79,232,202,.96),rgba(20,160,135,.96));border-color:rgba(150,255,235,.65);color:#052A23}
 .toast.g{background:linear-gradient(180deg,rgba(255,218,92,.97),rgba(200,150,0,.97));border-color:rgba(255,240,180,.7);color:#2A2000}
 @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:none}}
-
-.fxPop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:120;
-  display:flex;align-items:center;gap:12px;padding:16px 24px;border-radius:14px;
-  font-family:var(--hn);font-weight:700;font-size:14px;color:var(--text);
-  background:rgba(4,14,19,.94);border:1px solid var(--line);box-shadow:0 24px 70px -12px rgba(0,0,0,.65);
-  animation:fxIn .3s cubic-bezier(.2,1.4,.3,1);pointer-events:none;max-width:88vw}
-.fxPop.out{animation:fxOut .5s ease-in forwards}
-@keyframes fxIn{from{opacity:0;transform:translate(-50%,-50%) scale(.85)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-@keyframes fxOut{to{opacity:0;transform:translate(-50%,-50%) scale(.9)}}
-.fxPop.fxGold{border-color:rgba(255,199,0,.5)}
-.fxPop.fxGold .fxIcon{font-size:30px;display:inline-block;animation:fxBounce .55s ease-in-out infinite alternate}
-@keyframes fxBounce{to{transform:translateY(-5px) scale(1.12)}}
-.fxPop.fxSink{border-color:rgba(31,182,201,.4)}
-.fxPop.fxSink .fxIcon{font-size:26px;display:inline-block;animation:fxShipSink 1.3s ease-in forwards}
-@keyframes fxShipSink{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(16px) rotate(20deg);opacity:.25}}
 
 .foot{margin-top:30px;text-align:center;font-size:11px;color:var(--dim);line-height:1.8}
 .foot a{color:var(--sand);text-decoration:none}
@@ -301,9 +267,9 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
   <div class="stat"><u>Leg</u><b id="hStep">0/5</b></div>
   <div class="bar"><i id="hBar"></i></div>
-  <button class="libbtn hudBtn openBadgeBtn" id="badgeBtn">🏅 <span id="badgeCount">0</span>/8</button>
-  <button class="libbtn hudBtn peersChip" id="peersBtn"><em></em> Peers</button>
-  <button class="libbtn hudBtn navChip openNavBtn" id="navBtn">🧭 Navigator</button>
+  <button class="libbtn" id="badgeBtn" style="cursor:pointer">🏅 <span id="badgeCount">0</span>/8</button>
+  <a class="libbtn" href="https://www.coursera.org" target="_blank" rel="noopener">📖 Captain's Library</a>
+  <a class="libbtn" href="#" id="libEnrollBtn">✉ Request Enrollment</a>
   <div class="me">
     <div class="who"><b id="meName">—</b><span id="meMail">signed in</span></div>
     <div class="av" id="meAv">—</div>
@@ -323,7 +289,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
     </div>
 
     <div class="rail" id="crewRail">
-      <div class="railHead">Crew Rankings <span id="railTag">Preview — live once the game launches</span></div>
+      <div class="railHead">Crew Rankings <span>sample data</span></div>
       <ul class="railList" id="railList"></ul>
     </div>
   </div>
@@ -385,7 +351,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
     <div class="body">
       <div class="seaRadar" aria-hidden="true">
         <div class="radarRing"></div><div class="radarRing r2"></div>
-        <div class="radarGlow"></div>
+        <div class="radarSweep"></div>
         <div class="radarShip">⛵</div>
         <div class="radarBlip"></div>
         <div class="radarIsland">🏝️</div>
@@ -414,25 +380,12 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
               <textarea class="mono" rows="2" data-f="q2refl" placeholder="Jot a note to yourself (optional)"></textarea>
             </div>
           </div>
-          <div class="quiz" data-qid="q3">
-            <div class="qhead">Question 3 · Role + Goal + Tone</div>
-            <p class="qstem">Why include a role, goal, and tone in a prompt?</p>
-            <div class="qopts">
-              <button class="qopt" data-correct="true">A. To give Claude clearer instructions about the task and the response you want</button>
-              <button class="qopt" data-correct="false">B. To make Claude respond faster</button>
-            </div>
-            <div class="qfeedback">
-              <p class="fbmain">✅ Correct! Role, goal, and tone make your instructions clearer. Example — Role: Act as an L&amp;D instructional designer. Goal: Create 5 formative assessment questions. Tone: Simple and encouraging.</p>
-              <p class="fbreflect">💭 Apply it to your work: Think of one prompt you regularly use. How could you add a role, goal, or tone to make it clearer?</p>
-              <textarea class="mono" rows="2" data-f="q3refl" placeholder="Jot a note to yourself (optional)"></textarea>
-            </div>
-          </div>
         </div>
       </div>
 
       <div class="course" id="v2"><span class="dot"></span>
         <div class="meta"><em>Voyage Two · Craft · Learn</em>
-          <b>AI Automation with Claude</b>
+          <b>AI Collaboration with Claude</b>
           <span id="v2s">Coursera · opens once Mission Check A is answered</span></div>
         <div class="acts"><a class="btn crs off" id="v2open" data-ev="open-v2">Set Sail</a>
           <button class="btn ghost" data-course="v2" disabled>Locked</button></div></div>
@@ -453,21 +406,15 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
               <textarea class="mono" rows="2" data-f="q4refl" placeholder="Jot a note to yourself (optional)"></textarea>
             </div>
           </div>
-          <div class="quiz" data-qid="q5">
-            <div class="qhead">Question 5 · Skeptical Prompting</div>
-            <p class="qstem">What is the purpose of a skeptical prompt?</p>
-            <div class="qopts">
-              <button class="qopt" data-correct="true">A. To ask Claude to challenge your idea and identify weaknesses or risks</button>
-              <button class="qopt" data-correct="false">B. To make Claude disagree with everything you say</button>
-            </div>
-            <div class="qfeedback">
-              <p class="fbmain">✅ Correct! A skeptical prompt helps you stress-test your thinking. Example: "Act as a skeptical reviewer. Look at this onboarding plan and identify the 5 biggest risks or gaps I may have missed."</p>
-              <p class="fbreflect">💭 Apply it to your work: What idea, plan, or deliverable in your current work could benefit from Claude challenging it before you move forward?</p>
-              <textarea class="mono" rows="2" data-f="q5refl" placeholder="Jot a note to yourself (optional)"></textarea>
-            </div>
-          </div>
         </div>
       </div>
+
+      <div class="course ready" id="bonus"><span class="dot"></span>
+        <div class="meta"><em>Bonus Cove · optional</em>
+          <b>AI Automation with Claude</b>
+          <span>Coursera · recommended — not required to continue</span></div>
+        <div class="acts"><a class="btn crs" id="bonusopen" data-ev="open-bonus" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-automation-with-claude">Set Sail</a>
+          <button class="btn ghost" data-course="bonus">Charted</button></div></div>
 
       <div class="acts hide" id="n3"><button class="btn" data-next="3">Both voyages charted — continue</button></div>
     </div>
@@ -476,49 +423,22 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <section class="stage locked" id="s4">
     <div class="sh"><div class="node">04</div>
       <div><h3>The narrows</h3><p>Core — steady hands through the pinch point</p></div>
-      <span class="tag">core</span></div>
+      <span class="tag">gate</span></div>
     <div class="body">
-      <p style="font-size:13.5px;color:var(--dim);line-height:1.55;margin-bottom:14px">One more course before the solo voyage — this one builds on what the twin voyages taught you.</p>
-
-      <div class="course ready" id="core3"><span class="dot"></span>
-        <div class="meta"><em>Core · Coursera</em>
-          <b>AI Collaboration with Claude</b>
-          <span>Choosing a prompting strategy for the situation, and shaping one body of knowledge for different audiences</span></div>
-        <div class="acts"><a class="btn crs" id="core3open" data-ev="open-core3" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-collaboration-with-claude">Set Sail</a>
-          <button class="btn ghost" data-course="core3">Charted</button></div></div>
-
-      <div class="panel dim" id="narrowsMission">
-        <h5>Mission Check — locked until charted</h5>
-        <div id="narrowsQs" class="hide">
-          <div class="quiz" data-qid="q6">
-            <div class="qhead">Question 6 · Choosing a Strategy</div>
-            <p class="qstem">You need Claude's help on a task with lots of small, interdependent steps, where each step's output shapes the next. Which approach fits best?</p>
-            <div class="qopts">
-              <button class="qopt" data-correct="true">A. Step-by-step — work through it one exchange at a time, checking each step before moving on</button>
-              <button class="qopt" data-correct="false">B. All-at-once — ask for everything in a single message with no back-and-forth</button>
-            </div>
-            <div class="qfeedback">
-              <p class="fbmain">✅ Correct! When steps depend on each other, working step-by-step lets you catch problems early instead of finding them at the end. All-at-once suits simpler, self-contained tasks.</p>
-              <p class="fbreflect">💭 Apply it to your work: Think of a task you usually ask Claude to do in one big request — would breaking it into steps produce a better result?</p>
-              <textarea class="mono" rows="2" data-f="q6refl" placeholder="Jot a note to yourself (optional)"></textarea>
-            </div>
-          </div>
-          <div class="quiz" data-qid="q7">
-            <div class="qhead">Question 7 · Audience-Specific Deliverables</div>
-            <p class="qstem">You have one research summary and need to brief both your VP (wants the bottom line) and your team (wants the detail). What's the best approach?</p>
-            <div class="qopts">
-              <button class="qopt" data-correct="true">A. Ask Claude to reshape the same source material into two different outputs — one framed for each audience</button>
-              <button class="qopt" data-correct="false">B. Write one generic summary and send it to both audiences unchanged</button>
-            </div>
-            <div class="qfeedback">
-              <p class="fbmain">✅ Correct! The same body of knowledge can produce very different deliverables depending on who's reading it. Reshaping for the audience beats a one-size-fits-all version.</p>
-              <p class="fbreflect">💭 Apply it to your work: What's one piece of work you've created that could be reshaped for a different audience instead of written from scratch again?</p>
-              <textarea class="mono" rows="2" data-f="q7refl" placeholder="Jot a note to yourself (optional)"></textarea>
-            </div>
-          </div>
+      <p style="font-size:13.5px;color:var(--dim);line-height:1.55;margin-bottom:14px">No course here — just one question stands between you and the solo voyage.</p>
+      <div class="quiz" data-qid="q5">
+        <div class="qhead">Question 5 · Skeptical Prompting</div>
+        <p class="qstem">What is the purpose of a skeptical prompt?</p>
+        <div class="qopts">
+          <button class="qopt" data-correct="true">A. To ask Claude to challenge your idea and identify weaknesses or risks</button>
+          <button class="qopt" data-correct="false">B. To make Claude disagree with everything you say</button>
+        </div>
+        <div class="qfeedback">
+          <p class="fbmain">✅ Correct! A skeptical prompt helps you stress-test your thinking. Example: "Act as a skeptical reviewer. Look at this onboarding plan and identify the 5 biggest risks or gaps I may have missed."</p>
+          <p class="fbreflect">💭 Apply it to your work: What idea, plan, or deliverable in your current work could benefit from Claude challenging it before you move forward?</p>
+          <textarea class="mono" rows="2" data-f="q5refl" placeholder="Jot a note to yourself (optional)"></textarea>
         </div>
       </div>
-
       <div class="acts hide" id="n4"><button class="btn" data-next="4">Continue to solo voyage</button></div>
     </div>
   </section>
@@ -531,22 +451,21 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
       <div class="panel" id="applyPanel">
         <h5>Apply — before you set off</h5>
         <label class="q"><i>01</i>What's one thing from these courses you'll use in your work this week?</label>
-        <textarea rows="2" data-f="a1" placeholder="Optional — you can leave this blank and still continue"></textarea>
+        <textarea rows="2" data-f="a1"></textarea>
         <div class="acts"><button class="btn" id="applyGo">Save and set off</button></div>
       </div>
       <div class="callout" id="comeBack">
         <b>Plan logged. Now go and try it.</b>
         <p>Put it to work on the task you named. When you've had a go — even a half-finished one — come back here and tell us how it went. Your progress is saved, so you can close this page.</p>
         <div class="acts"><button class="btn mint" id="openReflect">I've tried it — open my reflection</button>
-          <button class="btn ghost" id="editApply1">◀ Edit my plan</button></div>
+          <button class="btn ghost" id="editApply">Edit my plan</button></div>
       </div>
       <div class="panel dim" id="reflectPanel">
         <h5>Reflect — locked until you've applied it</h5>
         <div id="reflectQs" class="hide">
           <label class="q"><i>01</i>What did you try, and how did it go?</label>
-          <textarea rows="2" data-f="r1" placeholder="Optional — half-finished counts, or leave blank and still continue"></textarea>
-          <div class="acts"><button class="btn gold" data-next="5">Log my voyage</button>
-            <button class="btn ghost" id="editApply2">◀ Edit my plan</button></div>
+          <textarea rows="2" data-f="r1" placeholder="Half-finished counts."></textarea>
+          <div class="acts"><button class="btn gold" data-next="5">Log my voyage</button></div>
         </div>
       </div>
     </div>
@@ -571,7 +490,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
         <div class="meta"><em>Program 3 · Coursera</em>
           <b>Augment &amp; Automate Your Business</b>
           <span>Take automation further — pick up where this voyage leaves off</span></div>
-        <div class="acts"><a class="btn crs" id="nextCourseOpen" data-ev="open-next" target="_blank" rel="noopener" href="https://coursera.org/programs/automate-augment-your-betterup-business-processes-1iljk">Enroll ▶</a>
+        <div class="acts"><a class="btn crs" id="nextCourseOpen" data-ev="open-next" target="_blank" rel="noopener" href="#">Enroll ▶</a>
           <button class="btn ghost" id="nextCourseGo">Enrolled</button></div></div>
       <div class="callout" id="enrollOk"><b>Nice — you're on your way.</b>
         <p>Keep sailing. There's always another chart to mark.</p></div>
@@ -579,41 +498,24 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   </section>
 
   <p class="foot">
-    Stuck or curious? <a href="https://betterup.enterprise.slack.com/archives/C0BUVGZHFR6" id="slackLink" target="_blank" rel="noopener">Ask your peers in Slack</a>.<br>
+    Stuck or curious? <a href="#" id="slackLink">Ask your peers in Slack</a><br>
     Built by BU L&amp;D. Suggestions or questions: <a href="mailto:bu.learning@betterup.co">bu.learning@betterup.co</a>
     <span class="mono">We track progress and page activity to improve the programme</span>
   </p>
   </div><!-- /stagesView -->
 </main>
+
+<button class="peers" id="peersBtn"><em></em> Ask your peers</button>
 </div><!-- /gameRoot -->
 
 <div class="dossierOverlay hide" id="dossierOverlay">
   <div class="dossierCard">
     <button class="dClose" id="dClose">✕</button>
-    <div class="dossierQuick">
-      <button class="libbtn openBadgeBtn" title="Achievements">🏅</button>
-      <button class="libbtn openNavBtn" title="Ask the Navigator">🧭</button>
-    </div>
     <div class="dTag" id="dTag"></div>
     <h3 id="dTitle"></h3>
     <p id="dBlurb"></p>
     <div class="dReward" id="dReward"></div>
     <button class="btn" id="dBegin">Begin ▶</button>
-  </div>
-</div>
-
-<div class="dossierOverlay hide" id="navOverlay">
-  <div class="dossierCard" style="max-width:480px">
-    <button class="dClose" id="navClose">✕</button>
-    <div class="dTag">🧭 Ask the Navigator</div>
-    <h3>Lost your bearings?</h3>
-    <p>Write what's confusing you, then take it to your own Claude.</p>
-    <textarea class="mono" id="navQ" rows="4" placeholder="What are you stuck on?" style="margin-bottom:14px"></textarea>
-    <div class="acts">
-      <button class="btn gold" id="navChart">Chart it for Claude</button>
-      <a class="btn crs" id="navOpenClaude" href="https://claude.ai" target="_blank" rel="noopener">Open Claude ↗</a>
-    </div>
-    <p style="font-size:12px;color:var(--dim);margin-top:14px">Paste it in, ask away, come back anytime — your progress is saved.</p>
   </div>
 </div>
 
@@ -630,22 +532,8 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbwhQ2-lyLIVj--aVVCW3OSHVDc1-N08f02NyLoSZak-bvzYSGx5PUXFyjvsJEgRlm2zmQ/exec';
-const GAME='marked-chart';
-function resolveEmail(){
-  const WHOAMI_KEY='tmc:whoami';
-  try{
-    const cached=localStorage.getItem(WHOAMI_KEY);
-    if(cached){const w=JSON.parse(cached);if(w&&w.email)return w.email;}
-  }catch(e){}
-  let local=null;
-  try{local=window.prompt("Welcome aboard — what's your BetterUp email? (just the part before @betterup.co, used to save your progress)");}catch(e){}
-  local=local?local.trim().replace(/@.*$/,''):'';
-  const resolved=local?local+'@betterup.co':'guest+'+Math.random().toString(36).slice(2,8)+'@betterup.co';
-  try{localStorage.setItem(WHOAMI_KEY,JSON.stringify({email:resolved}));}catch(e){}
-  return resolved;
-}
-const USER={email:(window.BU_USER&&window.BU_USER.email)||resolveEmail()};
-USER.name=(window.BU_USER&&window.BU_USER.name)||USER.email.split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+const GAME='marked-chart'; // routes data to the "RWC — …" tabs in the shared sheet
+const USER={email:(window.BU_USER&&window.BU_USER.email)||'you@betterup.co'};
 
 /* ---------- ambient ---------- */
 (function(){let h='';for(let i=0;i<34;i++){const s=Math.random()*2.4+1.2;
@@ -654,7 +542,11 @@ USER.name=(window.BU_USER&&window.BU_USER.name)||USER.email.split('@')[0].replac
 (function(){let h='';for(let i=0;i<90;i++){h+=`<circle cx="${Math.random()*100}%" cy="${Math.random()*56}%" r="${Math.random()*1.3+.3}" fill="#F4EDE1" style="animation-delay:-${Math.random()*5}s"/>`;}
   document.querySelector('.stars').innerHTML=h;})();
 
-function ping(f){/* deliberate no-op — no sound. Call sites throughout the file depend on this existing, so it stays as a stub. */}
+let ac=null;
+function ping(f){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+  const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f||520;
+  g.gain.setValueAtTime(.05,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0008,ac.currentTime+.13);
+  o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.14);}catch(e){}}
 
 /* ---------- state + persistence ---------- */
 const KEY='tmc:'+USER.email;
@@ -664,9 +556,9 @@ function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.
 
 const SESSION=Math.random().toString(36).slice(2,10);
 let visible=0,lastTick=Date.now(),queue=[];
-function ev(type,target,extra){queue.push({ts:new Date().toISOString(),email:USER.email,name:USER.name,session:SESSION,type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
-function flush(){if(!queue.length)return;if(!API){queue=[];return;}const batch=queue.slice();queue=[];post('events',{events:batch});}
-function post(action,payload){if(!API)return;try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email,name:USER.name,session:SESSION},payload))});}catch(e){}}
+function ev(type,target,extra){queue.push({email:USER.email,session:SESSION,ts:new Date().toISOString(),type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
+function flush(){if(!queue.length)return;const batch=queue.slice();queue=[];if(!API)return;post('events',{events:batch});}
+function post(action,payload){try{fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email},payload))});}catch(e){}}
 setInterval(()=>{const n=Date.now();if(document.visibilityState==='visible')visible+=n-lastTick;lastTick=n;},1000);
 setInterval(flush,20000);
 document.addEventListener('visibilitychange',()=>{ev(document.visibilityState==='visible'?'focus':'blur');if(document.visibilityState!=='visible')flush();});
@@ -696,7 +588,7 @@ const LEG_INFO={
   1:{tag:'Leg 01',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
   2:{tag:'Leg 02',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
   3:{tag:'Leg 03 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
-  4:{tag:'Leg 04 · Core',title:'The narrows',blurb:'One core course and a two-question mission check before the solo voyage opens.',reward:'★ 200 XP'},
+  4:{tag:'Leg 04',title:'The narrows',blurb:'No course, one question — clear it and the solo voyage opens.',reward:'★ 200 XP'},
   5:{tag:'Leg 05',title:'Solo voyage',blurb:'Apply it to real work, then report back from the field.',reward:'★ 350 XP'},
   6:{tag:'Final',title:'Hoard found',blurb:'The chart is whole. What did you build with it?',reward:'Complete'}
 };
@@ -714,7 +606,6 @@ document.getElementById('dClose').addEventListener('click',closeDossier);
 document.getElementById('dossierOverlay').addEventListener('click',e=>{if(e.target.id==='dossierOverlay')closeDossier();});
 document.getElementById('dBegin').addEventListener('click',()=>{
   const id=+document.getElementById('dossierOverlay').dataset.go;
-  if(id===3){ev('dossier-begin','twin-voyages.html');window.location.href='twin-voyages.html';return;}
   closeDossier();
   showStage(id);
   ev('dossier-begin','s'+id);
@@ -735,21 +626,7 @@ function showStage(id){
   document.querySelectorAll('.stage').forEach(s=>s.classList.remove('open'));
   el.classList.remove('locked');
   el.classList.add('open');
-  if(id===6){const s7=document.getElementById('s7');if(s7&&!s7.classList.contains('locked'))s7.classList.add('open');}
-  // Scroll to the target stage itself, not the top of the page — with several
-  // collapsed stage headers stacked above it (s1..s4), scrolling to page-top
-  // for a later stage like Solo Voyage left its actual inputs far below the
-  // fold, which read as "the input is locked" when it was really just off-screen.
-  // Header height varies by width (single vs wrapped rows), so the clearance
-  // is measured live rather than hardcoded — a static offset left the sticky
-  // header covering the "Back to the Route" button at some widths.
-  requestAnimationFrame(()=>{
-    const hudH=document.querySelector('.hud').getBoundingClientRect().height;
-    const backBtn=document.getElementById('backToRoute');
-    const backH=backBtn?backBtn.getBoundingClientRect().height+24:0;
-    const targetY=el.getBoundingClientRect().top+window.scrollY-hudH-backH-10;
-    window.scrollTo({top:Math.max(0,targetY),behavior:'smooth'});
-  });
+  el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 document.getElementById('backToRoute').addEventListener('click',()=>{ping(420);showMap();});
 
@@ -764,7 +641,7 @@ const BADGES=[
   {id:'voyager1',icon:'⛵',title:'Voyager',desc:'Charted Voyage One'},
   {id:'twinvoyager',icon:'🌊',title:'Twin Voyager',desc:'Charted both voyages'},
   {id:'sharpshooter',icon:'🎯',title:'Sharpshooter',desc:'Answered 3 questions correctly in a row'},
-  {id:'bonusseeker',icon:'🗺️',title:'Chart Collector',desc:'Charted the Core voyage through the Narrows'},
+  {id:'bonusseeker',icon:'🗺️',title:'Chart Collector',desc:'Explored the Bonus Cove'},
   {id:'narrows',icon:'⚔️',title:'Steady Hands',desc:'Threaded the Narrows'},
   {id:'hoard',icon:'🏴‍☠️',title:'Hoard Finder',desc:'Found the hoard'}
 ];
@@ -800,42 +677,15 @@ function toast(m,k){const d=document.createElement('div');d.className='toast'+(k
   document.getElementById('toasts').appendChild(d);
   setTimeout(()=>{d.style.transition='opacity .4s,transform .4s';d.style.opacity=0;d.style.transform='translateY(10px)';},2200);
   setTimeout(()=>d.remove(),2700);}
-function feedbackPop(correct){
-  const d=document.createElement('div');
-  d.className='fxPop '+(correct?'fxGold':'fxSink');
-  d.innerHTML=correct
-    ?'<span class="fxIcon">💰</span><span>Treasure found — sharp reasoning!</span>'
-    :'<span class="fxIcon">⛵</span><span>Took on water — the crew presses on.</span>';
-  document.body.appendChild(d);
-  setTimeout(()=>d.classList.add('out'),1300);
-  setTimeout(()=>d.remove(),1800);
-}
 function setXp(){document.getElementById('hXp').textContent=S.xp+' XP';updateRank();}
 function addXp(n){S.xp+=n;setXp();toast('+'+n+' XP');save();}
 
-let railLive=null; // null=not loaded yet, array=live data from the sheet
 function renderRail(){
+  const sample=[{name:"Salt",xp:640},{name:"Bo'sun J",xp:410},{name:"Half-Moon",xp:260},{name:"Crow",xp:150}];
   const me={name:S.pirateName||'You',xp:S.xp,me:true};
-  const base=Array.isArray(railLive)?railLive:
-    [{name:"Salt",xp:640},{name:"Bo'sun J",xp:410},{name:"Half-Moon",xp:260},{name:"Crow",xp:150}];
-  const all=[...base,me].sort((a,b)=>b.xp-a.xp).slice(0,10);
+  const all=[...sample,me].sort((a,b)=>b.xp-a.xp);
   document.getElementById('railList').innerHTML=all.map(p=>
     `<li${p.me?' class="me"':''}><span>${p.name}</span><b>${p.xp} XP</b></li>`).join('');
-}
-async function loadLeaderboard(){
-  if(!API)return; // no backend configured yet — stay on the Preview fallback
-  try{
-    const res=await fetch(API+'?action=leaderboard&game='+encodeURIComponent(GAME));
-    if(!res.ok)throw new Error('bad status '+res.status);
-    const data=await res.json();
-    if(!Array.isArray(data))throw new Error('unexpected shape');
-    railLive=data.slice(0,10).map(d=>({name:String(d.name||d.email||'Pirate'),xp:+d.xp||0}));
-    const tag=document.getElementById('railTag');
-    if(tag)tag.textContent='Live';
-    renderRail();
-  }catch(e){
-    ev('leaderboard-fetch-fail','',String(e)); // stays on the Preview list, no error shown to the learner
-  }
 }
 
 function islandMark(x,y,col,big){
@@ -914,30 +764,29 @@ function refresh(){const n=Object.keys(S.cleared).length;
   document.getElementById('hBar').style.width=(n/6*100)+'%';drawMap();renderRail();}
 
 function advance(id,silent){
-  const already=!!S.cleared[id];
+  if(S.cleared[id])return;
   S.cleared[id]=1;
-  if(!already&&!silent){ping(680);addXp(XP[id]||200);ev('clear','stage-'+id);}
+  if(!silent){ping(680);addXp(XP[id]||200);ev('clear','stage-'+id);}
   const el=document.getElementById('s'+id);
-  el.classList.remove('on');el.classList.add('done');
+  el.classList.remove('on');el.classList.add('done');if(!silent)el.classList.remove('open');
   const nx=document.getElementById('s'+(id+1));
-  if(nx){nx.classList.remove('locked');nx.classList.add('on');}
-  if(id===4&&!already)awardBadge('narrows',silent);
-  if(id===5){
-    S.cleared[6]=1;
+  if(nx){nx.classList.remove('locked');nx.classList.add('on');if(!silent)nx.classList.add('open');}
+  if(id===4)awardBadge('narrows',silent);
+  if(id===5){S.cleared[6]=1;
     const s7=document.getElementById('s7');
     if(s7){s7.classList.remove('locked');s7.classList.add('on');}
-    if(!already){if(!silent)toast('Hoard found',1);awardBadge('hoard',silent);}
-  }
+    if(!silent)toast('Hoard found',1);
+    awardBadge('hoard',silent);}
   refresh();save();
-  // navigation ALWAYS runs, cleared or not — and goes to the next section
-  // directly, never back to the route map (map is the hub you start from).
-  if(!silent){
-    if(nx)showStage(id+1); else showMap();
-  }
+  if(!silent)showStage(id+1);
 }
 document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>advance(+b.dataset.next)));
 document.querySelectorAll('.sh').forEach(h=>h.addEventListener('click',()=>{
-  const s=h.parentElement;if(s.classList.contains('locked'))return;ping(420);s.classList.toggle('open');}));
+  const s=h.parentElement;if(s.classList.contains('locked'))return;ping(420);
+  const wasOpen=s.classList.contains('open');
+  document.querySelectorAll('.stage').forEach(x=>x.classList.remove('open'));
+  if(!wasOpen)s.classList.add('open');
+}));
 
 /* ---------- quiz ---------- */
 function answered(qid){return !!S.quiz[qid];}
@@ -952,12 +801,12 @@ function applyQuizVisual(block,qid){
   block.querySelector('.qfeedback').classList.add('show');
 }
 function onQuizAnswered(qid,silent){
-  if(qid==='q2'||qid==='q3')unlockVoyageTwo(silent);
-  if(qid==='q4'||qid==='q5')checkContinue();
-  if(qid==='q6'||qid==='q7')checkNarrowsContinue();
+  if(qid==='q2')unlockVoyageTwo(silent);
+  if(qid==='q4')checkContinue();
+  if(qid==='q5')checkNarrows();
 }
 function unlockVoyageTwo(silent){
-  if(!allAnswered(['q2','q3']))return;
+  if(!allAnswered(['q2']))return;
   const row=document.getElementById('v2');
   if(row.classList.contains('ready'))return;
   row.classList.add('ready');
@@ -965,12 +814,12 @@ function unlockVoyageTwo(silent){
   row.querySelector('[data-course]').textContent='Charted';
   const a=document.getElementById('v2open');
   a.classList.remove('off');a.target='_blank';a.rel='noopener';
-  a.href='https://www.coursera.org/learn/ai-for-everyone-ai-automation-with-claude';
-  document.getElementById('v2s').textContent='Coursera · use Claude Projects and RAG to automate repeatable work';
+  a.href='https://www.coursera.org/learn/ai-for-everyone-ai-collaboration-with-claude';
+  document.getElementById('v2s').textContent='Coursera · refine communication and shape one body of knowledge for different audiences';
   if(!silent)toast('Second voyage open',2);
 }
-function checkContinue(){if(S.courses.v2&&allAnswered(['q4','q5']))document.getElementById('n3').classList.remove('hide');}
-function checkNarrowsContinue(){if(S.courses.core3&&allAnswered(['q6','q7']))document.getElementById('n4').classList.remove('hide');}
+function checkContinue(){if(S.courses.v2&&allAnswered(['q4']))document.getElementById('n3').classList.remove('hide');}
+function checkNarrows(){if(allAnswered(['q5']))document.getElementById('n4').classList.remove('hide');}
 function wireQuiz(){
   document.querySelectorAll('.quiz').forEach(q=>{
     const qid=q.dataset.qid;
@@ -981,7 +830,6 @@ function wireQuiz(){
         S.quiz[qid]={sel:btn.textContent.trim()[0],correct};
         applyQuizVisual(q,qid);
         ping(correct?680:300);addXp(20);
-        feedbackPop(correct);
         ev('quiz-answer',qid,correct?'correct':'wrong');
         onQuizAnswered(qid,false);
         if(Object.keys(S.quiz).length===1)awardBadge('weathered',false);
@@ -1001,27 +849,20 @@ function markCourse(k,silent){
   if(!silent){ping(720);addXp(120);ev('course-done',k);}
   if(k==='v1'){
     document.getElementById('missionA').classList.remove('dim');
-    document.getElementById('missionA').querySelector('h5').textContent='Mission Check A — answer both to continue';
+    document.getElementById('missionA').querySelector('h5').textContent='Mission Check A — answer to continue';
     document.getElementById('missionAQs').classList.remove('hide');
     if(!silent)toast('Mission Check A open',2);
     awardBadge('voyager1',silent);
   }
   if(k==='v2'){
     document.getElementById('missionB').classList.remove('dim');
-    document.getElementById('missionB').querySelector('h5').textContent='Mission Check B — answer both to continue';
+    document.getElementById('missionB').querySelector('h5').textContent='Mission Check B — answer to continue';
     document.getElementById('missionBQs').classList.remove('hide');
     checkContinue();
     if(!silent)toast('Mission Check B open',2);
     awardBadge('twinvoyager',silent);
   }
-  if(k==='core3'){
-    document.getElementById('narrowsMission').classList.remove('dim');
-    document.getElementById('narrowsMission').querySelector('h5').textContent='Mission Check — answer both to continue';
-    document.getElementById('narrowsQs').classList.remove('hide');
-    checkNarrowsContinue();
-    if(!silent)toast('Mission Check open',2);
-    awardBadge('bonusseeker',silent);
-  }
+  if(k==='bonus')awardBadge('bonusseeker',silent);
   save();
 }
 document.querySelectorAll('[data-course]').forEach(b=>b.addEventListener('click',()=>markCourse(b.dataset.course)));
@@ -1032,26 +873,22 @@ document.querySelectorAll('[data-f]').forEach(t=>{
 });
 
 function doApply(silent){
-  const already=!!S.applied;
   S.applied=true;
   const p=document.getElementById('applyPanel');
-  // Never disable the input or the button — a returning learner can always
-  // come back and edit or re-save their answer. XP is awarded once only.
-  document.getElementById('applyGo').textContent='Save again';
-  p.querySelector('h5').textContent='Apply — logged (you can still edit and re-save)';
-  p.classList.add('hide'); // Apply and Reflect are separate, one-at-a-time views
+  p.querySelectorAll('textarea').forEach(t=>t.disabled=true);
+  document.getElementById('applyGo').disabled=true;
+  p.querySelector('h5').textContent='Apply — logged';
   document.getElementById('comeBack').classList.add('show');
-  document.getElementById('reflectPanel').classList.add('hide');
-  if(!silent){ping(700);if(!already)addXp(150);ev('apply-saved');toast(already?'Answer updated':'Plan logged — go and try it',2);
+  if(!silent){ping(700);addXp(150);ev('apply-saved');toast('Plan logged — go and try it',2);
     setTimeout(()=>document.getElementById('comeBack').scrollIntoView({behavior:'smooth',block:'center'}),200);}
   save();
 }
 function doReflect(silent){
   S.reflectOpen=true;
-  document.getElementById('comeBack').classList.remove('show');
   const p=document.getElementById('reflectPanel');
-  p.classList.remove('dim','hide');p.querySelector('h5').textContent='Reflect — how did it go?';
+  p.classList.remove('dim');p.querySelector('h5').textContent='Reflect — how did it go?';
   document.getElementById('reflectQs').classList.remove('hide');
+  document.getElementById('openReflect').disabled=true;
   if(!silent){ping(640);ev('reflect-opened');setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),180);}
   save();
 }
@@ -1063,17 +900,20 @@ function doEnroll(silent){
   if(!silent){ping(720);addXp(100);ev('next-course-enrolled');}
   save();
 }
+function editApply(){
+  S.applied=false;
+  const p=document.getElementById('applyPanel');
+  p.querySelectorAll('textarea').forEach(t=>t.disabled=false);
+  document.getElementById('applyGo').disabled=false;
+  p.querySelector('h5').textContent='Apply — before you set off';
+  document.getElementById('comeBack').classList.remove('show');
+  ev('apply-edit');save();
+  setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),180);
+}
 document.getElementById('nextCourseGo').addEventListener('click',()=>doEnroll());
 document.getElementById('applyGo').addEventListener('click',()=>doApply());
 document.getElementById('openReflect').addEventListener('click',()=>doReflect());
-function reopenApply(){
-  document.getElementById('applyPanel').classList.remove('hide');
-  document.getElementById('comeBack').classList.remove('show');
-  document.getElementById('reflectPanel').classList.add('hide');
-  ping(420);
-}
-document.getElementById('editApply1').addEventListener('click',reopenApply);
-document.getElementById('editApply2').addEventListener('click',reopenApply);
+document.getElementById('editApply').addEventListener('click',()=>editApply());
 document.getElementById('pCopy').addEventListener('click',async()=>{ping(500);
   try{await navigator.clipboard.writeText(document.getElementById('pTxt').textContent);toast('Copied — paste it in Claude',2);}
   catch(e){toast('Select and copy above');}});
@@ -1118,21 +958,18 @@ function peers(){ping(460);ev('peers-click');if(SLACK){window.open(SLACK,'_blank
 document.getElementById('peersBtn').addEventListener('click',peers);
 document.getElementById('slackLink').addEventListener('click',e=>{e.preventDefault();peers();});
 
-function openBadgeOverlay(){ping(500);document.getElementById('badgeOverlay').classList.remove('hide');}
-function openNavOverlay(){ping(500);ev('nav-open');document.getElementById('navOverlay').classList.remove('hide');}
-document.querySelectorAll('.openBadgeBtn').forEach(b=>b.addEventListener('click',openBadgeOverlay));
-document.querySelectorAll('.openNavBtn').forEach(b=>b.addEventListener('click',openNavOverlay));
-document.getElementById('navClose').addEventListener('click',()=>document.getElementById('navOverlay').classList.add('hide'));
-document.getElementById('navOverlay').addEventListener('click',e=>{if(e.target.id==='navOverlay')document.getElementById('navOverlay').classList.add('hide');});
-document.getElementById('navChart').addEventListener('click',async()=>{
-  const q=document.getElementById('navQ').value.trim();
-  if(!q){toast('Write your question first');return;}
-  const msg=`I'm working through The Marked Chart, BetterUp's Running with Claude program, and got stuck on this: ${q}. Can you help me understand it and suggest what to try next?`;
-  ping(600);ev('nav-question',q.slice(0,60));
-  try{await navigator.clipboard.writeText(msg);toast('Copied — paste it into Claude',2);}
-  catch(e){toast('Select and copy the message above');}
+document.getElementById('badgeBtn').addEventListener('click',()=>{ping(500);document.getElementById('badgeOverlay').classList.remove('hide');});
+document.getElementById('libEnrollBtn').addEventListener('click',e=>{
+  e.preventDefault();ping(600);addXp(20);
+  const body='I would like to enroll in Claude AI Comprehensive Guide.\n\n'
+    +'Name: '+(S.pirateName||'')+'\nDate: '
+    +new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'\n';
+  window.location.href='mailto:bu.learning@betterup.co'
+    +'?cc=deepika.kanojia@betterup.co'
+    +'&subject='+encodeURIComponent('Enrollment request — Claude AI Comprehensive Guide')
+    +'&body='+encodeURIComponent(body);
+  toast('Email drafted — check your mail app',2);
 });
-document.getElementById('navOpenClaude').addEventListener('click',()=>ev('nav-open-claude'));
 document.querySelector('[data-ev="log-build"]').addEventListener('click',()=>{
   ping(700);addXp(30);toast('Logged — nice work, pirate 🏴‍☠️',1);
 });
@@ -1142,7 +979,7 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
 /* ---------- restore ---------- */
 (function restore(){
   load();setXp();setIdentity();renderBadges();
-  if(!S.cleared[3]&&S.courses.v2&&allAnswered(['q4','q5']))S.cleared[3]=1;
+  if(!S.cleared[3]&&S.courses.v2&&allAnswered(['q4']))S.cleared[3]=1;
   const done=Object.keys(S.cleared).map(Number).filter(n=>n<=5).sort();
   const saved={...S.cleared};S.cleared={};
   done.forEach(id=>advance(id,true));
@@ -1164,7 +1001,6 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
   document.getElementById('mapView').classList.remove('hide');
   document.getElementById('stagesView').classList.add('hide');
   refresh();
-  loadLeaderboard();
   ev('session-start','',done.length?'resumed at leg '+Math.min(done.length+1,6):'first visit');
 
   if(S.pirateName){
