@@ -1302,6 +1302,7 @@ document.getElementById('libEnrollBtn').addEventListener('click',e=>{
 document.querySelector('[data-ev="log-build"]').addEventListener('click',()=>{
   ping(700);
   if(!S.buildLogged){S.buildLogged=true;addXp(30);save();} /* one-time XP — repeat clicks still toast but no longer farm XP */
+  1. Open https://docs.google.com/spreadsheets/d/1AcLNmW55Q79dXh35e3OioXWyHcekxWDQKX_aut0EW1A/edit — you'll get "You need access" or 404.
   toast('Logged — nice work, pirate 🏴‍☠️',1);
 });
 document.getElementById('badgeClose').addEventListener('click',()=>document.getElementById('badgeOverlay').classList.add('hide'));
