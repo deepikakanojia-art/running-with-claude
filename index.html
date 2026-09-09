@@ -411,9 +411,9 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
   <div class="brand"><b>BU Learning</b><i>The Marked Chart</i></div>
   <div class="stat"><u>Rank</u><b id="hRank" class="p">Deckhand</b></div>
   <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
-  <button class="stat statBtn" id="badgeBtn" aria-label="Steps done, and your badges">
+  <button class="stat statBtn" id="badgeBtn" aria-label="Steps completed, and badges collected - opens your achievements">
     <u>Steps</u><b id="hStep">0/8</b>
-    <span class="statSub">🏅 <span id="badgeCount">0</span>/8</span>
+    <span class="statSub">🏅 <span id="badgeCount">0</span> badges</span>
   </button>
   <div class="bar"><i id="hBar"></i></div>
   <button class="libbtn" id="guideBtn" style="cursor:pointer">🧭 Guide</button>
@@ -1099,7 +1099,7 @@ const SESSION=Math.random().toString(36).slice(2,10);
 let visible=0,lastTick=Date.now(),queue=[];
 function ev(type,target,extra){queue.push({email:USER.email,session:SESSION,ts:new Date().toISOString(),type,target:target||'',step:Object.keys(S.cleared).length,secs:Math.round(visible/1000),extra:extra||''});if(queue.length>=12)flush();}
 function flush(){if(!queue.length)return;const batch=queue.slice();queue=[];if(!API)return;post('events',{events:batch});}
-function post(action,payload){try{fetch(API,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email},payload))});}catch(e){}} /* keepalive so the request survives a refresh/tab-close (e.g. the beforeunload flush) instead of being aborted mid-flight */
+function post(action,payload){try{fetch(API,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,game:GAME,email:USER.email},payload))}).catch(()=>{});}catch(e){}} /* .catch as well as try/catch: fetch rejects asynchronously, so the try alone left every unreachable save as an uncaught rejection in the console */ /* keepalive so the request survives a refresh/tab-close (e.g. the beforeunload flush) instead of being aborted mid-flight */
 setInterval(()=>{const n=Date.now();if(document.visibilityState==='visible')visible+=n-lastTick;lastTick=n;},1000);
 setInterval(flush,20000);
 document.addEventListener('visibilitychange',()=>{ev(document.visibilityState==='visible'?'focus':'blur');if(document.visibilityState!=='visible')flush();});
