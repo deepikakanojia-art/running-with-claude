@@ -276,7 +276,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <div class="bar"><i id="hBar"></i></div>
   <button class="libbtn" id="badgeBtn" style="cursor:pointer">🏅 <span id="badgeCount">0</span>/8</button>
   <a class="libbtn" data-ev="hud-expand-your-range" href="https://deepikakanojia-art.github.io/sample-expand-your-range./" target="_blank" rel="noopener">📖 Expand Your Range</a>
-  <a class="libbtn" href="#" id="libEnrollBtn">✉ Request Enrollment</a>
+  <button class="libbtn" id="coachBtn" style="cursor:pointer">🤖 AI Coach</button>
   <div class="me">
     <div class="who"><b id="meName">—</b><span id="meMail">signed in</span></div>
     <div class="av" id="meAv">—</div>
@@ -821,6 +821,23 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   </div>
 </div>
 
+<div class="dossierOverlay hide" id="coachOverlay">
+  <div class="dossierCard" style="max-width:480px">
+    <button class="dClose" id="coachClose">&#10005;</button>
+    <div class="dTag">AI Coach</div>
+    <h3>&#129302; Ask your AI Coach</h3>
+    <p>Stuck on anything in this program? Write your question below, then take it to your
+      own Claude &mdash; this doesn't send it anywhere, it just helps you frame it clearly.</p>
+    <textarea class="mono" id="coachQ" rows="4"
+      placeholder="e.g. I'm not sure what my RANGE score actually means, or how to write a prompt for my own work..."></textarea>
+    <div class="acts">
+      <button class="btn" id="coachCopy">Copy question for Claude</button>
+      <a class="btn ghost" id="coachOpen" data-ev="coach-open-claude" href="https://claude.ai" target="_blank" rel="noopener">Open Claude &#8599;</a>
+    </div>
+    <p class="edge">Paste it in, ask away, and come back here anytime &mdash; your progress is saved.</p>
+  </div>
+</div>
+
 <div class="toasts" id="toasts"></div>
 
 <script>
@@ -1324,17 +1341,26 @@ document.getElementById('peersBtn').addEventListener('click',peers);
 document.getElementById('slackLink').addEventListener('click',e=>{e.preventDefault();peers();});
 
 document.getElementById('badgeBtn').addEventListener('click',()=>{ping(500);document.getElementById('badgeOverlay').classList.remove('hide');});
-document.getElementById('libEnrollBtn').addEventListener('click',e=>{
-  e.preventDefault();ping(600);
-  if(!S.libRequested){S.libRequested=true;addXp(20);save();} /* one-time XP — button is otherwise re-clickable to resend the email */
-  const body='I would like to enroll in Claude AI Comprehensive Guide.\n\n'
-    +'Name: '+(S.pirateName||'')+'\nDate: '
-    +new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'\n';
-  window.location.href='mailto:bu.learning@betterup.co'
-    +'?cc=deepika.kanojia@betterup.co'
-    +'&subject='+encodeURIComponent('Enrollment request — Claude AI Comprehensive Guide')
-    +'&body='+encodeURIComponent(body);
-  toast('Email drafted — check your mail app',2);
+/* AI coach: copy-and-open, no API key and no cost — the learner takes the framed
+   question to their own Claude. Same helper the sibling programmes offer, so the
+   three courses behave alike. S.libRequested is left in the saved state shape on
+   purpose: older saves already carry it, and dropping it would mean a migration
+   for a field nothing reads. */
+document.getElementById('coachBtn').addEventListener('click',()=>{
+  ping(500);ev('coach-open');
+  document.getElementById('coachOverlay').classList.remove('hide');
+});
+function closeCoach(){document.getElementById('coachOverlay').classList.add('hide');}
+document.getElementById('coachClose').addEventListener('click',closeCoach);
+document.getElementById('coachOverlay').addEventListener('click',e=>{if(e.target.id==='coachOverlay')closeCoach();});
+document.getElementById('coachCopy').addEventListener('click',async()=>{
+  const q=document.getElementById('coachQ').value.trim();
+  if(!q){toast('Write your question first');return;}
+  const prompt="I'm working through The Marked Chart, BetterUp's Running with Claude program, "
+    +"and got stuck on this:\n\n"+q+"\n\nCan you help me understand it and suggest what to try next?";
+  try{await navigator.clipboard.writeText(prompt);toast('Copied — paste it into Claude',2);}
+  catch(e){toast('Select and copy the text above');}
+  ev('coach-question','',q.slice(0,80));
 });
 document.querySelector('[data-ev="log-build"]').addEventListener('click',()=>{
   ping(700);
