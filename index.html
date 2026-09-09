@@ -138,6 +138,13 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 .chart.show{display:block}
 .chart h4{font-size:8.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--dim);margin-bottom:12px}
 .edge{margin-top:12px;font-size:13.5px;color:var(--dim);line-height:1.5}
+
+/* Leg 01 briefing video. aspect-ratio reserves the box before metadata loads so
+   the "I've watched it" button doesn't jump down once the first frame appears. */
+.vid{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid rgba(31,182,201,.32);
+  background:#000;display:block;margin-bottom:10px}
+.vcap{margin:8px 0 0;font-size:13px;color:var(--dim);line-height:1.5}
+.vcap b{color:var(--text)}
 .edge b{color:var(--gold)}
 
 .course{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;background:rgba(244,237,225,.028)}
@@ -252,7 +259,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <div class="landCard">
     <div class="landTag">BU Learning · Program 2 · Running with Claude</div>
     <h1>THE MARKED CHART</h1>
-    <p class="sub">Half a chart, five legs, one hoard. Claude reads the winds — the pirate at the helm makes the call.</p>
+    <p class="sub">Half a chart, six legs, one hoard. Claude reads the winds — the pirate at the helm makes the call.</p>
     <label class="q"><i>What do the crew call you?</i></label>
     <input type="text" id="pirateNameInput" placeholder="Your pirate name" maxlength="24">
     <button class="btn" id="setSailBtn">Set Sail ▶</button>
@@ -265,7 +272,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
   <div class="brand"><b>BU Learning</b><i>The Marked Chart</i></div>
   <div class="stat"><u>Rank</u><b id="hRank" class="p">Deckhand</b></div>
   <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
-  <div class="stat"><u>Leg</u><b id="hStep">0/5</b></div>
+  <div class="stat"><u>Leg</u><b id="hStep">0/6</b></div>
   <div class="bar"><i id="hBar"></i></div>
   <button class="libbtn" id="badgeBtn" style="cursor:pointer">🏅 <span id="badgeCount">0</span>/8</button>
   <a class="libbtn" href="https://www.coursera.org" target="_blank" rel="noopener">📖 Captain's Library</a>
@@ -279,12 +286,12 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 <main class="wrap">
   <h1 class="title">Chart your <em>RANGE</em>.</h1>
   <div><span class="programTag">Program 2 · Running with Claude</span></div>
-  <p class="sub">Five legs to the hoard. Answer what you know, read your own bearing, clear two voyages and the mission checks between them, thread the narrows, then set off on a solo voyage into real work. Tap a marker below to open its dossier.</p>
+  <p class="sub">Six legs to the hoard. Watch the briefing, answer what you know, read your own bearing, clear two voyages and the mission checks between them, thread the narrows, then set off on a solo voyage into real work. Tap a marker below to open its dossier.</p>
 
   <div id="mapView">
     <div class="map">
       <span class="cap">Route · The Marked Chart</span>
-      <svg viewBox="0 0 900 340" id="mapSvg" aria-label="Sea route with five legs"></svg>
+      <svg viewBox="0 0 900 340" id="mapSvg" aria-label="Sea route with six legs"></svg>
       <span class="hint">Tap the glowing marker</span>
     </div>
 
@@ -569,6 +576,21 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
 
   <section class="stage on open" id="s1">
     <div class="sh"><div class="node">01</div>
+      <div><h3>Read the winds</h3><p>Two minutes on deck before you touch the chart</p></div>
+      <span class="tag">2 min</span></div>
+    <div class="body">
+      <video class="vid" controls preload="metadata" playsinline>
+        <source src="BetterUp%20RANGE_%20Your%20AI%20Fluency%20Score_720p.mp4" type="video/mp4">
+        Your browser can't play this video &mdash; <a href="BetterUp%20RANGE_%20Your%20AI%20Fluency%20Score_720p.mp4">download it instead</a>.
+      </video>
+      <p class="edge" style="margin-top:0">Double-click to watch the video in full screen.</p>
+      <p class="vcap"><b>Explainer video</b> &middot; Why your RANGE bearing comes before the legs &middot; 2 min</p>
+      <div class="acts"><button class="btn" data-next="1">I've watched it &mdash; continue</button></div>
+    </div>
+  </section>
+
+  <section class="stage locked" id="s2">
+    <div class="sh"><div class="node">02</div>
       <div><h3>The weathered page</h3><p>A torn fragment asks the first question</p></div>
       <span class="tag">1 min</span></div>
     <div class="body">
@@ -585,12 +607,12 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
           <textarea class="mono" rows="2" data-f="q1refl" placeholder="Jot a note to yourself (optional)"></textarea>
         </div>
       </div>
-      <div class="acts"><button class="btn" data-next="1">I've charted it — continue</button></div>
+      <div class="acts"><button class="btn" data-next="2">I've charted it — continue</button></div>
     </div>
   </section>
 
-  <section class="stage locked" id="s2">
-    <div class="sh"><div class="node">02</div>
+  <section class="stage locked" id="s3">
+    <div class="sh"><div class="node">03</div>
       <div><h3>Chart your bearing</h3><p>Run the RANGE evaluator in your own Claude, then bring the score back</p></div>
       <span class="tag">5 min</span></div>
     <div class="body">
@@ -603,19 +625,19 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
       <div class="err" id="scoreErr">Couldn't read that. Paste the line beginning with RANGE, including R: A: N: G: EF: values.</div>
       <div class="acts">
         <button class="btn" id="scoreGo">Plot my bearing</button>
-        <button class="btn ghost" data-next="2">Don't have a score yet — skip for now ▶</button>
+        <button class="btn ghost" data-next="3">Don't have a score yet — skip for now ▶</button>
       </div>
       <div class="chart" id="chartWrap">
         <h4>Your RANGE profile</h4>
         <svg id="chart" viewBox="0 0 620 250" aria-label="RANGE profile chart"></svg>
         <p class="edge" id="edgeTxt"></p>
-        <div class="acts"><button class="btn" data-next="2">Got it — continue</button></div>
+        <div class="acts"><button class="btn" data-next="3">Got it — continue</button></div>
       </div>
     </div>
   </section>
 
-  <section class="stage locked" id="s3">
-    <div class="sh"><div class="node">03</div>
+  <section class="stage locked" id="s4">
+    <div class="sh"><div class="node">04</div>
       <div><h3>Twin voyages</h3><p>Critical — clear both voyages, and both mission checks, before the narrows open</p></div>
       <span class="tag">critical</span></div>
     <div class="body">
@@ -686,12 +708,12 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
         <div class="acts"><a class="btn crs" id="bonusopen" data-ev="open-bonus" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-automation-with-claude">Set Sail</a>
           <button class="btn ghost" data-course="bonus">Charted</button></div></div>
 
-      <div class="acts hide" id="n3"><button class="btn" data-next="3">Both voyages charted — continue</button></div>
+      <div class="acts hide" id="n4"><button class="btn" data-next="4">Both voyages charted — continue</button></div>
     </div>
   </section>
 
-  <section class="stage locked" id="s4">
-    <div class="sh"><div class="node">04</div>
+  <section class="stage locked" id="s5">
+    <div class="sh"><div class="node">05</div>
       <div><h3>The narrows</h3><p>Core — steady hands through the pinch point</p></div>
       <span class="tag">gate</span></div>
     <div class="body">
@@ -709,12 +731,12 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
           <textarea class="mono" rows="2" data-f="q5refl" placeholder="Jot a note to yourself (optional)"></textarea>
         </div>
       </div>
-      <div class="acts hide" id="n4"><button class="btn" data-next="4">Continue to solo voyage</button></div>
+      <div class="acts hide" id="n5"><button class="btn" data-next="5">Continue to solo voyage</button></div>
     </div>
   </section>
 
-  <section class="stage locked" id="s5">
-    <div class="sh"><div class="node">05</div>
+  <section class="stage locked" id="s6">
+    <div class="sh"><div class="node">06</div>
       <div><h3>Solo voyage</h3><p>Apply it to real work, then report back from the field</p></div>
       <span class="tag">Mission</span></div>
     <div class="body">
@@ -735,13 +757,13 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
         <div id="reflectQs" class="hide">
           <label class="q"><i>01</i>What did you try, and how did it go?</label>
           <textarea rows="2" data-f="r1" placeholder="Half-finished counts."></textarea>
-          <div class="acts"><button class="btn gold" data-next="5">Log my voyage</button></div>
+          <div class="acts"><button class="btn gold" data-next="6">Log my voyage</button></div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="stage locked" id="s6">
+  <section class="stage locked" id="s7">
     <div class="sh"><div class="node">★</div>
       <div><h3>Hoard found</h3><p>Flag planted</p></div><span class="tag">Complete</span></div>
     <div class="body">
@@ -751,7 +773,7 @@ label.q i{font-style:normal;color:var(--teal);font-family:var(--mono);font-size:
     </div>
   </section>
 
-  <section class="stage locked" id="s7">
+  <section class="stage locked" id="s8">
     <div class="sh"><div class="node">📖</div>
       <div><h3>Enroll in Your Next Course</h3><p>Keep going — the crew's library has more to chart</p></div>
       <span class="tag">Optional</span></div>
@@ -837,9 +859,23 @@ function ping(f){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)(
 
 /* ---------- state + persistence ---------- */
 const KEY='tmc:'+USER.email;
-const S={pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,applyXpAwarded:false,reflectOpen:false,mailed:false,badges:{},streak:0,libRequested:false,buildLogged:false};
+const S={v:0,pirateName:'',xp:0,cleared:{},courses:{},quiz:{},range:null,fields:{},applied:false,applyXpAwarded:false,reflectOpen:false,mailed:false,badges:{},streak:0,libRequested:false,buildLogged:false};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(API)post('save',{state:S});}
-function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));}catch(e){}}
+function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));}catch(e){}migrateLegs();}
+// The briefing video became leg 01, so every leg saved before it shipped now sits
+// one number below the stage it refers to. Left unshifted, someone who had cleared
+// old leg 3 (Twin Voyages) would return to find The Narrows ticked off and Twin
+// Voyages locked. Shift, then credit the briefing itself: anyone with progress
+// reached the old opener without ever being offered a video, so gating their route
+// behind it would strand them. v:2 makes this run exactly once.
+function migrateLegs(){
+  if(S.v===2)return;
+  const shifted={};
+  Object.keys(S.cleared).forEach(k=>{const n=+k;if(n>=1)shifted[n+1]=1;});
+  if(Object.keys(shifted).length)shifted[1]=1;
+  S.cleared=shifted;
+  S.v=2;
+}
 
 const SESSION=Math.random().toString(36).slice(2,10);
 let visible=0,lastTick=Date.now(),queue=[];
@@ -872,12 +908,13 @@ document.getElementById('setSailBtn').addEventListener('click',()=>{
 
 /* ---------- dossier ---------- */
 const LEG_INFO={
-  1:{tag:'Leg 01',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
-  2:{tag:'Leg 02',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
-  3:{tag:'Leg 03 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
-  4:{tag:'Leg 04',title:'The narrows',blurb:'No course, one question — clear it and the solo voyage opens.',reward:'★ 200 XP'},
-  5:{tag:'Leg 05',title:'Solo voyage',blurb:'Apply it to real work, then report back from the field.',reward:'★ 350 XP'},
-  6:{tag:'Final',title:'Hoard found',blurb:'The chart is whole. What did you build with it?',reward:'Complete'}
+  1:{tag:'Leg 01',title:'Read the winds',blurb:'Two minutes on deck before you touch the chart — what this voyage is for, and why your RANGE bearing comes before the legs.',reward:'★ 100 XP'},
+  2:{tag:'Leg 02',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
+  3:{tag:'Leg 03',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
+  4:{tag:'Leg 04 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
+  5:{tag:'Leg 05',title:'The narrows',blurb:'No course, one question — clear it and the solo voyage opens.',reward:'★ 200 XP'},
+  6:{tag:'Leg 06',title:'Solo voyage',blurb:'Apply it to real work, then report back from the field.',reward:'★ 350 XP'},
+  7:{tag:'Final',title:'Hoard found',blurb:'The chart is whole. What did you build with it?',reward:'Complete'}
 };
 function openDossier(id){
   const d=LEG_INFO[id];if(!d)return;
@@ -918,9 +955,9 @@ function showStage(id){
 document.getElementById('backToRoute').addEventListener('click',()=>{ping(420);showMap();});
 
 /* ---------- ui ---------- */
-const XP={1:100,2:150,3:400,4:200,5:350};
+const XP={1:100,2:100,3:150,4:400,5:200,6:350};
 const DIMS=[['Reach','R'],['Autonomy','A'],['Navigation','N'],['Generalization','G'],['Execution','EF']];
-const PTS=[[92,268],[268,214],[430,178],[598,132],[730,96],[832,52]];
+const PTS=[[92,268],[214,229],[340,201],[465,167],[589,135],[714,103],[832,52]];
 
 const BADGES=[
   {id:'weathered',icon:'🗞️',title:'First Read',desc:'Answered your first question'},
@@ -1018,7 +1055,7 @@ function islandMark(x,y,col,big){
        <path d="M${x-2},${y-9} Q${x-10},${y-11} ${x-12},${y-4}" fill="none" stroke="${col}" stroke-width="1.4" stroke-linecap="round"/>
        <path d="M${x-2},${y-7} Q${x+7},${y-10} ${x+10},${y-3}" fill="none" stroke="${col}" stroke-width="1.4" stroke-linecap="round"/>`}`;
 }
-const MAP_LABELS={1:'WEATHERED PAGE',2:'CHART BEARING',3:'TWIN VOYAGES',4:'THE NARROWS',5:'SOLO VOYAGE',6:'HOARD'};
+const MAP_LABELS={1:'READ THE WINDS',2:'WEATHERED PAGE',3:'CHART BEARING',4:'TWIN VOYAGES',5:'THE NARROWS',6:'SOLO VOYAGE',7:'HOARD'};
 function activeBuoy(x,y){
   return `<circle class="ringPulse" cx="${x}" cy="${y}" r="24" fill="none" stroke="#1FB6C9" stroke-width="2"/>
     <circle class="ringPulse r2" cx="${x}" cy="${y}" r="24" fill="none" stroke="#1FB6C9" stroke-width="2"/>
@@ -1046,11 +1083,11 @@ function drawMap(){
    <path d="M92,268 C170,252 210,224 268,214 S380,196 430,178 S540,152 598,132 S700,112 730,96 S810,72 832,52"
      fill="none" stroke="url(#tr)" stroke-width="2.6" stroke-dasharray="8 8" opacity=".55"/>`;
   let firstIncomplete=null;
-  for(let k=1;k<=5;k++){if(!S.cleared[k]){firstIncomplete=k;break;}}
+  for(let k=1;k<=6;k++){if(!S.cleared[k]){firstIncomplete=k;break;}}
   PTS.forEach((p,i)=>{
-    const id=i+1,summit=i===5,done=summit?!!S.cleared[6]:!!S.cleared[id],active=!summit&&!done&&id===firstIncomplete;
+    const id=i+1,summit=i===6,done=summit?!!S.cleared[7]:!!S.cleared[id],active=!summit&&!done&&id===firstIncomplete;
     if(!done&&!active)return; /* undiscovered — hidden until reached */
-    const label=MAP_LABELS[summit?6:id];
+    const label=MAP_LABELS[summit?7:id];
     if(active){
       h+=`<g class="pin" data-go="${id}">
         <circle cx="${p[0]}" cy="${p[1]}" r="26" fill="transparent"/>
@@ -1059,7 +1096,7 @@ function drawMap(){
           font-weight="700" letter-spacing="1.4" fill="#1FB6C9">${label}</text>`;
     }else{
       const col=summit?'#FFC700':'#4FE8CA';
-      h+=`<g class="pin" data-go="${summit?6:id}"><circle cx="${p[0]}" cy="${p[1]}" r="20" fill="transparent"/>
+      h+=`<g class="pin" data-go="${summit?7:id}"><circle cx="${p[0]}" cy="${p[1]}" r="20" fill="transparent"/>
         ${islandMark(p[0],p[1],col,summit)}</g>
         <text x="${p[0]}" y="${p[1]+30}" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8.5"
           letter-spacing="1.4" fill="${col}">${label}</text>`;
@@ -1077,8 +1114,8 @@ function drawMap(){
     ping(600);openDossier(+p.dataset.go);ev('map-jump','s'+p.dataset.go);}));
 }
 function refresh(){const n=Object.keys(S.cleared).length;
-  document.getElementById('hStep').textContent=Math.min(n,5)+'/5';
-  document.getElementById('hBar').style.width=(n/6*100)+'%';drawMap();renderRail();}
+  document.getElementById('hStep').textContent=Math.min(n,6)+'/6';
+  document.getElementById('hBar').style.width=(n/7*100)+'%';drawMap();renderRail();}
 
 function advance(id,silent){
   if(S.cleared[id])return;
@@ -1088,10 +1125,10 @@ function advance(id,silent){
   el.classList.remove('on');el.classList.add('done');if(!silent)el.classList.remove('open');
   const nx=document.getElementById('s'+(id+1));
   if(nx){nx.classList.remove('locked');nx.classList.add('on');if(!silent)nx.classList.add('open');}
-  if(id===4)awardBadge('narrows',silent);
-  if(id===5){S.cleared[6]=1;
-    const s7=document.getElementById('s7');
-    if(s7){s7.classList.remove('locked');s7.classList.add('on');}
+  if(id===5)awardBadge('narrows',silent);
+  if(id===6){S.cleared[7]=1;
+    const s8=document.getElementById('s8');
+    if(s8){s8.classList.remove('locked');s8.classList.add('on');}
     if(!silent)toast('Hoard found',1);
     awardBadge('hoard',silent);}
   if(!silent){refresh();save();} /* silent replay during restore() only reproduces already-saved state; skip re-POSTing it and skip the per-call refresh() (which fires its own leaderboard fetch) — restore() does one consolidated refresh() after the whole replay loop */
@@ -1135,8 +1172,8 @@ function unlockVoyageTwo(silent){
   document.getElementById('v2s').textContent='Coursera · refine communication and shape one body of knowledge for different audiences';
   if(!silent)toast('Second voyage open',2);
 }
-function checkContinue(){if(S.courses.v2&&allAnswered(['q4']))document.getElementById('n3').classList.remove('hide');}
-function checkNarrows(){if(allAnswered(['q5']))document.getElementById('n4').classList.remove('hide');}
+function checkContinue(){if(S.courses.v2&&allAnswered(['q4']))document.getElementById('n4').classList.remove('hide');}
+function checkNarrows(){if(allAnswered(['q5']))document.getElementById('n5').classList.remove('hide');}
 function wireQuiz(){
   document.querySelectorAll('.quiz').forEach(q=>{
     const qid=q.dataset.qid;
@@ -1311,11 +1348,11 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
 /* ---------- restore ---------- */
 (function restore(){
   load();setXp();setIdentity();renderBadges();
-  if(!S.cleared[3]&&S.courses.v2&&allAnswered(['q4'])){S.cleared[3]=1;addXp(XP[3]||400);} /* legacy backfill — award the leg's XP once since it was never earned via a real advance() */
-  const done=Object.keys(S.cleared).map(Number).filter(n=>n<=5).sort();
+  if(!S.cleared[4]&&S.courses.v2&&allAnswered(['q4'])){S.cleared[4]=1;addXp(XP[4]||400);} /* legacy backfill — award the leg's XP once since it was never earned via a real advance() */
+  const done=Object.keys(S.cleared).map(Number).filter(n=>n<=6).sort();
   const saved={...S.cleared};S.cleared={};
   done.forEach(id=>advance(id,true));
-  if(saved[6])S.cleared[6]=1;
+  if(saved[7])S.cleared[7]=1;
 
   Object.keys(S.quiz).forEach(qid=>{
     const block=document.querySelector(`.quiz[data-qid="${qid}"]`);
@@ -1341,13 +1378,13 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
 
   document.getElementById('mapView').classList.remove('hide');
   document.getElementById('stagesView').classList.add('hide');
-  refresh();save(); /* one consolidated save (covers the cleared[3] backfill above) instead of one POST per silently-replayed step */
-  ev('session-start','',done.length?'resumed at leg '+Math.min(done.length+1,6):'first visit');
+  refresh();save(); /* one consolidated save (covers the cleared[4] backfill above) instead of one POST per silently-replayed step */
+  ev('session-start','',done.length?'resumed at leg '+Math.min(done.length+1,7):'first visit');
 
   if(S.pirateName){
     document.getElementById('landingScreen').classList.add('hide');
     document.getElementById('gameRoot').classList.remove('hide');
-    if(done.length)toast('Welcome back — leg '+Math.min(done.length,5),2);
+    if(done.length)toast('Welcome back — leg '+Math.min(done.length,6),2);
   }
 })();
 </script>
