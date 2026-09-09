@@ -222,7 +222,7 @@ h1.title em{font-style:normal;color:var(--pink)}
 .stage{border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(10px);margin-bottom:13px;overflow:hidden;transition:border-color .3s,box-shadow .3s;scroll-margin-top:76px;box-shadow:0 10px 26px -20px rgba(120,60,40,.34)}
 .stage.on{border-color:rgba(206,0,88,.42);box-shadow:0 14px 40px -22px rgba(206,0,88,.55)}
 .stage.done{border-color:rgba(224,138,60,.42)}
-.sh{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none}
+.sh{display:flex;align-items:center;gap:14px;padding:16px 18px;user-select:none}
 .node{width:40px;height:40px;flex:0 0 40px;border-radius:13px;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:14px;border:1px solid var(--line2);background:#FFFDFB;color:var(--mute)}
 .stage.on .node{border-color:var(--pink);color:#fff;background:linear-gradient(180deg,var(--pinkLift),var(--pink));box-shadow:0 6px 16px rgba(206,0,88,.32)}
 .stage.done .node{border-color:var(--done);color:#fff;background:linear-gradient(180deg,#EFA457,var(--done));box-shadow:0 6px 14px rgba(224,138,60,.30)}
@@ -234,6 +234,13 @@ h1.title em{font-style:normal;color:var(--pink)}
 .body{display:none;padding:0 18px 20px 72px}
 .stage.open .body{display:block}
 .stage.locked{opacity:.45;pointer-events:none}
+/* Only the step being worked on is in the page at all. The others are not
+   collapsed-but-present as they used to be, so the screen holds one thing. */
+#stagesView .stage{display:none}
+#stagesView .stage.shown{display:block}
+.stageBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.stageBar .backToRoute{margin-bottom:0}
+.stageProg{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.2em;color:var(--pink)}
 
 /* ===== buttons: soft shadow, no bevel ===== */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:12px;cursor:pointer;font-family:var(--hn);font-size:13.5px;font-weight:700;color:#fff;
@@ -721,7 +728,10 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
   </div>
 
   <div id="stagesView" class="hide">
-    <button class="btn ghost backToRoute" id="backToRoute">◀ Back to the Route</button>
+    <div class="stageBar">
+      <button class="btn ghost backToRoute" id="backToRoute">◀ Back to the route</button>
+      <span class="stageProg" id="stageProg"></span>
+    </div>
 
   <section class="stage on open" id="s1">
     <div class="sh"><div class="node">01</div>
@@ -919,6 +929,7 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
       <div class="summit"><div class="cup">🏴‍☠️</div><h3>You found the hoard</h3>
         <p>You didn't just finish the courses — you put it to work. Log what you built so other people can see what's possible.</p>
         <button class="btn gold" data-ev="log-build">Log your build in #ai-builds</button></div>
+      <div class="acts"><button class="btn ghost" id="toNextCourse">See what&rsquo;s next &#9654;</button></div>
     </div>
   </section>
 
@@ -1163,10 +1174,15 @@ function showStage(id){
   if(!el)return;
   document.getElementById('mapView').classList.add('hide');
   document.getElementById('stagesView').classList.remove('hide');
-  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('open'));
+  /* 'shown' takes every other step out of the page; 'open' still governs the
+     body. Both are cleared first so exactly one step can ever be visible. */
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('open','shown'));
   el.classList.remove('locked');
-  el.classList.add('open');
-  el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.classList.add('open','shown');
+  const prog=document.getElementById('stageProg');
+  if(prog)prog.textContent='Step '+String(id).padStart(2,'0')+' of 8';
+  /* with one step on screen there is nothing above it to scroll past */
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 document.getElementById('backToRoute').addEventListener('click',()=>{ping(420);showMap();});
 
@@ -1478,12 +1494,8 @@ function advance(id,silent){
   if(!silent)showStage(id+1);
 }
 document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>advance(+b.dataset.next)));
-document.querySelectorAll('.sh').forEach(h=>h.addEventListener('click',()=>{
-  const s=h.parentElement;if(s.classList.contains('locked'))return;ping(420);
-  const wasOpen=s.classList.contains('open');
-  document.querySelectorAll('.stage').forEach(x=>x.classList.remove('open'));
-  if(!wasOpen)s.classList.add('open');
-}));
+/* The stage header used to toggle its own body. With one step on screen that
+   only ever emptied the view, so the header is now just a header. */
 
 /* ---------- quiz ---------- */
 function answered(qid){return !!S.quiz[qid];}
@@ -1704,6 +1716,11 @@ document.getElementById('coachCopy').addEventListener('click',async()=>{
   try{await navigator.clipboard.writeText(prompt);toast('Copied — paste it into Claude',2);}
   catch(e){toast('Select and copy the text above');}
   ev('coach-question','',q.slice(0,80));
+});
+/* Step 08 used to be reachable only because every stage was stacked on the page.
+   With one step on screen it needs its own way in from the summit. */
+document.getElementById('toNextCourse').addEventListener('click',()=>{
+  ping(600);ev('to-next-course');showStage(8);
 });
 document.querySelector('[data-ev="log-build"]').addEventListener('click',()=>{
   ping(700);
