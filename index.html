@@ -1179,6 +1179,11 @@ function showStage(id){
   document.querySelectorAll('.stage').forEach(s=>s.classList.remove('open','shown'));
   el.classList.remove('locked');
   el.classList.add('open','shown');
+  /* A step already cleared must never show a disabled gate. Normally the saved
+     quiz answers re-open it during restore(), but legacy saves can carry a
+     cleared step without the answer that opened it - and with one step on screen
+     a dead continue button strands the learner completely. */
+  if(S.cleared[id])openGate('n'+id);
   const prog=document.getElementById('stageProg');
   if(prog)prog.textContent='Step '+String(id).padStart(2,'0')+' of 8';
   /* with one step on screen there is nothing above it to scroll past */
@@ -1469,26 +1474,37 @@ function refresh(){const n=Object.keys(S.cleared).length,sd=stepsDone();
   drawMap();renderRail();}
 
 function advance(id,silent){
-  if(S.cleared[id])return;
-  S.cleared[id]=1;
-  if(!silent){ping(680);addXp(XP[id]||200);ev('clear','stage-'+id);}
+  /* Revisiting a step you have already cleared still has to carry you forward.
+     This used to `return` on an already-cleared step, which was survivable while
+     every step was stacked on one page - you could just scroll to the next card -
+     but with one step per screen it left the learner pressing a continue button
+     that did nothing. So: first-time effects are guarded, navigation is not. */
+  const already=!!S.cleared[id];
+  if(!already){
+    S.cleared[id]=1;
+    if(!silent){ping(680);addXp(XP[id]||200);ev('clear','stage-'+id);}
+  }
   const el=document.getElementById('s'+id);
   el.classList.remove('on');el.classList.add('done');if(!silent)el.classList.remove('open');
   const nx=document.getElementById('s'+(id+1));
   if(nx){nx.classList.remove('locked');nx.classList.add('on');if(!silent)nx.classList.add('open');}
-  if(id===5)awardBadge('narrows',silent);
-  if(id===6){S.cleared[7]=1;
-    const s8=document.getElementById('s8');
-    if(s8){s8.classList.remove('locked');s8.classList.add('on');}
-    if(!silent)toast('Hoard found',1);
-    awardBadge('hoard',silent);}
+  if(!already){
+    if(id===5)awardBadge('narrows',silent);
+    if(id===6){S.cleared[7]=1;
+      const s8=document.getElementById('s8');
+      if(s8){s8.classList.remove('locked');s8.classList.add('on');}
+      if(!silent)toast('Hoard found',1);
+      awardBadge('hoard',silent);}
+  }
   if(!silent){
-    /* Queue the connector that just became complete so drawMap() animates it
-       drawing rather than snapping in, then pop confetti on the node itself.
-       Clamped to the last connector: clearing step 6 also sets cleared[7], which
-       would otherwise index past the six segments. */
-    pendingDraw=Math.min(Object.keys(S.cleared).length-1,MAPPTS.length-2);
-    pendingBurst=id-1;
+    /* Only a step cleared for the first time extends the trail, so the draw and
+       the confetti are queued here and not on a revisit. Clamped to the last
+       connector: clearing step 6 also sets cleared[7], which would otherwise
+       index past the six segments. */
+    if(!already){
+      pendingDraw=Math.min(Object.keys(S.cleared).length-1,MAPPTS.length-2);
+      pendingBurst=id-1;
+    }
     refresh();save();
   }
   if(!silent)showStage(id+1);
