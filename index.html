@@ -73,22 +73,42 @@ body{font-family:var(--hn);background:var(--bg);color:var(--text);min-height:100
 .landCard input:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px rgba(206,0,88,.14)}
 
 /* ===== HUD ===== */
-.hud{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
-  padding:10px 20px;background:rgba(255,247,239,.90);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);
+.hud{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;
+  padding:10px 20px;background:rgba(255,247,239,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);
   box-shadow:0 2px 18px -8px rgba(120,60,40,.22)}
+/* Grouped so the bar and the action chips wrap as units rather than the nine
+   children breaking up wherever they happen to land. */
+.hudStats{display:flex;align-items:flex-start;gap:20px;min-width:0}
+.hudActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
 .brand{display:flex;align-items:baseline;gap:10px}
 .brand b{font-size:15px;font-weight:700;color:var(--choc)}
 .brand i{font-style:normal;font-size:9.5px;color:var(--pink);font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em}
-.stat{display:flex;flex-direction:column;gap:2px;min-width:72px}
+.stat{display:flex;flex-direction:column;gap:2px;min-width:0}
 .stat u{text-decoration:none;font-size:8.5px;color:var(--dim);font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em}
-.stat b{font-size:15.5px;font-weight:700;font-family:var(--mono)}
+.stat b{font-size:15.5px;font-weight:700;font-family:var(--mono);line-height:1.15}
+/* "Legend of the Marked Chart" is 25 characters. It is an earned title, so it
+   wraps in a narrow column rather than being truncated away. */
+#hRank{font-size:12px;max-width:13ch;white-space:normal}
+#hXp,#hStep{white-space:nowrap}
 .stat b.p{color:var(--pink)}
-.bar{flex:1;min-width:120px;height:8px;border-radius:99px;background:rgba(176,104,74,.13);border:1px solid var(--line);overflow:hidden}
-.bar>i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--orange),var(--coral) 55%,var(--pink));box-shadow:0 1px 8px rgba(206,0,88,.30);transition:width .8s cubic-bezier(.2,.9,.2,1)}
+.bar{flex:1 1 190px;min-width:170px;max-width:330px;height:13px;display:flex;gap:3px;
+  background:none;border:none;padding:0;border-radius:0}
+.bar>i{flex:1;height:100%;border-radius:4px;background:rgba(90,45,30,.15);
+  box-shadow:inset 0 1px 2px rgba(90,45,30,.28);transition:background .4s,box-shadow .4s,transform .25s}
+.bar>i.on{background:linear-gradient(180deg,var(--neonMag),var(--neonPink));
+  box-shadow:0 0 10px rgba(255,45,142,.7),inset 0 1px 0 rgba(255,255,255,.55)}
+/* the pip that just lit gets one pop, so progress is felt and not only seen */
+.bar>i.justOn{animation:pipPop .5s cubic-bezier(.2,1.5,.3,1)}
+@keyframes pipPop{0%{transform:scaleY(1)}45%{transform:scaleY(1.75)}100%{transform:scaleY(1)}}
+/* all eight lit: the whole bar goes gold */
+.bar.full>i.on{background:linear-gradient(180deg,#FFD166,var(--neonAmber));
+  box-shadow:0 0 12px rgba(255,176,32,.8),inset 0 1px 0 rgba(255,255,255,.6)}
+@media (prefers-reduced-motion:reduce){.bar>i.justOn{animation:none}}
+@media (max-width:900px){.bar{flex-basis:100%;max-width:none;order:9}}
 .libbtn{font-size:11px;color:var(--dim);text-decoration:none;border:1px solid var(--line2);padding:7px 11px;border-radius:9px;white-space:nowrap;font-family:var(--mono);letter-spacing:.05em;background:#FFFDFB;box-shadow:0 1px 3px rgba(120,60,40,.08);transition:color .2s,border-color .2s,box-shadow .2s,transform .07s}
 .libbtn:hover{color:var(--pink);border-color:var(--pink);box-shadow:0 4px 12px rgba(206,0,88,.16)}
 .libbtn:active{transform:translateY(1px)}
-.me{display:flex;align-items:center;gap:9px;margin-left:auto}
+.me{display:flex;align-items:center;gap:9px}
 .me .who{text-align:right;line-height:1.25}
 .me .who b{display:block;font-size:12px;font-weight:700}
 .me .who span{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.1em}
@@ -119,7 +139,7 @@ h1.title em{font-style:normal;color:var(--pink)}
 #guideOverlay .heroFacts{grid-template-columns:1fr;gap:8px;max-width:none;margin:0}
 /* the steps stat doubles as the achievements button, so it needs to look pressable */
 .statBtn{background:none;border:none;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;
-  display:flex;flex-direction:column;gap:2px;min-width:72px}
+  display:flex;flex-direction:column;gap:2px;min-width:0}
 .statBtn:hover .statSub,.statBtn:focus-visible .statSub{color:var(--pink)}
 .statBtn:focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:6px}
 .statSub{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.08em}
@@ -305,7 +325,6 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 .callout p{font-size:13.5px;color:var(--dim);line-height:1.5}
 
 .quiz{border:1px solid var(--line);border-radius:14px;background:#FFFCF9;padding:15px 16px;margin-bottom:14px}
-.quiz .qhead{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;color:var(--pink);margin-bottom:6px}
 .quiz .qstem{font-size:14.5px;font-weight:700;margin-bottom:11px;line-height:1.4}
 .qopts{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
 .qopt{text-align:left;padding:11px 13px;border-radius:11px;border:1px solid var(--line2);background:#FFF9F4;color:var(--text);font-family:var(--hn);font-size:13px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s}
@@ -319,7 +338,7 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 .qfeedback .fbreflect{font-size:12.5px;line-height:1.5;color:#9A5A15;margin-bottom:7px}
 @media (min-width:760px){
   .quiz.answered{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
-  .quiz.answered .qhead,.quiz.answered .qstem,.quiz.answered .qopts{grid-column:1}
+  .quiz.answered .qstem,.quiz.answered .qopts{grid-column:1}
   .quiz.answered .qfeedback{grid-column:2;grid-row:1/4;border-top:none;border-left:1px dashed var(--line2);
     padding-top:0;padding-left:24px;margin-top:0}
 }
@@ -385,6 +404,116 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 .foot a{color:var(--pink);text-decoration:none}
 .foot a:hover{text-decoration:underline}
 .foot .mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;font-size:8.5px;display:block;margin-top:6px}
+
+/* ═══════════════ NEON + 3D GAME LAYER ═══════════════
+   Applied as an override so the sunrise palette underneath is untouched.
+
+   Three rules govern where neon is allowed, because neon everywhere is neon
+   nowhere (Tufte's signal-to-noise; Fitts/Norman on perceived affordance):
+     1. Neon marks what is INTERACTIVE or LIVE - the primary action, the current
+        step, live counters. Body copy stays warm brown and stays readable.
+     2. Depth encodes STATE, not decoration: a raised riser means "pressable",
+        a compressed one means "pressed", flat means "disabled".
+     3. Every glow has a matching press state, so the feedback loop closes. */
+:root{
+  --neonPink:#FF2D8E;--neonMag:#FF52A8;--neonAmber:#FFB020;--neonCoral:#FF6B4A;
+  --riser:#96003F;--riserWarm:#A85F12;
+  --glowPink:0 0 10px rgba(255,45,142,.5),0 0 28px rgba(255,45,142,.24);
+  --glowPinkHi:0 0 16px rgba(255,45,142,.72),0 0 44px rgba(255,45,142,.38);
+  --glowAmber:0 0 10px rgba(255,176,32,.48),0 0 26px rgba(255,176,32,.22);
+  /* two-layer card depth: a tight contact shadow plus a soft ambient one */
+  --lift:0 1px 0 rgba(255,255,255,.9) inset,0 2px 5px -2px rgba(90,45,30,.24),0 14px 30px -16px rgba(90,45,30,.45);
+}
+
+/* ---------- primary action: a solid riser that visibly compresses ---------- */
+.btn{
+  background:linear-gradient(180deg,var(--neonMag) 0%,var(--pink) 58%,#B7004E 100%);
+  text-shadow:0 1px 1px rgba(90,0,40,.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 -2px 0 rgba(0,0,0,.16),
+    0 4px 0 var(--riser),
+    0 12px 22px -8px rgba(206,0,88,.55),
+    var(--glowPink);
+}
+.btn:hover{
+  filter:none;transform:translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -2px 0 rgba(0,0,0,.16),
+    0 6px 0 var(--riser),
+    0 18px 30px -10px rgba(206,0,88,.6),
+    var(--glowPinkHi);
+}
+/* the riser collapses to 1px so the button reads as physically pressed */
+.btn:active{
+  transform:translateY(3px);
+  box-shadow:
+    inset 0 2px 4px rgba(90,0,40,.35),
+    0 1px 0 var(--riser),
+    0 3px 8px -4px rgba(206,0,88,.5);
+}
+.btn.gold{background:linear-gradient(180deg,#FFD166 0%,var(--neonAmber) 58%,#E08A00 100%);color:#3A2205;text-shadow:0 1px 0 rgba(255,255,255,.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(0,0,0,.12),0 4px 0 var(--riserWarm),0 12px 22px -8px rgba(255,176,32,.5),var(--glowAmber)}
+.btn.gold:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 0 var(--riserWarm),0 18px 30px -10px rgba(255,176,32,.55),var(--glowAmber)}
+.btn.mint{background:linear-gradient(180deg,#FFC078 0%,var(--done) 60%,#C06E15 100%);color:#3A2205;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 4px 0 var(--riserWarm),0 12px 22px -8px rgba(224,138,60,.5),var(--glowAmber)}
+.btn.crs{background:linear-gradient(180deg,#4B96FF 0%,var(--coursera) 60%,#003E97 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 0 #00347E,0 12px 22px -8px rgba(0,86,210,.5),0 0 12px rgba(75,150,255,.4)}
+.btn.ghost{background:linear-gradient(180deg,#FFFFFF,#FFF3E9);color:var(--pink2);
+  box-shadow:inset 0 0 0 1.5px rgba(206,0,88,.32),0 3px 0 rgba(176,104,74,.22),0 8px 16px -8px rgba(90,45,30,.35)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--neonPink),0 4px 0 rgba(176,104,74,.26),0 12px 22px -10px rgba(255,45,142,.4),0 0 14px rgba(255,45,142,.25)}
+.btn.ghost:active{transform:translateY(2px);box-shadow:inset 0 2px 4px rgba(90,45,30,.18),0 1px 0 rgba(176,104,74,.22)}
+/* disabled must read as flat and dead - no riser, no glow */
+.btn:disabled,.btn.off{transform:none;box-shadow:inset 0 0 0 1px rgba(176,104,74,.28);background:#F3E4D8;color:#A98A7A;text-shadow:none}
+
+/* ---------- HUD: live numbers glow, labels do not ---------- */
+.stat b{text-shadow:0 0 10px rgba(255,45,142,.22)}
+.stat b.p{color:var(--neonPink);text-shadow:0 0 12px rgba(255,45,142,.55)}
+.bar{background:rgba(90,45,30,.14);box-shadow:inset 0 2px 4px rgba(90,45,30,.22)}
+.bar>i{background:linear-gradient(90deg,var(--neonAmber),var(--neonCoral) 45%,var(--neonPink));
+  box-shadow:0 0 12px rgba(255,45,142,.6),inset 0 1px 0 rgba(255,255,255,.5)}
+.av{box-shadow:0 3px 0 var(--riser),0 8px 18px -6px rgba(206,0,88,.5),var(--glowPink)}
+.libbtn:hover{color:var(--neonPink);border-color:var(--neonPink);box-shadow:0 0 12px rgba(255,45,142,.3),0 4px 10px -4px rgba(206,0,88,.3)}
+h1.title em{text-shadow:0 0 22px rgba(255,45,142,.35)}
+
+/* ---------- panels: consistent two-layer depth ---------- */
+.stage,.rail,.quiz,.course,.panel,.landCard,.heroFacts li,.badgeRow,.mCard{box-shadow:var(--lift)}
+.stage.on{box-shadow:var(--lift),0 0 0 1.5px rgba(255,45,142,.35),0 18px 40px -20px rgba(255,45,142,.5)}
+.stage.done{box-shadow:var(--lift),0 0 0 1.5px rgba(255,176,32,.3)}
+.map{box-shadow:0 2px 0 rgba(255,255,255,.6) inset,0 10px 24px -12px rgba(90,45,30,.4),0 36px 76px -34px rgba(90,45,30,.6)}
+
+/* ---------- the step chip: a 3D token, neon when live ---------- */
+.node{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 0 rgba(176,104,74,.3),0 5px 10px -5px rgba(90,45,30,.4)}
+.stage.on .node{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 0 var(--riser),0 9px 18px -6px rgba(206,0,88,.5),var(--glowPink)}
+.stage.done .node{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 0 var(--riserWarm),0 9px 16px -6px rgba(224,138,60,.45),var(--glowAmber)}
+
+/* ---------- answer options: hover promises, correct/wrong confirm ---------- */
+.qopt{box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 2px 5px -3px rgba(90,45,30,.28)}
+.qopt:hover:not(:disabled){border-color:var(--neonPink);box-shadow:0 0 0 1px rgba(255,45,142,.4),0 8px 18px -8px rgba(255,45,142,.4),0 0 14px rgba(255,45,142,.2)}
+.qopt.correct{box-shadow:0 0 0 1.5px rgba(255,176,32,.5),var(--glowAmber)}
+.qopt.wrong{box-shadow:0 0 0 1.5px rgba(179,38,30,.35)}
+
+/* ---------- chips, toasts, tags ---------- */
+.programTag{box-shadow:0 0 12px rgba(255,45,142,.18),inset 0 1px 0 rgba(255,255,255,.7)}
+.stage.on .tag{box-shadow:0 0 10px rgba(255,45,142,.22)}
+.toast{box-shadow:0 4px 0 var(--riser),0 18px 34px -12px rgba(206,0,88,.55),var(--glowPinkHi)}
+.toast.m,.toast.g{box-shadow:0 4px 0 var(--riserWarm),0 18px 34px -12px rgba(224,138,60,.5),var(--glowAmber)}
+.peers{box-shadow:0 3px 0 rgba(176,104,74,.28),0 14px 28px -12px rgba(90,45,30,.45),0 0 14px rgba(255,45,142,.18)}
+.peers em{background:var(--neonPink);box-shadow:0 0 10px rgba(255,45,142,.8)}
+.railList li.me{box-shadow:inset 0 0 0 1px rgba(255,45,142,.35),0 0 14px -4px rgba(255,45,142,.3)}
+.railList li b{color:var(--pink2);text-shadow:0 0 10px rgba(255,45,142,.2)}
+.factBtn i{text-shadow:0 0 10px rgba(255,45,142,.5)}
+.heroFacts li.open{box-shadow:var(--lift),0 0 0 1.5px rgba(255,45,142,.28)}
+.dossierCard{box-shadow:0 0 0 1px rgba(255,45,142,.14),0 40px 90px -28px rgba(60,30,20,.6)}
+.heroLegend .lgNow::before{box-shadow:0 0 0 2px rgba(255,255,255,.7),0 0 12px rgba(255,45,142,.8)}
+.heroLegend .lgDone::before{box-shadow:0 0 0 2px rgba(255,255,255,.7),0 0 10px rgba(255,176,32,.7)}
+
+/* Motion is the one thing that must yield: the depth and glow stay (they carry
+   state), only the movement goes. */
+@media (prefers-reduced-motion:reduce){
+  .btn:hover,.btn:active{transform:none}
+}
 </style>
 </head>
 <body>
@@ -409,16 +538,28 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 <div id="gameRoot" class="hide">
 <header class="hud">
   <div class="brand"><b>BU Learning</b><i>The Marked Chart</i></div>
-  <div class="stat"><u>Rank</u><b id="hRank" class="p">Deckhand</b></div>
-  <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
-  <button class="stat statBtn" id="badgeBtn" aria-label="Steps completed, and badges collected - opens your achievements">
-    <u>Steps</u><b id="hStep">0/8</b>
-    <span class="statSub">🏅 <span id="badgeCount">0</span> badges</span>
-  </button>
-  <div class="bar"><i id="hBar"></i></div>
-  <button class="libbtn" id="guideBtn" style="cursor:pointer">🧭 Guide</button>
-  <a class="libbtn" data-ev="hud-expand-your-range" href="https://deepikakanojia-art.github.io/sample-expand-your-range./" target="_blank" rel="noopener">📖 Expand Your Range</a>
-  <button class="libbtn" id="coachBtn" style="cursor:pointer">🤖 AI Coach</button>
+
+  <div class="hudStats">
+    <div class="stat"><u>Rank</u><b id="hRank" class="p">Deckhand</b></div>
+    <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
+    <button class="stat statBtn" id="badgeBtn" aria-label="Steps completed, and badges collected - opens your achievements">
+      <u>Steps</u><b id="hStep">0/8</b>
+      <span class="statSub">🏅 <span id="badgeCount">0</span> badges</span>
+    </button>
+  </div>
+
+  <!-- One pip per step, built in JS and lit by refresh(). Discrete beats a
+       continuous fill here: a learner can see how many are left without doing
+       arithmetic on a bar. -->
+  <div class="bar" id="hBar" role="progressbar" aria-valuemin="0" aria-valuemax="8"
+    aria-valuenow="0" aria-label="Steps completed"></div>
+
+  <div class="hudActions">
+    <button class="libbtn" id="guideBtn" style="cursor:pointer">🧭 Guide</button>
+    <a class="libbtn" data-ev="hud-expand-your-range" href="https://deepikakanojia-art.github.io/sample-expand-your-range./" target="_blank" rel="noopener">📖 Expand Your Range</a>
+    <button class="libbtn" id="coachBtn" style="cursor:pointer">🤖 AI Coach</button>
+  </div>
+
   <div class="me">
     <div class="who"><b id="meName">—</b><span id="meMail">signed in</span></div>
     <div class="av" id="meAv">—</div>
@@ -538,25 +679,19 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
   <div class="buRecGrid">
     <div class="course ready"><span class="dot"></span>
       <div class="meta"><em>Programme 01 · Prompting depth</em>
-        <b>Expand Your Range</b>
-        <span>Widen what you can ask Claude for — context, audience, format and iteration,
-          scored against the same RANGE frame you just used.</span></div>
+        <b>Expand Your Range</b></div>
       <div class="acts"><a class="btn crs" data-ev="rec-expand-your-range" target="_blank"
         rel="noopener" href="https://deepikakanojia-art.github.io/sample-expand-your-range./">Open</a></div></div>
 
     <div class="course ready"><span class="dot"></span>
       <div class="meta"><em>Programme 03 · Process automation</em>
-        <b>Augment &amp; Automate</b>
-        <span>Map a real process, find where AI belongs in it, and build a repeatable Claude
-          Project or workflow that someone else can run without you.</span></div>
+        <b>Augment &amp; Automate</b></div>
       <div class="acts"><a class="btn crs" data-ev="rec-augment-automate" target="_blank"
         rel="noopener" href="https://deepikakanojia-art.github.io/Augment-sample-/">Open</a></div></div>
 
     <div class="course ready"><span class="dot"></span>
       <div class="meta"><em>Self-serve · Okta single sign-on</em>
-        <b>The full Coursera catalogue</b>
-        <span>Everything BetterUp has licensed — automation, analytics, leadership and more.
-          Signs you in with your BetterUp account, no separate password.</span></div>
+        <b>The full Coursera catalogue</b></div>
       <div class="acts"><a class="btn crs" data-ev="rec-coursera-catalogue" target="_blank"
         rel="noopener" href="https://betterup.okta.com/app/coursera/exk1xmqmfkt9zcNtd358/sso/saml">Browse</a></div></div>
   </div>
@@ -567,8 +702,6 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 <section class="buSec" id="buRateSec">
   <div class="buKicker">Your verdict</div>
   <h2>Rate this experience</h2>
-  <p class="buSub">One tap. It goes straight to the person who built it and shapes what the
-    next programme looks like — so an honest 2 is more useful than a polite 5.</p>
 
   <div class="buRate" id="buRateBox">
     <div class="buCredit">
@@ -749,11 +882,10 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 
   <section class="stage locked" id="s2">
     <div class="sh"><div class="node">02</div>
-      <div><h3>The weathered page</h3><p>A torn fragment asks the first question</p></div>
+      <div><h3>The weathered page</h3></div>
       <span class="tag">1 min</span></div>
     <div class="body">
       <div class="quiz" data-qid="q1">
-        <div class="qhead">Question 1 · /context</div>
         <p class="qstem">What is /context used for in Claude?</p>
         <div class="qopts">
           <button class="qopt" data-correct="true">A. helps you monitor and manage the token usage of your session, which is necessary to prevent hitting context limits and losing conversation history/quality.</button>
@@ -817,7 +949,6 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
         <h5>Mission Check A — locked until Voyage One is charted</h5>
         <div id="missionAQs" class="hide">
           <div class="quiz" data-qid="q2">
-            <div class="qhead">Question 2 · Tokens</div>
             <p class="qstem">What are tokens in Claude?</p>
             <div class="qopts">
               <button class="qopt" data-correct="true">A. Units of text/data that Claude processes in the input and output</button>
@@ -843,7 +974,6 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
         <h5>Mission Check B — locked until Voyage Two is charted</h5>
         <div id="missionBQs" class="hide">
           <div class="quiz" data-qid="q4">
-            <div class="qhead">Question 4 · Evaluate and Iterate</div>
             <p class="qstem">Claude gives you an answer, but it isn't quite right. What should you do?</p>
             <div class="qopts">
               <button class="qopt" data-correct="true">A. Review the output, explain what needs to change, and ask Claude to improve it</button>
@@ -875,9 +1005,7 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
       <div><h3>The narrows</h3><p>Core — steady hands through the pinch point</p></div>
       <span class="tag">gate</span></div>
     <div class="body">
-      <p style="font-size:13.5px;color:var(--dim);line-height:1.55;margin-bottom:14px">No course here — just one question stands between you and the solo voyage.</p>
       <div class="quiz" data-qid="q5">
-        <div class="qhead">Question 5 · Skeptical Prompting</div>
         <p class="qstem">What is the purpose of an adversarial verifier prompt?</p>
         <div class="qopts">
           <button class="qopt" data-correct="true">A. To ask Claude to actively try to poke holes in your idea and surface weaknesses or risks</button>
@@ -1136,7 +1264,7 @@ document.getElementById('setSailBtn').addEventListener('click',()=>{
 /* ---------- dossier ---------- */
 const STEP_INFO={
   1:{tag:'Step 01',title:'Read the winds',blurb:'Two minutes on deck before you touch the chart — what this voyage is for, and why your RANGE bearing comes before the legs.',reward:'★ 100 XP'},
-  2:{tag:'Step 02',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
+  2:{tag:'Step 02',title:'The weathered page',blurb:'One question, on giving Claude context. Answer it and step 03 opens.',reward:'★ 100 XP'},
   3:{tag:'Step 03',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
   4:{tag:'Step 04 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
   5:{tag:'Step 05',title:'The narrows',blurb:'No course, one question — clear it and the solo voyage opens.',reward:'★ 200 XP'},
@@ -1286,13 +1414,13 @@ async function renderRail(){
    The plate ships one spare waypoint on the summit climb; it was painted out of
    the image rather than left to read as a phantom eighth checkpoint. */
 const MAPPTS=[
- {id:1, fx:9.63,  fy:61.00, label:'WINDS',   icon:'film',    hue:'#F5A04B', title:'Read the winds',     desc:'Two minutes on deck before you touch the chart.'},
- {id:2, fx:20.57, fy:67.27, label:'PAGE',    icon:'scroll',  hue:'#EE8A4B', title:'The weathered page', desc:'A torn fragment asks the first question.'},
- {id:3, fx:37.26, fy:69.71, label:'BEARING', icon:'compass', hue:'#EE6C55', title:'Chart your bearing', desc:'Run the RANGE evaluator and plot your growth edge.'},
- {id:4, fx:47.85, fy:62.70, label:'VOYAGES', icon:'sails',   hue:'#E4515F', title:'Twin voyages',       desc:'Two courses, two mission checks between them.'},
- {id:5, fx:68.54, fy:56.22, label:'NARROWS', icon:'gate',    hue:'#D62A6B', title:'The narrows',        desc:'One question stands between you and the solo voyage.'},
- {id:6, fx:80.08, fy:49.73, label:'SOLO',    icon:'rocket',  hue:'#CE0058', title:'Solo voyage',        desc:'Apply it to real work, then report back from the field.'},
- {id:7, fx:91.15, fy:33.05, label:'SUMMIT',  icon:'flag',    hue:'#F5A04B', title:'Hoard found',        desc:'The chart is whole. What did you build with it?'}
+ {id:1, fx:9.63,  fy:61.00, label:'WINDS',   icon:'film',    hue:'#FFB020', title:'Read the winds',     desc:'Two minutes on deck before you touch the chart.'},
+ {id:2, fx:20.57, fy:67.27, label:'PAGE',    icon:'scroll',  hue:'#FF9124', title:'The weathered page', desc:'One question, on giving Claude context.'},
+ {id:3, fx:37.26, fy:69.71, label:'BEARING', icon:'compass', hue:'#FF6B4A', title:'Chart your bearing', desc:'Run the RANGE evaluator and plot your growth edge.'},
+ {id:4, fx:47.85, fy:62.70, label:'VOYAGES', icon:'sails',   hue:'#FF4A6E', title:'Twin voyages',       desc:'Two courses, two mission checks between them.'},
+ {id:5, fx:68.54, fy:56.22, label:'NARROWS', icon:'gate',    hue:'#FF2D8E', title:'The narrows',        desc:'One question stands between you and the solo voyage.'},
+ {id:6, fx:80.08, fy:49.73, label:'SOLO',    icon:'rocket',  hue:'#FF1478', title:'Solo voyage',        desc:'Apply it to real work, then report back from the field.'},
+ {id:7, fx:91.15, fy:33.05, label:'SUMMIT',  icon:'flag',    hue:'#FFC63C', title:'Hoard found',        desc:'The chart is whole. What did you build with it?'}
 ];
 MAPPTS.forEach(m=>{m.x=m.fx*10;m.y=m.fy*5.63;});
 const LOCK_HUE='#C6AB9B';
@@ -1362,16 +1490,16 @@ function drawMap(){
   let h=`<defs>
     <linearGradient id="segGrad" gradientUnits="userSpaceOnUse"
       x1="${A[0].x}" y1="${A[0].y}" x2="${A[A.length-1].x}" y2="${A[A.length-1].y}">
-      <stop offset="0%" stop-color="#F5A04B"/><stop offset="42%" stop-color="#EE6C55"/>
-      <stop offset="78%" stop-color="#CE0058"/><stop offset="100%" stop-color="#F5A04B"/>
+      <stop offset="0%" stop-color="#FFB020"/><stop offset="42%" stop-color="#FF6B4A"/>
+      <stop offset="78%" stop-color="#FF2D8E"/><stop offset="100%" stop-color="#FFB020"/>
     </linearGradient>
     <filter id="segGlow" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#F5A04B" flood-opacity=".85"/></filter>
+      <feDropShadow dx="0" dy="0" stdDeviation="3.6" flood-color="#FF2D8E" flood-opacity=".95"/></filter>
     ${A.map((m,i)=>`<radialGradient id="halo${i}">
       <stop offset="0%" stop-color="${m.hue}" stop-opacity=".85"/>
       <stop offset="100%" stop-color="${m.hue}" stop-opacity="0"/></radialGradient>
       <filter id="ng${i}" x="-90%" y="-90%" width="280%" height="280%">
-      <feDropShadow dx="0" dy="1.5" stdDeviation="3.4" flood-color="${m.hue}" flood-opacity=".9"/></filter>`).join('')}
+      <feDropShadow dx="0" dy="1.5" stdDeviation="4.2" flood-color="${m.hue}" flood-opacity=".9"/></filter>`).join('')}
   </defs>`;
 
   /* connectors first, so nodes always sit on top of them */
@@ -1386,7 +1514,7 @@ function drawMap(){
     const col=isLock?LOCK_HUE:m.hue,R=isLive?23:19,op=isLock?.72:1;
     if(!isLock)h+=`<circle class="nodeHalo${isLive?' breathe':''}" cx="${m.x}" cy="${m.y}" r="${R+14}"
       fill="url(#halo${i})" opacity="${isLive?.34:.22}"/>`;
-    if(isLive)h+=`<circle class="nodePulse" cx="${m.x}" cy="${m.y}" r="${R}" fill="none" stroke="#CE0058" stroke-width="2.2"/>
+    if(isLive)h+=`<circle class="nodePulse" cx="${m.x}" cy="${m.y}" r="${R}" fill="none" stroke="#FF2D8E" stroke-width="2.4"/>
       <circle class="nodePulse p2" cx="${m.x}" cy="${m.y}" r="${R}" fill="none" stroke="#FFFFFF" stroke-width="1.4" opacity=".85"/>`;
     if(i===A.length-1&&!isLock)
       h+=`<circle class="sparkle" cx="${m.x-24}" cy="${m.y-15}" r="1.7" fill="#FFF1DC"/>
@@ -1411,7 +1539,7 @@ function drawMap(){
     </g>`;
 
     /* a bobbing "you are here" chevron over the live node */
-    if(isLive)h+=`<g class="hereBob"><path d="M${m.x},${m.y-R-11} l6,-8 h-12 z" fill="#CE0058" stroke="#FFF6EA" stroke-width="1.4"/></g>`;
+    if(isLive)h+=`<g class="hereBob"><path d="M${m.x},${m.y-R-11} l6,-8 h-12 z" fill="#FF2D8E" stroke="#FFF6EA" stroke-width="1.4"/></g>`;
   });
 
   svg.innerHTML=h;
@@ -1460,9 +1588,30 @@ function stepsDone(){
   if(S.mailed)n++;
   return Math.min(n,8);
 }
+/* Builds the eight pips once, then lights the first `sd` of them. The pip that
+   has just turned on is flagged so it can pop; the flag is dropped afterwards so
+   a later refresh does not replay it. */
+function paintBar(sd){
+  const bar=document.getElementById('hBar');if(!bar)return;
+  if(bar.children.length!==8){bar.innerHTML='<i></i>'.repeat(8);bar.dataset.lit='0';}
+  const was=+(bar.dataset.lit||0);
+  [...bar.children].forEach((pip,i)=>{
+    const on=i<sd;
+    pip.classList.toggle('on',on);
+    if(on&&i>=was&&i===sd-1){
+      pip.classList.add('justOn');
+      setTimeout(()=>pip.classList.remove('justOn'),600);
+    }
+    if(!on)pip.classList.remove('justOn');
+  });
+  bar.classList.toggle('full',sd>=8);
+  bar.dataset.lit=String(sd);
+  bar.setAttribute('aria-valuenow',String(sd));
+  bar.setAttribute('aria-valuetext',sd+' of 8 steps done');
+}
 function refresh(){const n=Object.keys(S.cleared).length,sd=stepsDone();
   document.getElementById('hStep').textContent=sd+'/8';
-  document.getElementById('hBar').style.width=(sd/8*100)+'%';
+  paintBar(sd);
   /* the plate's cool pre-dawn veil lifts as legs clear — the sun literally comes
      up over the run of the programme */
   const dawn=document.getElementById('dawn');
