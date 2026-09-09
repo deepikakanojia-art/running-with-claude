@@ -95,12 +95,37 @@ body{font-family:var(--hn);background:var(--bg);color:var(--text);min-height:100
 .av{width:36px;height:36px;flex:0 0 36px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:12.5px;font-weight:700;color:#fff;background:linear-gradient(145deg,var(--pink),var(--pink2));box-shadow:0 4px 14px rgba(206,0,88,.32)}
 
 /* ===== layout ===== */
-.wrap{position:relative;z-index:10;max-width:1120px;margin:0 auto;padding:24px 18px 96px}
-h1.title{font-size:clamp(30px,5.6vw,54px);font-weight:700;line-height:1.02;letter-spacing:-.025em;margin-bottom:6px}
+.wrap{position:relative;z-index:10;max-width:1240px;margin:0 auto;padding:14px 18px 96px}
+h1.title{font-size:clamp(34px,6.2vw,68px);font-weight:700;line-height:1.01;letter-spacing:-.028em;margin-bottom:4px}
 h1.title em{font-style:normal;color:var(--pink)}
 .programTag{display:inline-block;font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;
-  color:var(--pink2);border:1px solid rgba(206,0,88,.30);background:rgba(206,0,88,.05);padding:5px 10px;border-radius:99px;margin-bottom:14px}
-.sub{color:var(--dim);max-width:60ch;font-size:15px;line-height:1.55;margin-bottom:20px}
+  color:var(--pink2);border:1px solid rgba(206,0,88,.30);background:rgba(206,0,88,.05);padding:6px 12px;border-radius:99px;margin-bottom:12px;font-size:10px}
+.sub{color:var(--dim);max-width:82ch;font-size:16.5px;line-height:1.5;margin-bottom:12px}
+/* What the programme actually gives you, as one scannable row. Deliberately
+   tighter than the paragraph it replaced so the hero keeps its height. */
+.heroFacts{list-style:none;display:grid;gap:8px 12px;margin:0 0 14px;align-items:start;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));max-width:1180px}
+.heroFacts li{border:1px solid var(--line);border-radius:12px;background:#FFFCF9;overflow:hidden;
+  box-shadow:0 4px 12px -10px rgba(120,60,40,.55)}
+.factBtn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;background:none;border:none;cursor:pointer;text-align:left;
+  font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text);letter-spacing:.04em}
+.factBtn:hover{color:var(--pink)}
+.factBtn:focus-visible{outline:2px solid var(--pink);outline-offset:-2px}
+/* the + turns into an x when open, so the control says what it will do */
+.factBtn i{font-style:normal;font-size:15px;line-height:1;color:var(--pink);transition:transform .2s}
+.heroFacts li.open .factBtn i{transform:rotate(45deg)}
+.heroFacts li p{display:none;padding:0 12px 11px;font-size:12.5px;color:var(--dim);line-height:1.5}
+#guideOverlay .heroFacts{grid-template-columns:1fr;gap:8px;max-width:none;margin:0}
+/* the steps stat doubles as the achievements button, so it needs to look pressable */
+.statBtn{background:none;border:none;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;
+  display:flex;flex-direction:column;gap:2px;min-width:72px}
+.statBtn:hover .statSub,.statBtn:focus-visible .statSub{color:var(--pink)}
+.statBtn:focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:6px}
+.statSub{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.08em}
+/* 10px padding gives a 38px row; on touch that is under the 44px minimum */
+@media (max-width:560px){.factBtn{padding:13px 14px;font-size:12px}.heroFacts li p{font-size:13px}}
+.heroFacts li.open p{display:block}
 
 /* ===== hero route map =====
    The sunrise plate is the background; every checkpoint, connector and label is
@@ -108,7 +133,9 @@ h1.title em{font-style:normal;color:var(--pink)}
    a matching aspect-ratio here keeps SVG coordinates locked to image pixels at
    every viewport width, which is what holds the nodes on their waypoints. */
 .backToRoute{margin-bottom:16px}
-.hero{width:88%;max-width:1000px;margin:0 auto 18px}
+.hero{width:min(90vw,2100px,calc(82svh * 1.7768));max-width:none;
+  margin:0 0 20px 50%;transform:translateX(-50%)}
+@supports not (height:1svh){.hero{width:min(90vw,2100px,calc(82vh * 1.7768))}}
 .map{position:relative;border:1px solid var(--line2);border-radius:20px;overflow:hidden;
   aspect-ratio:1672/941;background:linear-gradient(180deg,#FFE6CC,#FFD3B0);
   box-shadow:0 30px 70px -30px rgba(120,60,40,.55),0 2px 0 rgba(255,255,255,.6) inset}
@@ -118,14 +145,14 @@ h1.title em{font-style:normal;color:var(--pink)}
   background:linear-gradient(180deg,rgba(58,30,42,.55),rgba(40,22,30,.34));
   transition:opacity 1.2s ease}
 .map #mapSvg{position:absolute;inset:0;width:100%;height:100%;z-index:3;display:block}
-.map .cap,.map .hint{position:absolute;z-index:5;font-size:8.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;
-  background:rgba(46,27,20,.44);color:#FFF3E6;padding:5px 9px;border-radius:99px;backdrop-filter:blur(4px)}
-.map .cap{top:12px;left:14px}
-.map .hint{bottom:12px;right:14px}
-.heroLegend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin:10px 0 0;
-  font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--dim)}
+.map .cap,.map .hint{position:absolute;z-index:5;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;
+  background:rgba(46,27,20,.46);color:#FFF3E6;padding:6px 12px;border-radius:99px;backdrop-filter:blur(4px)}
+.map .cap{top:16px;left:18px}
+.map .hint{bottom:16px;right:18px}
+.heroLegend{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin:12px 0 0;
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--dim)}
 .heroLegend i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
-.heroLegend i::before{content:"";width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.7)}
+.heroLegend i::before{content:"";width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.7)}
 .heroLegend .lgDone::before{background:var(--done)}
 .heroLegend .lgNow::before{background:var(--pink)}
 .heroLegend .lgLock::before{background:#B49C8E}
@@ -170,14 +197,14 @@ h1.title em{font-style:normal;color:var(--pink)}
 @media (max-width:560px){.nodeLabel{display:none}}
 
 /* hover card on the map */
-.mCard{position:absolute;max-width:244px;padding:13px 15px;border-radius:14px;pointer-events:none;z-index:6;
+.mCard{position:absolute;max-width:280px;padding:15px 17px;border-radius:15px;pointer-events:none;z-index:6;
   background:rgba(255,252,249,.97);border:1px solid var(--line2);
   box-shadow:0 18px 40px -14px rgba(90,45,30,.5);opacity:0;transform:translateY(6px);
   transition:opacity .22s,transform .22s}
 .mCard.show{opacity:1;transform:translateY(0)}
 .mCard .num{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--pink);text-transform:uppercase}
-.mCard h4{font-size:14.5px;font-weight:700;margin:3px 0 6px;letter-spacing:-.01em}
-.mCard p{font-size:12.5px;line-height:1.5;color:var(--dim)}
+.mCard h4{font-size:16px;font-weight:700;margin:3px 0 6px;letter-spacing:-.01em}
+.mCard p{font-size:13.5px;line-height:1.5;color:var(--dim)}
 .mCard .state{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:9px;
   letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
 .ms-done{background:rgba(224,138,60,.16);color:#9A5A15;border:1px solid rgba(224,138,60,.45)}
@@ -227,7 +254,8 @@ a.btn{text-decoration:none}
 .acts{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
 
 .pbox{border:1px solid var(--line2);border-radius:12px;background:#FFF4E9;padding:14px;margin:10px 0}
-.pbox code{color:var(--pink2);font-family:var(--mono);font-size:12.5px}
+.pbox code{display:block;color:var(--pink2);font-family:var(--mono);font-size:12.5px;
+  line-height:1.55;white-space:normal;word-break:break-word}
 ol.steps{counter-reset:s;list-style:none;margin:12px 0 14px}
 ol.steps li{counter-increment:s;position:relative;padding-left:31px;margin-bottom:8px;font-size:13.5px;color:var(--dim)}
 ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:700;background:rgba(206,0,88,.09);color:var(--pink);border:1px solid rgba(206,0,88,.28)}
@@ -237,6 +265,8 @@ textarea:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px rgba(2
 label.q{display:block;font-size:13.5px;margin:0 0 6px;line-height:1.45}
 label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.14em;display:block;margin-bottom:3px}
 .err{color:#B3261E;font-size:12.5px;margin-bottom:9px;display:none}
+/* says what the disabled gate is waiting for; hidden once it opens */
+.gateHint{font-size:12.5px;color:var(--dim);margin-top:9px;font-style:italic}
 
 .chart{display:none;margin-top:18px;border:1px solid var(--line);border-radius:14px;background:#FFF4E9;padding:16px}
 .chart.show{display:block}
@@ -244,12 +274,10 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 .edge{margin-top:12px;font-size:13.5px;color:var(--dim);line-height:1.5}
 .edge b{color:var(--pink2)}
 
-/* Leg 01 briefing video. aspect-ratio reserves the box before metadata loads so
+/* Step 01 briefing video. aspect-ratio reserves the box before metadata loads so
    the "I've watched it" button doesn't jump down once the first frame appears. */
 .vid{width:100%;aspect-ratio:16/9;border-radius:14px;border:1px solid var(--line2);
   background:#2E1B14;display:block;margin-bottom:10px;box-shadow:0 14px 34px -18px rgba(120,60,40,.5)}
-.vcap{margin:8px 0 0;font-size:13px;color:var(--dim);line-height:1.5}
-.vcap b{color:var(--text)}
 
 .course{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:10px;background:#FFFCF9;box-shadow:0 6px 16px -14px rgba(120,60,40,.4)}
 .course .dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#D3BCAE}
@@ -363,7 +391,7 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
   <div class="landCard">
     <div class="landTag">BU Learning · Program 2 · Running with Claude</div>
     <h1>THE MARKED CHART</h1>
-    <p class="sub">Half a chart, six legs, one hoard. Claude reads the winds — the pirate at the helm makes the call.</p>
+    <p class="sub">Half a chart, six steps, one hoard. Claude reads the winds — the pirate at the helm makes the call.</p>
     <label class="q"><i>What do the crew call you?</i></label>
     <input type="text" id="pirateNameInput" placeholder="Your pirate name" maxlength="24">
     <button class="btn" id="setSailBtn">Set Sail ▶</button>
@@ -376,9 +404,12 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
   <div class="brand"><b>BU Learning</b><i>The Marked Chart</i></div>
   <div class="stat"><u>Rank</u><b id="hRank" class="p">Deckhand</b></div>
   <div class="stat"><u>Doubloons</u><b id="hXp">0 XP</b></div>
-  <div class="stat"><u>Leg</u><b id="hStep">0/6</b></div>
+  <button class="stat statBtn" id="badgeBtn" aria-label="Steps done, and your badges">
+    <u>Steps</u><b id="hStep">0/8</b>
+    <span class="statSub">🏅 <span id="badgeCount">0</span>/8</span>
+  </button>
   <div class="bar"><i id="hBar"></i></div>
-  <button class="libbtn" id="badgeBtn" style="cursor:pointer">🏅 <span id="badgeCount">0</span>/8</button>
+  <button class="libbtn" id="guideBtn" style="cursor:pointer">🧭 Guide</button>
   <a class="libbtn" data-ev="hud-expand-your-range" href="https://deepikakanojia-art.github.io/sample-expand-your-range./" target="_blank" rel="noopener">📖 Expand Your Range</a>
   <button class="libbtn" id="coachBtn" style="cursor:pointer">🤖 AI Coach</button>
   <div class="me">
@@ -388,10 +419,10 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
 </header>
 
 <main class="wrap">
-  <h1 class="title">Chart your <em>RANGE</em>.</h1>
-  <div><span class="programTag">Program 2 · Running with Claude</span></div>
-  <p class="sub">Six legs to the hoard. Watch the briefing, answer what you know, read your own bearing, clear two voyages and the mission checks between them, thread the narrows, then set off on a solo voyage into real work. Tap a marker below to open its dossier.</p>
-
+  <h1 class="title">Running with <em>Claude</em></h1>
+  <div><span class="programTag">Program 2</span></div>
+  <p class="sub">Six steps, then the summit. Go at your own speed &mdash; your progress saves
+    itself, so you can stop any time.</p>
   <div id="mapView">
     <div class="hero">
       <div class="map" id="mapBox">
@@ -404,7 +435,7 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
         <img class="mapBg" src="hero-sunrise-route.jpg"
           alt="A sunrise valley with a glowing trail climbing to a flag on the summit" decoding="async">
         <div class="dawn" id="dawn"></div>
-        <svg id="mapSvg" viewBox="0 0 1000 563" preserveAspectRatio="none" aria-label="Six legs and the summit"></svg>
+        <svg id="mapSvg" viewBox="0 0 1000 563" preserveAspectRatio="none" aria-label="Six steps and the summit"></svg>
         <div class="mCard" id="mCard"></div>
         <span class="hint" id="mapProg">Tap the glowing marker</span>
       </div>
@@ -419,7 +450,7 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
     </div>
     <!-- Recommended next + "Created by Deepika" 5-star rating - Running with Claude.
      Sits at the end of #mapView so it shows on the route page and hides with it when
-     a leg is open. Colours resolve through --buAccent / --buAccent2 / --buHi, which
+     a step is open. Colours resolve through --buAccent / --buAccent2 / --buHi, which
      fall back to this page's teal family because it defines no --lav/--pink/--bupink.
      Class names are bu-prefixed so they cannot clash with the .stars starfield rule.
      Ratings ride the page's existing ev() then flush() pipeline into the Event record
@@ -702,7 +733,6 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
         Your browser can't play this video &mdash; <a href="BetterUp%20RANGE_%20Your%20AI%20Fluency%20Score_720p.mp4">download it instead</a>.
       </video>
       <p class="edge" style="margin-top:0">Double-click to watch the video in full screen.</p>
-      <p class="vcap"><b>Explainer video</b> &middot; Why your RANGE bearing comes before the legs &middot; 2 min</p>
       <div class="acts"><button class="btn" data-next="1">I've watched it &mdash; continue</button></div>
     </div>
   </section>
@@ -736,14 +766,13 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
     <div class="body">
       <ol class="steps"><li>Copy the prompt below.</li><li>Open Claude, paste it, let it run.</li>
         <li>Copy the Score Card line it gives you.</li><li>Paste it back here.</li></ol>
-      <div class="pbox"><code id="pTxt">evaluate my RANGE</code></div>
+      <div class="pbox"><code id="pTxt">Evaluate my RANGE. Base this only on my own Claude activity in my own account &mdash; if this conversation doesn't have enough to go on, look at my own most recent substantial session, never anyone else's conversation, project, or account. Don't reference or attribute another person's work to me.</code></div>
       <button class="btn ghost" id="pCopy">Copy the prompt</button>
       <div style="height:16px"></div>
       <textarea class="mono" id="scoreIn" placeholder="RANGE | 2026-09-01 | R:2 A:2 N:1 G:2 EF:3 | Total:10/25 | first run"></textarea>
       <div class="err" id="scoreErr">Couldn't read that. Paste the line beginning with RANGE, including R: A: N: G: EF: values.</div>
       <div class="acts">
         <button class="btn" id="scoreGo">Plot my bearing</button>
-        <button class="btn ghost" data-next="3">Don't have a score yet — skip for now ▶</button>
       </div>
       <div class="chart" id="chartWrap">
         <h4>Your RANGE profile</h4>
@@ -826,7 +855,8 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
         <div class="acts"><a class="btn crs" id="bonusopen" data-ev="open-bonus" target="_blank" rel="noopener" href="https://www.coursera.org/learn/ai-for-everyone-ai-automation-with-claude">Set Sail</a>
           <button class="btn ghost" data-course="bonus">Charted</button></div></div>
 
-      <div class="acts hide" id="n4"><button class="btn" data-next="4">Both voyages charted — continue</button></div>
+      <div class="acts" id="n4"><button class="btn" data-next="4" disabled>Both voyages charted — continue</button></div>
+      <p class="gateHint" id="n4hint">Chart both voyages and answer both mission checks, then this opens.</p>
     </div>
   </section>
 
@@ -849,7 +879,8 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
           <textarea class="mono" rows="2" data-f="q5refl" placeholder="Jot a note to yourself (optional)"></textarea>
         </div>
       </div>
-      <div class="acts hide" id="n5"><button class="btn" data-next="5">Continue to solo voyage</button></div>
+      <div class="acts" id="n5"><button class="btn" data-next="5" disabled>Continue to solo voyage</button></div>
+      <p class="gateHint" id="n5hint">Answer the question above, then this opens.</p>
     </div>
   </section>
 
@@ -936,6 +967,47 @@ label.q i{font-style:normal;color:var(--pink);font-family:var(--mono);font-size:
     <div class="dTag">Achievements</div>
     <h3>Ship's Log of Deeds</h3>
     <div id="badgeList" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<div class="dossierOverlay hide" id="guideOverlay">
+  <div class="dossierCard" style="max-width:540px">
+    <button class="dClose" id="guideClose">&#10005;</button>
+    <div class="dTag">Guide</div>
+    <h3>How this works</h3>
+    <p>Six steps, then the summit. Tap any heading to see what it means.</p>
+    <ul class="heroFacts">
+      <li>
+        <button type="button" class="factBtn" aria-expanded="false" data-ev="fact-route">
+          <span>&#128506; The route</span><i aria-hidden="true">+</i>
+        </button>
+        <p>Each dot is one step. Tap a dot to start it. Finish a step to unlock the next one.</p>
+      </li>
+      <li>
+        <button type="button" class="factBtn" aria-expanded="false" data-ev="fact-doubloons">
+          <span>&#11088; Doubloons</span><i aria-hidden="true">+</i>
+        </button>
+        <p>Doubloons are your points. Finish a step, earn points, move up the board below.</p>
+      </li>
+      <li>
+        <button type="button" class="factBtn" aria-expanded="false" data-ev="fact-badges">
+          <span>&#127941; Badges</span><i aria-hidden="true">+</i>
+        </button>
+        <p>8 badges to collect. You earn one for each big win along the way.</p>
+      </li>
+      <li>
+        <button type="button" class="factBtn" aria-expanded="false" data-ev="fact-coach">
+          <span>&#129302; AI Coach</span><i aria-hidden="true">+</i>
+        </button>
+        <p>Stuck? Type your question. Copy it, paste it into Claude, get help.</p>
+      </li>
+      <li>
+        <button type="button" class="factBtn" aria-expanded="false" data-ev="fact-peers">
+          <span>&#128172; Your peers</span><i aria-hidden="true">+</i>
+        </button>
+        <p>Ask the group in Slack. Someone else has probably been stuck too.</p>
+      </li>
+    </ul>
   </div>
 </div>
 
@@ -1032,6 +1104,15 @@ function setIdentity(){
   document.getElementById('meAv').textContent=ini;
 }
 
+/* Feature row: each label opens its own explanation. Independent toggles rather
+   than an accordion, so opening one never closes what someone is mid-way
+   through reading. */
+document.querySelectorAll('.factBtn').forEach(b=>b.addEventListener('click',()=>{
+  const li=b.parentElement,open=li.classList.toggle('open');
+  b.setAttribute('aria-expanded',open?'true':'false');
+  ping(420);
+}));
+
 /* ---------- landing ---------- */
 document.getElementById('setSailBtn').addEventListener('click',()=>{
   const val=document.getElementById('pirateNameInput').value.trim();
@@ -1042,17 +1123,17 @@ document.getElementById('setSailBtn').addEventListener('click',()=>{
 });
 
 /* ---------- dossier ---------- */
-const LEG_INFO={
-  1:{tag:'Leg 01',title:'Read the winds',blurb:'Two minutes on deck before you touch the chart — what this voyage is for, and why your RANGE bearing comes before the legs.',reward:'★ 100 XP'},
-  2:{tag:'Leg 02',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
-  3:{tag:'Leg 03',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
-  4:{tag:'Leg 04 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
-  5:{tag:'Leg 05',title:'The narrows',blurb:'No course, one question — clear it and the solo voyage opens.',reward:'★ 200 XP'},
-  6:{tag:'Leg 06',title:'Solo voyage',blurb:'Apply it to real work, then report back from the field.',reward:'★ 350 XP'},
+const STEP_INFO={
+  1:{tag:'Step 01',title:'Read the winds',blurb:'Two minutes on deck before you touch the chart — what this voyage is for, and why your RANGE bearing comes before the legs.',reward:'★ 100 XP'},
+  2:{tag:'Step 02',title:'The weathered page',blurb:'A torn fragment of the chart asks one question before it will reveal the next line of the route.',reward:'★ 100 XP'},
+  3:{tag:'Step 03',title:'Chart your bearing',blurb:'Run the RANGE evaluator in your own Claude and bring the score back — it plots where your growth edge sits.',reward:'★ 150 XP'},
+  4:{tag:'Step 04 · Critical',title:'Twin voyages',blurb:'Two courses, two mission checks between them. Clear both before the narrows will open.',reward:'★ 400 XP'},
+  5:{tag:'Step 05',title:'The narrows',blurb:'No course, one question — clear it and the solo voyage opens.',reward:'★ 200 XP'},
+  6:{tag:'Step 06',title:'Solo voyage',blurb:'Apply it to real work, then report back from the field.',reward:'★ 350 XP'},
   7:{tag:'Final',title:'Hoard found',blurb:'The chart is whole. What did you build with it?',reward:'Complete'}
 };
 function openDossier(id){
-  const d=LEG_INFO[id];if(!d)return;
+  const d=STEP_INFO[id];if(!d)return;
   document.getElementById('dTag').textContent=d.tag;
   document.getElementById('dTitle').textContent=d.title;
   document.getElementById('dBlurb').textContent=d.blurb;
@@ -1230,7 +1311,7 @@ function mSeg(i){
 
 /* Which connector should draw itself, and which node should pop, on the next
    render where the map is actually on screen. advance() queues both.
-   They are NOT consumed while the route is hidden: clearing a leg sends the
+   They are NOT consumed while the route is hidden: clearing a step sends the
    learner straight on to the next stage, so playing the animation there would
    spend it on a view nobody is looking at. Held until they come back. */
 let pendingDraw=-1,pendingBurst=-1;
@@ -1240,11 +1321,11 @@ function showMCard(i){
   if(!box||!card)return;
   const n=Object.keys(S.cleared).length;
   const st=i<n?['Cleared','ms-done']:i===n?['You are here','ms-live']:['Locked','ms-lock'];
-  card.innerHTML=`<div class="num">${m.id===7?'Final':'Leg '+String(m.id).padStart(2,'0')}</div>`+
+  card.innerHTML=`<div class="num">${m.id===7?'Final':'Step '+String(m.id).padStart(2,'0')}</div>`+
     `<h4>${m.title}</h4><p>${m.desc}</p><span class="state ${st[1]}">${st[0]}</span>`;
   const r=box.getBoundingClientRect();
   let left=(m.x/1000)*r.width+32, top=(m.y/563)*r.height-30;
-  if(left+252>r.width)left=(m.x/1000)*r.width-256;
+  if(left+288>r.width)left=(m.x/1000)*r.width-292;
   if(left<8)left=8;
   if(top<8)top=8;
   if(top+170>r.height)top=Math.max(8,r.height-170);
@@ -1323,7 +1404,7 @@ function drawMap(){
     const open=()=>{
       const id=+g.dataset.go,el=document.getElementById('s'+id);
       if(!el){ping(200);toast('Nothing here yet');return;}
-      if(el.classList.contains('locked')){ping(200);showMCard(i);toast('Locked — clear the leg before it');return;}
+      if(el.classList.contains('locked')){ping(200);showMCard(i);toast('Locked — finish the step before it');return;}
       ping(600);openDossier(id);ev('map-jump','s'+id);
     };
     g.addEventListener('click',open);
@@ -1333,7 +1414,7 @@ function drawMap(){
   });
 }
 
-/* warm confetti at a node when its leg clears */
+/* warm confetti at a node when its step clears */
 function burstAt(idx){
   const m=MAPPTS[idx];if(!m)return;
   const svg=document.getElementById('mapSvg');if(!svg)return;
@@ -1349,16 +1430,25 @@ function burstAt(idx){
   setTimeout(()=>wrap.remove(),1000);
 }
 
-function refresh(){const n=Object.keys(S.cleared).length;
-  document.getElementById('hStep').textContent=Math.min(n,6)+'/6';
-  document.getElementById('hBar').style.width=(n/7*100)+'%';
+/* Eight steps all in: the six route steps, the summit, and enrolling in the next
+   course. cleared[] only covers 1..7 (7 is set automatically alongside step 6),
+   so the last one rides on S.mailed - otherwise 8/8 could never be reached and
+   the counter would sit at 7/8 forever. */
+function stepsDone(){
+  let n=0;for(let k=1;k<=7;k++)if(S.cleared[k])n++;
+  if(S.mailed)n++;
+  return Math.min(n,8);
+}
+function refresh(){const n=Object.keys(S.cleared).length,sd=stepsDone();
+  document.getElementById('hStep').textContent=sd+'/8';
+  document.getElementById('hBar').style.width=(sd/8*100)+'%';
   /* the plate's cool pre-dawn veil lifts as legs clear — the sun literally comes
      up over the run of the programme */
   const dawn=document.getElementById('dawn');
   /* capped well below 1: the veil should read as first light, never hide the plate */
   if(dawn)dawn.style.opacity=(Math.max(0,1-n/6)*0.62).toFixed(3);
   const prog=document.getElementById('mapProg');
-  if(prog)prog.textContent=n===0?'Start at leg 01':n>=7?'Summit reached':n>=6?'Summit unlocked':
+  if(prog)prog.textContent=n===0?'Start at step 01':n>=7?'Summit reached':n>=6?'Summit unlocked':
     String(n).padStart(2,'0')+' → '+String(n+1).padStart(2,'0');
   drawMap();renderRail();}
 
@@ -1379,7 +1469,7 @@ function advance(id,silent){
   if(!silent){
     /* Queue the connector that just became complete so drawMap() animates it
        drawing rather than snapping in, then pop confetti on the node itself.
-       Clamped to the last connector: clearing leg 6 also sets cleared[7], which
+       Clamped to the last connector: clearing step 6 also sets cleared[7], which
        would otherwise index past the six segments. */
     pendingDraw=Math.min(Object.keys(S.cleared).length-1,MAPPTS.length-2);
     pendingBurst=id-1;
@@ -1425,8 +1515,17 @@ function unlockVoyageTwo(silent){
   document.getElementById('v2s').textContent='Coursera · refine communication and shape one body of knowledge for different audiences';
   if(!silent)toast('Second voyage open',2);
 }
-function checkContinue(){if(S.courses.v2&&allAnswered(['q4']))document.getElementById('n4').classList.remove('hide');}
-function checkNarrows(){if(allAnswered(['q5']))document.getElementById('n5').classList.remove('hide');}
+/* Enables a step's continue button and drops the "waiting for" line. Kept in one
+   helper so the two gated steps cannot drift apart. classList.remove('hide') is
+   retained for anyone whose saved page still had the old hidden markup. */
+function openGate(gid){
+  const wrap=document.getElementById(gid);if(!wrap)return;
+  wrap.classList.remove('hide');
+  const b=wrap.querySelector('[data-next]');if(b)b.disabled=false;
+  const hint=document.getElementById(gid+'hint');if(hint)hint.style.display='none';
+}
+function checkContinue(){if(S.courses.v2&&allAnswered(['q4']))openGate('n4');}
+function checkNarrows(){if(allAnswered(['q5']))openGate('n5');}
 function wireQuiz(){
   document.querySelectorAll('.quiz').forEach(q=>{
     const qid=q.dataset.qid;
@@ -1507,7 +1606,7 @@ function doEnroll(silent){
   const b=document.getElementById('nextCourseGo');
   b.disabled=true;b.textContent='Enrolled ✓';
   document.getElementById('enrollOk').classList.add('show');
-  if(!silent){ping(720);addXp(100);ev('next-course-enrolled');}
+  if(!silent){ping(720);addXp(100);ev('next-course-enrolled');refresh();}
   if(!silent)save();
 }
 function editApply(){
@@ -1582,6 +1681,14 @@ document.getElementById('badgeBtn').addEventListener('click',()=>{ping(500);docu
    three courses behave alike. S.libRequested is left in the saved state shape on
    purpose: older saves already carry it, and dropping it would mean a migration
    for a field nothing reads. */
+document.getElementById('guideBtn').addEventListener('click',()=>{
+  ping(500);ev('guide-open');
+  document.getElementById('guideOverlay').classList.remove('hide');
+});
+function closeGuide(){document.getElementById('guideOverlay').classList.add('hide');}
+document.getElementById('guideClose').addEventListener('click',closeGuide);
+document.getElementById('guideOverlay').addEventListener('click',e=>{if(e.target.id==='guideOverlay')closeGuide();});
+
 document.getElementById('coachBtn').addEventListener('click',()=>{
   ping(500);ev('coach-open');
   document.getElementById('coachOverlay').classList.remove('hide');
@@ -1641,12 +1748,12 @@ document.getElementById('badgeOverlay').addEventListener('click',e=>{if(e.target
   document.getElementById('mapView').classList.remove('hide');
   document.getElementById('stagesView').classList.add('hide');
   refresh();save(); /* one consolidated save (covers the cleared[4] backfill above) instead of one POST per silently-replayed step */
-  ev('session-start','',done.length?'resumed at leg '+Math.min(done.length+1,7):'first visit');
+  ev('session-start','',done.length?'resumed at step '+Math.min(done.length+1,7):'first visit');
 
   if(S.pirateName){
     document.getElementById('landingScreen').classList.add('hide');
     document.getElementById('gameRoot').classList.remove('hide');
-    if(done.length)toast('Welcome back — leg '+Math.min(done.length,6),2);
+    if(done.length)toast('Welcome back — step '+Math.min(done.length,6),2);
   }
 })();
 </script>
